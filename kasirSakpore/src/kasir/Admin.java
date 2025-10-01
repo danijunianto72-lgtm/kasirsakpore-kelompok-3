@@ -32,7 +32,7 @@ public class Admin extends javax.swing.JPanel {
 
  public Admin() {
     initComponents();
-
+getTotalStokKurang();
     // atur layout panelChart
     panelChart.setLayout(new BorderLayout());
 
@@ -62,6 +62,46 @@ public class Admin extends javax.swing.JPanel {
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
     });
+}
+public void getTotalStokKurang() {
+    try {
+    // koneksi ke PostgreSQL
+    Connection conn = koneksi.dbKonek();
+    
+
+    // === Hitung barang dengan stok < 5 ===
+    String sqlKurang = "SELECT COUNT(*) AS total FROM barang WHERE stok < 5";
+    PreparedStatement psKurang = conn.prepareStatement(sqlKurang);
+    ResultSet rsKurang = psKurang.executeQuery();
+    if (rsKurang.next()) {
+        int totalKurang = rsKurang.getInt("total");
+        lblStok.setText(""+totalKurang);
+    }
+
+    // === Hitung semua barang ===
+    String sqlTotal = "SELECT COUNT(*) AS total FROM barang";
+    PreparedStatement psTotal = conn.prepareStatement(sqlTotal);
+    ResultSet rsTotal = psTotal.executeQuery();
+    if (rsTotal.next()) {
+        int totalBarang = rsTotal.getInt("total");
+        lblTotal.setText("" + totalBarang);
+    }
+
+        String sql = "SELECT COUNT(*) AS total FROM transaksi WHERE tgl_transaksi::date = CURRENT_DATE";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            int total = rs.getInt("total");
+            lblTransaksi.setText("" + total);
+        }
+
+    conn.close();
+
+} catch (Exception e) {
+    e.printStackTrace();
+}
+    
+
 }
 
    
@@ -199,13 +239,13 @@ private void loadChart(String startDate, String endDate) {
         lblKeuntungan = new javax.swing.JLabel();
         pnlMen = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        pnlMenu = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
         pnlTransaksi = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        lblPemasukan4 = new javax.swing.JLabel();
+        lblTransaksi = new javax.swing.JLabel();
         pnlStok = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        lblPemasukan6 = new javax.swing.JLabel();
+        lblStok = new javax.swing.JLabel();
         pnlBarang = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         lblPemasukan7 = new javax.swing.JLabel();
@@ -423,12 +463,12 @@ private void loadChart(String startDate, String endDate) {
         jLabel10.setRequestFocusEnabled(false);
         pnlMen.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, 20));
 
-        pnlMenu.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
-        pnlMenu.setText("100");
-        pnlMenu.setToolTipText("focus");
-        pnlMenu.setFocusable(false);
-        pnlMenu.setRequestFocusEnabled(false);
-        pnlMen.add(pnlMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 100, 90));
+        lblTotal.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
+        lblTotal.setText("100");
+        lblTotal.setToolTipText("focus");
+        lblTotal.setFocusable(false);
+        lblTotal.setRequestFocusEnabled(false);
+        pnlMen.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 100, 90));
 
         jPanel2.add(pnlMen, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 190, 180, 160));
 
@@ -443,12 +483,12 @@ private void loadChart(String startDate, String endDate) {
         jLabel8.setRequestFocusEnabled(false);
         pnlTransaksi.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, 20));
 
-        lblPemasukan4.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
-        lblPemasukan4.setText("99");
-        lblPemasukan4.setToolTipText("focus");
-        lblPemasukan4.setFocusable(false);
-        lblPemasukan4.setRequestFocusEnabled(false);
-        pnlTransaksi.add(lblPemasukan4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
+        lblTransaksi.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
+        lblTransaksi.setText("99");
+        lblTransaksi.setToolTipText("focus");
+        lblTransaksi.setFocusable(false);
+        lblTransaksi.setRequestFocusEnabled(false);
+        pnlTransaksi.add(lblTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
 
         jPanel2.add(pnlTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 10, 180, 160));
 
@@ -463,12 +503,12 @@ private void loadChart(String startDate, String endDate) {
         jLabel9.setRequestFocusEnabled(false);
         pnlStok.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, 20));
 
-        lblPemasukan6.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
-        lblPemasukan6.setText("10");
-        lblPemasukan6.setToolTipText("focus");
-        lblPemasukan6.setFocusable(false);
-        lblPemasukan6.setRequestFocusEnabled(false);
-        pnlStok.add(lblPemasukan6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
+        lblStok.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
+        lblStok.setText("10");
+        lblStok.setToolTipText("focus");
+        lblStok.setFocusable(false);
+        lblStok.setRequestFocusEnabled(false);
+        pnlStok.add(lblStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
 
         jPanel2.add(pnlStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 10, 180, 160));
 
@@ -571,9 +611,10 @@ private void loadChart(String startDate, String endDate) {
     private javax.swing.JLabel lblKeuntungan;
     private javax.swing.JLabel lblKeuntunganTotal;
     private javax.swing.JLabel lblMasuk;
-    private javax.swing.JLabel lblPemasukan4;
-    private javax.swing.JLabel lblPemasukan6;
     private javax.swing.JLabel lblPemasukan7;
+    private javax.swing.JLabel lblStok;
+    private javax.swing.JLabel lblTotal;
+    private javax.swing.JLabel lblTransaksi;
     private javax.swing.JPanel merah;
     private javax.swing.JPanel merah1;
     private javax.swing.JPanel panelChart;
@@ -583,7 +624,6 @@ private void loadChart(String startDate, String endDate) {
     private javax.swing.JPanel panelPengeluaran;
     private javax.swing.JPanel pnlBarang;
     private javax.swing.JPanel pnlMen;
-    private javax.swing.JLabel pnlMenu;
     private javax.swing.JPanel pnlStok;
     private javax.swing.JPanel pnlTransaksi;
     // End of variables declaration//GEN-END:variables
