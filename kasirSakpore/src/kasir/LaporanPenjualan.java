@@ -19,10 +19,15 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         initComponents();
         loadDataTransaksi();
     }
-    private void loadDataTransaksi() {
+  private void loadDataTransaksi() {
     DefaultTableModel model = new DefaultTableModel(
-        new String[]{"ID", "No Transaksi", "Kasir", "Tanggal", "Grand Total", "Metode"}, 0
-    );
+        new String[]{"No", "ID", "No Transaksi", "Kasir", "Tanggal", "Grand Total", "Metode"}, 0
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // semua sel tidak bisa di-edit
+        }
+    };
     
     try (Connection conn = koneksi.dbKonek()) {
         String sql = "SELECT idtransaksi, notransaksi, namapengguna, tgl_transaksi, grand_total, metodepembayaran " +
@@ -30,9 +35,11 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         PreparedStatement pst = conn.prepareStatement(sql);
         ResultSet rs = pst.executeQuery();
         
+        int no = 1;
         while (rs.next()) {
             model.addRow(new Object[]{
-                rs.getInt("idtransaksi"),
+                no++,  // nomor urut
+                rs.getInt("idtransaksi"), // ID (disembunyikan nanti)
                 rs.getString("notransaksi"),
                 rs.getString("namapengguna"),
                 rs.getTimestamp("tgl_transaksi"),
@@ -42,100 +49,23 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         }
         
         tblTransaksi.setModel(model);
-        
+
+        // === Atur ukuran kolom ===
+        tblTransaksi.getColumnModel().getColumn(0).setPreferredWidth(40); // kolom No kecil
+        tblTransaksi.getColumnModel().getColumn(0).setMaxWidth(50);
+        tblTransaksi.getColumnModel().getColumn(0).setMinWidth(40);
+
+        // Sembunyikan kolom ID (index ke-1)
+        tblTransaksi.getColumnModel().getColumn(1).setMinWidth(0);
+        tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(0);
+        tblTransaksi.getColumnModel().getColumn(1).setWidth(0);
+
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal load transaksi: " + e.getMessage());
     }
 }
 
-
-    // ==== INNER CLASS: Popup Detail ====
-    private class PopupDetailTransaksi extends JDialog {
-        private int idTransaksi;
-
-        // komponen UI
-        private JLabel lblKode, lblKasir, lblTanggal, lblSubtotal, lblDiskon, lblGrandTotal, lblMetode;
-        private JTable tblDetail;
-
-        public PopupDetailTransaksi(Frame parent, boolean modal, int idTransaksi) {
-            super(parent, modal);
-            this.idTransaksi = idTransaksi;
-            initUI();
-            loadDetailTransaksi();
-        }
-
-        private void initUI() {
-            setTitle("Detail Transaksi");
-            setSize(500, 400);
-            setLayout(new BorderLayout());
-
-            JPanel header = new JPanel(new GridLayout(0, 2));
-            lblKode = new JLabel();
-            lblKasir = new JLabel();
-            lblTanggal = new JLabel();
-            lblSubtotal = new JLabel();
-            lblDiskon = new JLabel();
-            lblGrandTotal = new JLabel();
-            lblMetode = new JLabel();
-
-            header.add(new JLabel("Kode:")); header.add(lblKode);
-            header.add(new JLabel("Kasir:")); header.add(lblKasir);
-            header.add(new JLabel("Tanggal:")); header.add(lblTanggal);
-            header.add(new JLabel("Subtotal:")); header.add(lblSubtotal);
-            header.add(new JLabel("Diskon:")); header.add(lblDiskon);
-            header.add(new JLabel("Grand Total:")); header.add(lblGrandTotal);
-            header.add(new JLabel("Metode:")); header.add(lblMetode);
-
-            add(header, BorderLayout.NORTH);
-
-            tblDetail = new JTable();
-            add(new JScrollPane(tblDetail), BorderLayout.CENTER);
-        }
-
-        private void loadDetailTransaksi() {
-            try (Connection conn = koneksi.dbKonek()) {
-                // header
-                String sqlTrans = "SELECT * FROM transaksi WHERE idtransaksi = ?";
-                PreparedStatement pst = conn.prepareStatement(sqlTrans);
-                pst.setInt(1, idTransaksi);
-                ResultSet rs = pst.executeQuery();
-                if (rs.next()) {
-                    lblKode.setText(rs.getString("notransaksi"));
-                    lblKasir.setText(rs.getString("namapengguna"));
-                    lblTanggal.setText(rs.getString("tgl_transaksi"));
-                    lblSubtotal.setText(rs.getBigDecimal("subtotal").toString());
-                    lblDiskon.setText(rs.getBigDecimal("diskon").toString());
-                    lblGrandTotal.setText(rs.getBigDecimal("grand_total").toString());
-                    lblMetode.setText(rs.getString("metodepembayaran"));
-                }
-
-                // detail barang
-                DefaultTableModel model = new DefaultTableModel(
-                    new String[]{"Nama Barang", "Jumlah", "Harga", "Subtotal"}, 0
-                );
-                String sqlDetail = "SELECT namabarang, jumlah, harga, subtotal FROM detailtransaksi WHERE idtransaksi = ?";
-                pst = conn.prepareStatement(sqlDetail);
-                pst.setInt(1, idTransaksi);
-                rs = pst.executeQuery();
-                while (rs.next()) {
-                    model.addRow(new Object[]{
-                        rs.getString("namabarang"),
-                        rs.getInt("jumlah"),
-                        rs.getBigDecimal("harga"),
-                        rs.getBigDecimal("subtotal")
-                    });
-                }
-                tblDetail.setModel(model);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Gagal load detail: " + e.getMessage());
-            }
-        }
-    }
-
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -188,12 +118,17 @@ public class LaporanPenjualan extends javax.swing.JPanel {
                 "id", "nomer", "Kode Transaksi", "Tanggal", "Nama Kasir", "Total Akhir"
             }
         ));
+        tblTransaksi.setRowHeight(33);
         tblTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblTransaksiMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(tblTransaksi);
+        if (tblTransaksi.getColumnModel().getColumnCount() > 0) {
+            tblTransaksi.getColumnModel().getColumn(0).setMaxWidth(30);
+            tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(30);
+        }
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, 1620, 600));
         jPanel1.add(jdcMulai, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 140, 150, 50));
@@ -245,22 +180,23 @@ public class LaporanPenjualan extends javax.swing.JPanel {
     }//GEN-LAST:event_tblTransaksiMouseClicked
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-   int selectedRow = tblTransaksi.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih transaksi dulu!");
-            return;
-        }
+int selectedRow = tblTransaksi.getSelectedRow();
+if (selectedRow == -1) {
+    JOptionPane.showMessageDialog(this, "Pilih transaksi dulu!");
+    return;
+}
 
-        int idTransaksi = (int) tblTransaksi.getValueAt(selectedRow, 0);
+// ID ada di kolom ke-1 (karena kolom 0 = nomor urut)
+int idTransaksi = (int) tblTransaksi.getValueAt(selectedRow, 1);
+PopupDetailTransaksi popup = new PopupDetailTransaksi(
+    (java.awt.Frame) SwingUtilities.getWindowAncestor(this), 
+    true, 
+    idTransaksi
+);
+popup.pack(); // ukurannya menyesuaikan isi
+popup.setLocationRelativeTo(SwingUtilities.getWindowAncestor(this)); // tengah parent
+popup.setVisible(true);
 
-        // panggil popup inner class
-        PopupDetailTransaksi popup = new PopupDetailTransaksi(
-            (java.awt.Frame) SwingUtilities.getWindowAncestor(this),
-            true,
-            idTransaksi
-        );
-        popup.setLocationRelativeTo(this);
-        popup.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
 
