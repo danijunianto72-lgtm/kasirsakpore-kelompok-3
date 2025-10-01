@@ -231,7 +231,8 @@ panelUtama.removeAll();
     Kasir kasirP = new Kasir(); 
     panelUtama.add(kasirP,BorderLayout.CENTER); 
     panelUtama.revalidate();               
-    panelUtama.repaint();         
+    panelUtama.repaint();   
+    
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton7ActionPerformed
 

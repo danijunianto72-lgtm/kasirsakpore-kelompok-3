@@ -98,6 +98,11 @@ public class KelolaKeuangan extends javax.swing.JPanel {
         btnSubmit.setBackground(new java.awt.Color(0, 255, 51));
         btnSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnSubmit.setText("SUBMIT ");
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
         pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 640, 320, 50));
 
         pnDaftarUser.setBackground(new java.awt.Color(255, 255, 255));
@@ -207,6 +212,10 @@ public class KelolaKeuangan extends javax.swing.JPanel {
     private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnFilterActionPerformed
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSubmitActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

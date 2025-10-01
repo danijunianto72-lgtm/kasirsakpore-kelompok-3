@@ -7,9 +7,11 @@ import java.sql.*;
 import javax.swing.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.table.DefaultTableModel;
+import java.util.Date;
 /**
  *
  * @author yaniyan
@@ -22,16 +24,23 @@ public class Kasir extends javax.swing.JPanel {
     public Kasir() {
         initComponents();
         loadMenu(null);
-try (Connection conn = koneksi.dbKonek()) {
-    txtNo.setText(generateNoTransaksi(conn));
-} catch (Exception e) {
-    e.printStackTrace();
-    txtNo.setText("TERROR"); // fallback kalau error
-}
+            jdcTanggal.setDate(new Date());
 
 
+        try (Connection conn = koneksi.dbKonek()) {
+            txtNo.setText(generateNoTransaksi(conn));
+        } catch (Exception e) {
+            e.printStackTrace();
+            txtNo.setText("TERROR"); // fallback kalau error
+        }
+
+          SwingUtilities.invokeLater(() -> {
+        txtSku.requestFocusInWindow();
+    });
     }
-    
+  
+ 
+
     private void loadMenu(String keyword) {
     pnlMenu.removeAll();
     pnlMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -353,7 +362,9 @@ btnSelesai.addActionListener(ev -> {
         ((DefaultTableModel) tblKasir.getModel()).setRowCount(0);
         txtTotal.setText("0");
         txtNo.setText(generateNoTransaksi(conn));
-
+  SwingUtilities.invokeLater(() -> {
+        txtSku.requestFocusInWindow();
+    });
     } catch (Exception ex) {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(dialog, "Gagal simpan transaksi: " + ex.getMessage());
@@ -375,6 +386,17 @@ dialog.addWindowListener(new WindowAdapter() {
 
 dialog.setVisible(true);
 
+}
+private void hitungTotal() {
+    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+    double total = 0;
+
+    for (int i = 0; i < model.getRowCount(); i++) {
+        double subTotal = Double.parseDouble(model.getValueAt(i, 4).toString()); // kolom 4 = Total
+        total += subTotal;
+    }
+
+    txtTotal.setText(String.valueOf(total));
 }
 
 // Helper untuk tambah field
@@ -519,6 +541,16 @@ private String generateNoTransaksi(Connection conn) throws SQLException {
         jPanel1.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 310, 90, 50));
 
         txtSku.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        txtSku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSkuActionPerformed(evt);
+            }
+        });
+        txtSku.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSkuKeyPressed(evt);
+            }
+        });
         jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 94, 301, 51));
 
         txtPengguna.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -598,25 +630,25 @@ private String generateNoTransaksi(Connection conn) throws SQLException {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-int row = tblKasir.getSelectedRow();
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih dulu item yang mau dihapus!");
-        return;
-    }
+    int row = tblKasir.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih dulu item yang mau dihapus!");
+            return;
+        }
 
-    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
 
-    String sku = model.getValueAt(row, 0).toString();
-    int jumlah = (int) model.getValueAt(row, 3);
+        String sku = model.getValueAt(row, 0).toString();
+        int jumlah = (int) model.getValueAt(row, 3);
 
-    // Kembalikan stok ke DB
-    updateStokBySKU(sku, jumlah);
+        // Kembalikan stok ke DB
+        updateStokBySKU(sku, jumlah);
 
-    // Hapus baris dari JTable
-    model.removeRow(row);
-
-    // Refresh menu
-    loadMenu(null);        // TODO add your handling code here:
+        // Hapus baris dari JTable
+        model.removeRow(row);
+hitungTotal();
+        // Refresh menu
+        loadMenu(null);        // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -689,6 +721,61 @@ private javax.swing.Timer searchTimer;
     private void btnPembayaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPembayaranActionPerformed
 showPopupPembayaran();        // TODO add your handling code here:
     }//GEN-LAST:event_btnPembayaranActionPerformed
+
+    private void txtSkuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSkuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSkuActionPerformed
+
+    private void txtSkuKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSkuKeyPressed
+    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+        String sku = txtSku.getText().trim();
+        if(!sku.isEmpty()){
+            try {
+Connection conn = koneksi.dbKonek();
+                String sql = "SELECT nama, hargabarang, stok FROM barang WHERE skubarang=?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, sku);
+                ResultSet rs = ps.executeQuery();
+                
+                if(rs.next()){
+                    String nama = rs.getString("nama");
+                    double harga = rs.getDouble("hargabarang");
+                    int stok = rs.getInt("stok");
+                    
+                    if(stok > 0){
+                        // Tambah ke JTable
+                        DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+                        model.addRow(new Object[]{
+                            sku,
+                            nama,
+                            harga,
+                            1, // jumlah default 1
+                            harga*1
+                        });
+                        
+                        // Update stok di DB (kurangi 1)
+                        String update = "UPDATE barang SET stok=stok-1 WHERE skubarang=?";
+                        PreparedStatement psUpdate = conn.prepareStatement(update);
+                        psUpdate.setString(1, sku);
+                        psUpdate.executeUpdate();
+                        hitungTotal();
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Stok habis!");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(this, "Barang tidak ditemukan!");
+                }
+                rs.close();
+                ps.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+        txtSku.setText(""); // kosongkan field agar siap scan lagi
+    }
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSkuKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
