@@ -16,6 +16,7 @@ import java.sql.*;
 import javax.swing.*;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 /**
  *
  * @author user
@@ -31,8 +32,127 @@ public class Dashboard extends javax.swing.JFrame {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy");
     String tgl = sdf.format(new Date());
     lblTanggal.setText(tgl);
+    fungsibutton () ;
     }
 
+    private void fungsibutton (){
+    // Misalnya btnMenu adalah JButton kamu
+btnAdmin.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F1"), "f1Action");
+
+btnAdmin.getActionMap().put("f1Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnAdmin.doClick();
+    }
+});
+
+btnBarang.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F2"), "f2Action");
+
+btnBarang.getActionMap().put("f2Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnBarang.doClick();
+    }
+});
+
+
+
+btnUser.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F3"), "f3Action");
+
+btnUser.getActionMap().put("f3Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnUser.doClick();
+    }
+});
+
+btnKeuangan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F4"), "f4Action");
+
+btnKeuangan.getActionMap().put("f4Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnKeuangan.doClick();
+    }
+});
+
+btnSupplier.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F5"), "f5Action");
+
+btnSupplier.getActionMap().put("f5Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnSupplier.doClick();
+    }
+});
+
+btnPembelian.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F6"), "f6Action");
+
+btnPembelian.getActionMap().put("f6Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnPembelian.doClick();
+    }
+});
+
+btnKasir.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F7"), "f7Action");
+
+btnKasir.getActionMap().put("f7Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnKasir.doClick();
+    }
+});
+
+
+btnLaporanPenjualan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F8"), "f8Action");
+
+btnLaporanPenjualan.getActionMap().put("f8Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnLaporanPenjualan.doClick();
+    }
+});
+
+
+btnLaporanKeuangan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F9"), "f9Action");
+
+btnLaporanKeuangan.getActionMap().put("f9Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnLaporanKeuangan.doClick();
+    }
+});
+
+btnLaporanPembelian.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    .put(KeyStroke.getKeyStroke("F10"), "f10Action");
+
+btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Jalankan aksi button
+        btnLaporanPembelian.doClick();
+    }
+});
+
+
+    }
 
 
     /**
@@ -47,16 +167,17 @@ public class Dashboard extends javax.swing.JFrame {
         panelUtama = new javax.swing.JPanel();
         navbar = new javax.swing.JPanel();
         lblTanggal = new javax.swing.JLabel();
-        cmbLaporan = new javax.swing.JComboBox<>();
+        btnLaporanPembelian = new javax.swing.JButton();
+        btnLaporanPenjualan = new javax.swing.JButton();
+        btnLaporanKeuangan = new javax.swing.JButton();
         sidebar = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        btnAdmin = new javax.swing.JButton();
+        btnBarang = new javax.swing.JButton();
+        btnUser = new javax.swing.JButton();
+        btnKeuangan = new javax.swing.JButton();
+        btnSupplier = new javax.swing.JButton();
+        btnKasir = new javax.swing.JButton();
+        btnPembelian = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -71,68 +192,81 @@ public class Dashboard extends javax.swing.JFrame {
 
         lblTanggal.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         lblTanggal.setText("WEDNESDAY 99, OKTOVER 2025");
-        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 50, 840, 90));
+        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 30, 840, 90));
 
-        cmbLaporan.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        cmbLaporan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih laporan", "laporan keuangan", "laporan penjualan", "laporan pembelian" }));
-        cmbLaporan.addActionListener(new java.awt.event.ActionListener() {
+        btnLaporanPembelian.setText("[F10] LAPORAN PEMBELIAN");
+        btnLaporanPembelian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbLaporanActionPerformed(evt);
+                btnLaporanPembelianActionPerformed(evt);
             }
         });
-        navbar.add(cmbLaporan, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 80, 200, 40));
+        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 90, 200, 40));
+
+        btnLaporanPenjualan.setText("[F8] LAPORAN PENJUALAN");
+        btnLaporanPenjualan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLaporanPenjualanActionPerformed(evt);
+            }
+        });
+        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 90, 200, 40));
+
+        btnLaporanKeuangan.setText("[F9] LAPORAN KEUANGAN");
+        btnLaporanKeuangan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLaporanKeuanganActionPerformed(evt);
+            }
+        });
+        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 90, 200, 40));
 
         sidebar.setBackground(new java.awt.Color(51, 51, 255));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
 
-        jButton1.setText("ADMIN");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAdmin.setText("ADMIN");
+        btnAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAdminActionPerformed(evt);
             }
         });
 
-        jButton2.setText("KELOLA BARANG");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnBarang.setText(" BARANG");
+        btnBarang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnBarangActionPerformed(evt);
             }
         });
 
-        jButton3.setText("KELOLA USER");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnUser.setText(" USER");
+        btnUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnUserActionPerformed(evt);
             }
         });
 
-        jButton4.setText("KELOLA KEUANGAN");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnKeuangan.setText(" KEUANGAN");
+        btnKeuangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnKeuanganActionPerformed(evt);
             }
         });
 
-        jButton5.setText("KELOLA KEUANGAN");
-
-        jButton6.setText("KELOLA SUPPLIER");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnSupplier.setText(" SUPPLIER");
+        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnSupplierActionPerformed(evt);
             }
         });
 
-        jButton7.setText("KASIR");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnKasir.setText("KASIR");
+        btnKasir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnKasirActionPerformed(evt);
             }
         });
 
-        jButton8.setText("PEMBELIAN");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        btnPembelian.setText("PEMBELIAN");
+        btnPembelian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                btnPembelianActionPerformed(evt);
             }
         });
 
@@ -143,36 +277,33 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
         sidebarLayout.setVerticalGroup(
             sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(59, 59, 59)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43)
+                .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(329, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,25 +339,25 @@ public class Dashboard extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
   panelUtama.removeAll();                
     Admin adminPanel = new Admin();        
 
         panelUtama.add(adminPanel, BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnAdminActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
  panelUtama.removeAll();                
     KelolaUser kuser = new KelolaUser();        
     panelUtama.add(kuser, BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();           
              // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnUserActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void btnKasirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKasirActionPerformed
 panelUtama.removeAll();                
     Kasir kasirP = new Kasir(); 
     panelUtama.add(kasirP,BorderLayout.CENTER); 
@@ -234,74 +365,65 @@ panelUtama.removeAll();
     panelUtama.repaint();   
     
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_btnKasirActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBarangActionPerformed
 panelUtama.removeAll();                
     KelolaBarang kbarang = new KelolaBarang();        
     panelUtama.add(kbarang,BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();             // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnBarangActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnKeuanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeuanganActionPerformed
 panelUtama.removeAll();                
     KelolaKeuangan kuang = new KelolaKeuangan();        
     panelUtama.add(kuang,BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();          // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnKeuanganActionPerformed
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void btnPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPembelianActionPerformed
 panelUtama.removeAll();                
     Pembelian kbeli = new Pembelian();        
     panelUtama.add(kbeli,BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();                                                 
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_btnPembelianActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierActionPerformed
 panelUtama.removeAll();                
     Suplier ksup = new Suplier();        
     panelUtama.add(ksup,BorderLayout.CENTER); 
     panelUtama.revalidate();               
     panelUtama.repaint();                                                 
                // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btnSupplierActionPerformed
 
-    private void cmbLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbLaporanActionPerformed
-    String pilihan = (String) cmbLaporan.getSelectedItem();
+    private void btnLaporanPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanPembelianActionPerformed
+panelUtama.removeAll();                
+    LaporanPembelian klapem = new LaporanPembelian();        
+    panelUtama.add(klapem,BorderLayout.CENTER); 
+    panelUtama.revalidate();               
+    panelUtama.repaint();          // TODO add your handling code here:
+    }//GEN-LAST:event_btnLaporanPembelianActionPerformed
 
-    panelUtama.removeAll(); // hapus isi lama
+    private void btnLaporanPenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanPenjualanActionPerformed
+panelUtama.removeAll();                
+    LaporanPenjualan klapen = new LaporanPenjualan();        
+    panelUtama.add(klapen,BorderLayout.CENTER); 
+    panelUtama.revalidate();               
+    panelUtama.repaint();          // TODO add your handling code here:
+    }//GEN-LAST:event_btnLaporanPenjualanActionPerformed
 
-    switch (pilihan) {
-       case "laporan keuangan":
-            LaporanKeuangan lk = new LaporanKeuangan();
-            panelUtama.add(lk, BorderLayout.CENTER);
-            break;
-
-        case "laporan pembelian":
-            LaporanPembelian lp = new LaporanPembelian();
-            panelUtama.add(lp, BorderLayout.CENTER);
-            break;
-
-        case "laporan penjualan":
-            LaporanPenjualan lpn = new LaporanPenjualan();
-            panelUtama.add(lpn, BorderLayout.CENTER);
-            break;
-
-
-
-        default:
-            panelUtama.add(new javax.swing.JLabel("Silakan pilih laporan"), BorderLayout.CENTER);
-    }
-
-    panelUtama.revalidate(); // refresh layout
-    panelUtama.repaint();    // redraw
-
-
-    }//GEN-LAST:event_cmbLaporanActionPerformed
+    private void btnLaporanKeuanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanKeuanganActionPerformed
+panelUtama.removeAll();                
+    LaporanKeuangan klapkeu = new LaporanKeuangan();        
+    panelUtama.add(klapkeu,BorderLayout.CENTER); 
+    panelUtama.revalidate();               
+    panelUtama.repaint();          // TODO add your handling code here:
+    }//GEN-LAST:event_btnLaporanKeuanganActionPerformed
 
     /**
      * @param args the command line arguments
@@ -339,15 +461,16 @@ panelUtama.removeAll();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> cmbLaporan;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
+    private javax.swing.JButton btnAdmin;
+    private javax.swing.JButton btnBarang;
+    private javax.swing.JButton btnKasir;
+    private javax.swing.JButton btnKeuangan;
+    private javax.swing.JButton btnLaporanKeuangan;
+    private javax.swing.JButton btnLaporanPembelian;
+    private javax.swing.JButton btnLaporanPenjualan;
+    private javax.swing.JButton btnPembelian;
+    private javax.swing.JButton btnSupplier;
+    private javax.swing.JButton btnUser;
     private javax.swing.JLabel lblTanggal;
     private javax.swing.JPanel navbar;
     private javax.swing.JPanel panelUtama;
