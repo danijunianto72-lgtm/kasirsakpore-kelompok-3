@@ -327,7 +327,7 @@ private void loadChart(String startDate, String endDate) {
                 .addContainerGap())
         );
 
-        jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 1690, 460));
+        jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, 1690, 460));
 
         panelKeuntunganTotal.setToolTipText("focus");
         panelKeuntunganTotal.setFocusable(false);
