@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.table.DefaultTableModel;
 import java.util.Date;
+import java.util.Timer;
 /**
  *
  * @author yaniyan
@@ -21,9 +22,13 @@ public class Kasir extends javax.swing.JPanel {
     /**
      * Creates new form Kasir
      */
+        private javax.swing.Timer timer;
+
     public Kasir() {
         initComponents();
         loadMenu(null);
+                setupSkuScanner(); // panggil fungsi setup disini
+
             jdcTanggal.setDate(new Date());
 
 
@@ -470,8 +475,82 @@ private String generateNoTransaksi(Connection conn) throws SQLException {
 
     return "T" + hariBulan + urutan; 
 }
+private void setupSkuScanner() {
+    // bikin timer dengan delay 500ms
+    timer = new javax.swing.Timer(500, e -> {
+        String sku = txtSku.getText().trim();
+        if (!sku.isEmpty()) {
+            jalankanCariBarang(sku);  // fungsi untuk ambil data barang
+            txtSku.setText("");       // kosongkan setelah scan selesai
+        }
+    });
+    timer.setRepeats(false);
+
+    // pasang listener ke textfield
+    txtSku.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        @Override
+        public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            restartTimer();
+        }
+
+        @Override
+        public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            restartTimer();
+        }
+
+        @Override
+        public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            restartTimer();
+        }
+
+        private void restartTimer() {
+            if (timer.isRunning()) {
+                timer.restart(); // kalau ada input baru, reset hitungan
+            } else {
+                timer.start();   // mulai hitungan 500ms
+            }
+        }
+    });
+}
 
 
+    private void jalankanCariBarang(String sku) {
+        try {
+            Connection conn = koneksi.dbKonek();
+            String sql = "SELECT nama, hargabarang, stok FROM barang WHERE skubarang=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, sku);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String nama = rs.getString("nama");
+                double harga = rs.getDouble("hargabarang");
+                int stok = rs.getInt("stok");
+
+                if (stok > 0) {
+                    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+                    model.addRow(new Object[]{ sku, nama, harga, 1, harga });
+
+                    // update stok
+                    String update = "UPDATE barang SET stok=stok-1 WHERE skubarang=?";
+                    PreparedStatement psUpdate = conn.prepareStatement(update);
+                    psUpdate.setString(1, sku);
+                    psUpdate.executeUpdate();
+
+                    hitungTotal();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Stok habis!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Barang tidak ditemukan!");
+            }
+
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -730,58 +809,11 @@ showPopupPembayaran();        // TODO add your handling code here:
     }//GEN-LAST:event_txtSkuActionPerformed
 
     private void txtSkuKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSkuKeyPressed
-    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
-        String sku = txtSku.getText().trim();
-        if(!sku.isEmpty()){
-            try {
-Connection conn = koneksi.dbKonek();
-                String sql = "SELECT nama, hargabarang, stok FROM barang WHERE skubarang=?";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, sku);
-                ResultSet rs = ps.executeQuery();
-                
-                if(rs.next()){
-                    String nama = rs.getString("nama");
-                    double harga = rs.getDouble("hargabarang");
-                    int stok = rs.getInt("stok");
-                    
-                    if(stok > 0){
-                        // Tambah ke JTable
-                        DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
-                        model.addRow(new Object[]{
-                            sku,
-                            nama,
-                            harga,
-                            1, // jumlah default 1
-                            harga*1
-                        });
-                        
-                        // Update stok di DB (kurangi 1)
-                        String update = "UPDATE barang SET stok=stok-1 WHERE skubarang=?";
-                        PreparedStatement psUpdate = conn.prepareStatement(update);
-                        psUpdate.setString(1, sku);
-                        psUpdate.executeUpdate();
-                        hitungTotal();
-                    }else{
-                        JOptionPane.showMessageDialog(this, "Stok habis!");
-                    }
-                }else{
-                    JOptionPane.showMessageDialog(this, "Barang tidak ditemukan!");
-                }
-                rs.close();
-                ps.close();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-            }
-        }
-        txtSku.setText(""); // kosongkan field agar siap scan lagi
-    }
 
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtSkuKeyPressed
 
     private void txtSkuKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSkuKeyReleased
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtSkuKeyReleased
 
 

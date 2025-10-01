@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,6 +25,7 @@ public class KelolaKeuangan extends javax.swing.JPanel {
         initComponents();
         loadDataKeuangan();
                     jdcTanggal.setDate(new java.util.Date());
+                    setFilterDefault();
 
     }
 boolean isEditMode = false; 
@@ -46,8 +48,12 @@ private void loadDataKeuangan() {
     model.addColumn("Tanggal");
 
     try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal FROM keuangan ORDER BY tanggal DESC";
-        PreparedStatement pst = conn.prepareStatement(sql);
+String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
+           + "FROM keuangan "
+           + "WHERE tanggal::date >= date_trunc('month', CURRENT_DATE) "
+           + "AND tanggal::date < (date_trunc('month', CURRENT_DATE) + interval '1 month') "
+           + "ORDER BY tanggal DESC";
+PreparedStatement pst = conn.prepareStatement(sql);
         ResultSet rs = pst.executeQuery();
 
         idList.clear(); // reset dulu list id
@@ -75,6 +81,19 @@ private void loadDataKeuangan() {
         JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
     }
 }
+private void setFilterDefault() {
+    Calendar cal = Calendar.getInstance();
+
+    // awal bulan
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    // akhir bulan
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
+}
+
+
 private void clearForm() {
     txtJenis.setText("");
     txtMasuk.setText("");
@@ -360,6 +379,8 @@ int row = tblKeuangan.getSelectedRow();
 
         // biar kolom No kecil
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -442,8 +463,7 @@ int row = tblKeuangan.getSelectedRow();
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
 clearForm();        // TODO add your handling code here:
  loadDataKeuangan();  // panggil ulang fungsi load semua data
-    jdcStart.setDate(null); // kosongkan filter tanggal
-    jdcEnd.setDate(null);
+setFilterDefault();
     }//GEN-LAST:event_btnResetActionPerformed
 
 
