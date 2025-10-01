@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -24,7 +25,22 @@ public class LaporanKeuangan extends javax.swing.JPanel {
     public LaporanKeuangan() {
         initComponents();
         loadDataKeuangan();
+        setFilterDefault();
     }
+    
+    private void setFilterDefault() {
+    Calendar cal = Calendar.getInstance();
+
+    // awal bulan
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    // akhir bulan
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
+}
+
+
     
     
 boolean isEditMode = false; 
@@ -217,7 +233,8 @@ private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) 
     }//GEN-LAST:event_jdcEndPropertyChange
 
     private void btnFIlterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFIlterActionPerformed
-loadDataKeuangan();        // TODO add your handling code here:
+loadDataKeuangan();  
+setFilterDefault();// TODO add your handling code here:
     }//GEN-LAST:event_btnFIlterActionPerformed
 
     private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
