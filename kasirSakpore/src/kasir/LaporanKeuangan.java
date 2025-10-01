@@ -25,16 +25,29 @@ public class LaporanKeuangan extends javax.swing.JPanel {
         initComponents();
         loadDataKeuangan();
     }
-    boolean isEditMode = false; 
+    
+    
+boolean isEditMode = false; 
 int selectedId = -1; // untuk simpan idkeuangan yang dipilih
-// taruh di atas class
+
 private java.util.List<Integer> idList = new ArrayList<>(); // buat simpan id
 
-    private void loadDataKeuangan() {
+private void loadDataKeuangan() {
+    java.util.Date start = java.sql.Date.valueOf(
+        java.time.LocalDate.now().withDayOfMonth(1) // awal bulan
+    );
+    java.util.Date end = java.sql.Date.valueOf(
+        java.time.LocalDate.now().withDayOfMonth(
+            java.time.LocalDate.now().lengthOfMonth() // akhir bulan
+        )
+    );
+    loadDataKeuangan(start, end);
+}
+private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) {
     DefaultTableModel model = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false; // tabel tidak bisa diubah langsung
+            return false;
         }
     };
 
@@ -45,21 +58,25 @@ private java.util.List<Integer> idList = new ArrayList<>(); // buat simpan id
     model.addColumn("Tanggal");
 
     try (Connection conn = koneksi.dbKonek()) {
-String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
-           + "FROM keuangan "
-           + "WHERE tanggal::date >= date_trunc('month', CURRENT_DATE) "
-           + "AND tanggal::date < (date_trunc('month', CURRENT_DATE) + interval '1 month') "
-           + "ORDER BY tanggal DESC";
+        String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
+                   + "FROM keuangan "
+                   + "WHERE tanggal::date BETWEEN ? AND ? "
+                   + "ORDER BY tanggal DESC";
         PreparedStatement pst = conn.prepareStatement(sql);
+
+        // konversi java.util.Date -> java.sql.Date
+        pst.setDate(1, new java.sql.Date(startDate.getTime()));
+        pst.setDate(2, new java.sql.Date(endDate.getTime()));
+
         ResultSet rs = pst.executeQuery();
 
-        idList.clear(); // reset dulu list id
+        idList.clear();
         int no = 1;
 
         while (rs.next()) {
-            idList.add(rs.getInt("idkeuangan")); // simpan ID ke list
+            idList.add(rs.getInt("idkeuangan"));
             model.addRow(new Object[]{
-                no++, // nomor urut
+                no++,
                 rs.getString("jeniskeuangan"),
                 rs.getDouble("masuk"),
                 rs.getDouble("keluar"),
@@ -69,7 +86,6 @@ String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
 
         tblKeuangan.setModel(model);
 
-        // atur lebar kolom No biar kecil
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
 
@@ -106,6 +122,12 @@ String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setText("Laporan Keuangan");
         panelUtama.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, -1, -1));
+
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
         panelUtama.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 150, 140, 40));
         panelUtama.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 150, 150, 40));
 
@@ -114,6 +136,11 @@ String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
 
         btnFIlter.setBackground(new java.awt.Color(102, 255, 255));
         btnFIlter.setText("Filter");
+        btnFIlter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFIlterActionPerformed(evt);
+            }
+        });
         panelUtama.add(btnFIlter, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 150, 130, 40));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -153,6 +180,11 @@ String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
 
         btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak1.setText("Cetak");
+        btnCetak1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetak1ActionPerformed(evt);
+            }
+        });
         panelUtama.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 150, 130, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -172,6 +204,25 @@ String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
+ if ("date".equals(evt.getPropertyName())) {
+        java.util.Date start = jdcStart.getDate();
+        java.util.Date end = jdcEnd.getDate();
+
+        if (start != null && end != null) {
+            loadDataKeuangan(start, end);
+        }
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcEndPropertyChange
+
+    private void btnFIlterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFIlterActionPerformed
+loadDataKeuangan();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFIlterActionPerformed
+
+    private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCetak1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
