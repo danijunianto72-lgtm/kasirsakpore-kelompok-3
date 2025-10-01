@@ -30,29 +30,40 @@ public class Admin extends javax.swing.JPanel {
      * Creates new form Admin
      */
 
-   public Admin() {
+ public Admin() {
     initComponents();
 
+    // atur layout panelChart
     panelChart.setLayout(new BorderLayout());
-     java.time.LocalDate today = java.time.LocalDate.now();
+
+    // ambil tanggal hari ini
+    java.time.LocalDate today = java.time.LocalDate.now();
+    // ambil tanggal awal bulan ini
     String startDate = today.withDayOfMonth(1).toString();
+    // ambil tanggal hari ini (akhir rentang default)
     String endDate = today.toString(); 
+
+    // panggil fungsi loadChart untuk menampilkan chart
     loadChart(startDate, endDate);
     
-warna();
-  try {
-            Connection conn = koneksi.dbKonek();
-            updateLabels(conn);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }   
-        
-     SwingUtilities.invokeLater(() -> {
+    // set warna (sepertinya fungsi kamu untuk styling UI)
+    warna();
+
+    try {
+        // koneksi database
+        Connection conn = koneksi.dbKonek();
+        // update label dari database
+        updateLabels(conn);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }   
+
+    // setelah semua selesai, set focus ke komponen date chooser
+    SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
-     
     });
-     
 }
+
    
    private void warna(){
    applyGradient(panelPemasukkan, new Color(204, 255, 204), new Color(102, 204, 102), false);

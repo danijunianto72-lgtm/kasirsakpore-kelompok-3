@@ -3,16 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package kasir;
-
-import java.awt.Frame;
-import javax.swing.table.DefaultTableModel;
+ 
+import javax.swing.JDialog;
+import javax.swing.*;
 import java.sql.*;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-/**
- *
- * @author LAB FO-05
- */
+import java.awt.*;
+import java.util.*;
+import javax.swing.table.DefaultTableModel;
 public class LaporanPenjualan extends javax.swing.JPanel {
 
     /**
@@ -22,31 +19,50 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         initComponents();
         loadDataTransaksi();
     }
+  private void loadDataTransaksi() {
+    DefaultTableModel model = new DefaultTableModel(
+        new String[]{"No", "ID", "No Transaksi", "Kasir", "Tanggal", "Grand Total", "Metode"}, 0
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // semua sel tidak bisa di-edit
+        }
+    };
     
-private void loadDataTransaksi() {
-    DefaultTableModel model = (DefaultTableModel) tblTransaksi.getModel();
-    model.setRowCount(0); // kosongkan tabel dulu
-
     try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT idtransaksi, notransaksi, tgl_transaksi, namapengguna, grand_total " +
-                     "FROM transaksi ORDER BY idtransaksi DESC";
+        String sql = "SELECT idtransaksi, notransaksi, namapengguna, tgl_transaksi, grand_total, metodepembayaran " +
+                     "FROM transaksi ORDER BY tgl_transaksi DESC";
         PreparedStatement pst = conn.prepareStatement(sql);
         ResultSet rs = pst.executeQuery();
         
         int no = 1;
         while (rs.next()) {
-            Object[] row = {
-                no++,
+            model.addRow(new Object[]{
+                no++,  // nomor urut
+                rs.getInt("idtransaksi"), // ID (disembunyikan nanti)
                 rs.getString("notransaksi"),
-                rs.getTimestamp("tgl_transaksi"),
                 rs.getString("namapengguna"),
-                rs.getBigDecimal("grand_total")
-            };
-            model.addRow(row);
+                rs.getTimestamp("tgl_transaksi"),
+                rs.getBigDecimal("grand_total"),
+                rs.getString("metodepembayaran")
+            });
         }
+        
+        tblTransaksi.setModel(model);
+
+        // === Atur ukuran kolom ===
+        tblTransaksi.getColumnModel().getColumn(0).setPreferredWidth(40); // kolom No kecil
+        tblTransaksi.getColumnModel().getColumn(0).setMaxWidth(50);
+        tblTransaksi.getColumnModel().getColumn(0).setMinWidth(40);
+
+        // Sembunyikan kolom ID (index ke-1)
+        tblTransaksi.getColumnModel().getColumn(1).setMinWidth(0);
+        tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(0);
+        tblTransaksi.getColumnModel().getColumn(1).setWidth(0);
+
     } catch (Exception e) {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
+        JOptionPane.showMessageDialog(this, "Gagal load transaksi: " + e.getMessage());
     }
 }
 
@@ -61,7 +77,6 @@ private void loadDataTransaksi() {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        btnDetail = new javax.swing.JButton();
         btnCetak = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblTransaksi = new javax.swing.JTable();
@@ -72,6 +87,7 @@ private void loadDataTransaksi() {
         jLabel9 = new javax.swing.JLabel();
         jdcSelesai = new com.toedter.calendar.JDateChooser();
         jLabel10 = new javax.swing.JLabel();
+        btnCetak1 = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -81,33 +97,38 @@ private void loadDataTransaksi() {
         jLabel6.setText("/");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 140, 10, 40));
 
-        btnDetail.setBackground(new java.awt.Color(0, 0, 102));
-        btnDetail.setForeground(new java.awt.Color(255, 255, 255));
-        btnDetail.setText("Detail");
-        btnDetail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDetailActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 140, 160, 50));
-
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
         btnCetak.setText("Cetak");
-        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 140, 160, 50));
 
         tblTransaksi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Kode Transaksi", "Tanggal", "Nama Kasir", "Total Akhir"
+                "id", "nomer", "Kode Transaksi", "Tanggal", "Nama Kasir", "Total Akhir"
             }
         ));
+        tblTransaksi.setRowHeight(33);
+        tblTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblTransaksiMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblTransaksi);
+        if (tblTransaksi.getColumnModel().getColumnCount() > 0) {
+            tblTransaksi.getColumnModel().getColumn(0).setMaxWidth(30);
+            tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(30);
+        }
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, 1620, 600));
         jPanel1.add(jdcMulai, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 140, 150, 50));
@@ -133,6 +154,11 @@ private void loadDataTransaksi() {
         jLabel10.setText("Selesai");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 140, -1, 40));
 
+        btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak1.setForeground(new java.awt.Color(255, 255, 255));
+        btnCetak1.setText("Cetak");
+        jPanel1.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -149,26 +175,34 @@ private void loadDataTransaksi() {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
-int row = tblTransaksi.getSelectedRow();
-if (row != -1) {
-    int idTransaksi = Integer.parseInt(tblTransaksi.getValueAt(row, 0).toString());
+    private void tblTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTransaksiMouseClicked
+            // TODO add your handling code here:
+    }//GEN-LAST:event_tblTransaksiMouseClicked
 
-    // ambil frame dari panel
-    Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
-
-    // buka popup
-    new PopupDetailTransaksi(parent, true, idTransaksi).setVisible(true);
-} else {
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+int selectedRow = tblTransaksi.getSelectedRow();
+if (selectedRow == -1) {
     JOptionPane.showMessageDialog(this, "Pilih transaksi dulu!");
+    return;
 }
 
-    }//GEN-LAST:event_btnDetailActionPerformed
+// ID ada di kolom ke-1 (karena kolom 0 = nomor urut)
+int idTransaksi = (int) tblTransaksi.getValueAt(selectedRow, 1);
+PopupDetailTransaksi popup = new PopupDetailTransaksi(
+    (java.awt.Frame) SwingUtilities.getWindowAncestor(this), 
+    true, 
+    idTransaksi
+);
+popup.pack(); // ukurannya menyesuaikan isi
+popup.setLocationRelativeTo(SwingUtilities.getWindowAncestor(this)); // tengah parent
+popup.setVisible(true);
+
+    }//GEN-LAST:event_btnCetakActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnDetail;
+    private javax.swing.JButton btnCetak1;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;
