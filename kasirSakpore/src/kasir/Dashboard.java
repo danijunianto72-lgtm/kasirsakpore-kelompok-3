@@ -411,10 +411,10 @@ panelUtama.removeAll();
 
     private void btnLaporanPenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanPenjualanActionPerformed
 panelUtama.removeAll();                
-    LaporanPenjualan klapen = new LaporanPenjualan();        
-    panelUtama.add(klapen,BorderLayout.CENTER); 
+    LaporanPenjualan klapkeu = new LaporanPenjualan();        
+    panelUtama.add(klapkeu,BorderLayout.CENTER); 
     panelUtama.revalidate();               
-    panelUtama.repaint();          // TODO add your handling code here:
+    panelUtama.repaint();           // TODO add your handling code here:
     }//GEN-LAST:event_btnLaporanPenjualanActionPerformed
 
     private void btnLaporanKeuanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanKeuanganActionPerformed
