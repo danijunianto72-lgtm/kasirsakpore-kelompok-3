@@ -550,6 +550,9 @@ private String generateNoTransaksi(Connection conn) throws SQLException {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtSkuKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSkuKeyReleased(evt);
+            }
         });
         jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 94, 301, 51));
 
@@ -776,6 +779,10 @@ Connection conn = koneksi.dbKonek();
 
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSkuKeyPressed
+
+    private void txtSkuKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSkuKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSkuKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

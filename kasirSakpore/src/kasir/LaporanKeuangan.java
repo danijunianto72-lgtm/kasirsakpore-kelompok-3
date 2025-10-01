@@ -4,6 +4,14 @@
  */
 package kasir;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LABFO-14
@@ -15,7 +23,61 @@ public class LaporanKeuangan extends javax.swing.JPanel {
      */
     public LaporanKeuangan() {
         initComponents();
+        loadDataKeuangan();
     }
+    boolean isEditMode = false; 
+int selectedId = -1; // untuk simpan idkeuangan yang dipilih
+// taruh di atas class
+private java.util.List<Integer> idList = new ArrayList<>(); // buat simpan id
+
+    private void loadDataKeuangan() {
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // tabel tidak bisa diubah langsung
+        }
+    };
+
+    model.addColumn("No");
+    model.addColumn("Jenis Keuangan");
+    model.addColumn("Masuk");
+    model.addColumn("Keluar");
+    model.addColumn("Tanggal");
+
+    try (Connection conn = koneksi.dbKonek()) {
+String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
+           + "FROM keuangan "
+           + "WHERE tanggal::date >= date_trunc('month', CURRENT_DATE) "
+           + "AND tanggal::date < (date_trunc('month', CURRENT_DATE) + interval '1 month') "
+           + "ORDER BY tanggal DESC";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+
+        idList.clear(); // reset dulu list id
+        int no = 1;
+
+        while (rs.next()) {
+            idList.add(rs.getInt("idkeuangan")); // simpan ID ke list
+            model.addRow(new Object[]{
+                no++, // nomor urut
+                rs.getString("jeniskeuangan"),
+                rs.getDouble("masuk"),
+                rs.getDouble("keluar"),
+                rs.getDate("tanggal")
+            });
+        }
+
+        tblKeuangan.setModel(model);
+
+        // atur lebar kolom No biar kecil
+        tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,17 +90,14 @@ public class LaporanKeuangan extends javax.swing.JPanel {
 
         panelUtama = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jdc1 = new com.toedter.calendar.JDateChooser();
-        jdc = new com.toedter.calendar.JDateChooser();
+        jdcEnd = new com.toedter.calendar.JDateChooser();
+        jdcStart = new com.toedter.calendar.JDateChooser();
         jLabel2 = new javax.swing.JLabel();
-        cmbKapan = new javax.swing.JComboBox<>();
-        btnRefrresh = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
-        btnCetak = new javax.swing.JButton();
+        btnFIlter = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblKeuangan = new javax.swing.JTable();
+        btnCetak1 = new javax.swing.JButton();
 
         panelUtama.setBackground(new java.awt.Color(255, 255, 255));
         panelUtama.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -47,36 +106,21 @@ public class LaporanKeuangan extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setText("Laporan Keuangan");
         panelUtama.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, -1, -1));
-        panelUtama.add(jdc1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 160, 140, 40));
-        panelUtama.add(jdc, new org.netbeans.lib.awtextra.AbsoluteConstraints(157, 160, 150, 40));
+        panelUtama.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 150, 140, 40));
+        panelUtama.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 150, 150, 40));
 
         jLabel2.setText("Sampai");
-        panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 170, -1, -1));
+        panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 160, -1, -1));
 
-        cmbKapan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hari ini", "7 Hari Terakhir", "Bulan ini", "tahun ini", " " }));
-        panelUtama.add(cmbKapan, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 160, 180, 40));
-
-        btnRefrresh.setBackground(new java.awt.Color(102, 204, 255));
-        btnRefrresh.setText("Refresh");
-        panelUtama.add(btnRefrresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 160, 140, 40));
-
-        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
-        btnEdit.setText("Edit");
-        panelUtama.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1300, 270, 130, 40));
-
-        btnDelete.setBackground(new java.awt.Color(255, 0, 51));
-        btnDelete.setText("Delete");
-        panelUtama.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(1460, 270, 130, 40));
-
-        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
-        btnCetak.setText("Cetak");
-        panelUtama.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 270, 130, 40));
+        btnFIlter.setBackground(new java.awt.Color(102, 255, 255));
+        btnFIlter.setText("Filter");
+        panelUtama.add(btnFIlter, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 150, 130, 40));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Daftar Keuangan");
-        panelUtama.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 360, -1, -1));
+        panelUtama.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 170, -1, -1));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -103,40 +147,43 @@ public class LaporanKeuangan extends javax.swing.JPanel {
                 "No", "Tanggal", "Jenis Keuangan", "Masuk", "Keluar", "Total"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblKeuangan);
 
-        panelUtama.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 390, 1460, 440));
+        panelUtama.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, 1460, 440));
+
+        btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak1.setText("Cetak");
+        panelUtama.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 150, 130, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnRefrresh;
-    private javax.swing.JComboBox<String> cmbKapan;
+    private javax.swing.JButton btnCetak1;
+    private javax.swing.JButton btnFIlter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private com.toedter.calendar.JDateChooser jdc;
-    private com.toedter.calendar.JDateChooser jdc1;
+    private com.toedter.calendar.JDateChooser jdcEnd;
+    private com.toedter.calendar.JDateChooser jdcStart;
     private javax.swing.JPanel panelUtama;
+    private javax.swing.JTable tblKeuangan;
     // End of variables declaration//GEN-END:variables
 }
