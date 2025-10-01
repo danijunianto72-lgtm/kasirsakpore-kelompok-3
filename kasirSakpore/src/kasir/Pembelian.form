@@ -34,6 +34,9 @@
   <SubComponents>
     <Container class="javax.swing.JPanel" name="panelUtama">
       <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[1740, 960]"/>
         </Property>
@@ -311,10 +314,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="btnRefresh" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
-                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                              <Component id="jDateChooser2" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
-                              <Component id="jDateChooser1" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="jDateChooser2" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="jDateChooser1" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="29" max="32767" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="350" max="-2" attributes="0"/>

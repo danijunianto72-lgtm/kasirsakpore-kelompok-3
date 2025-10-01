@@ -103,6 +103,7 @@ public class Suplier extends javax.swing.JPanel {
         lStatus3 = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JButton();
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
