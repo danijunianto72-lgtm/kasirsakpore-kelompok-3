@@ -7,7 +7,6 @@ import java.sql.*;
 import javax.swing.*;
 
 
-
 public class koneksi{
 private static Connection postgreKonek;
 public static Connection dbKonek()throws SQLException {
@@ -26,5 +25,4 @@ if(postgreKonek == null || postgreKonek.isClosed()){
     
 }return postgreKonek;
 }
-    
 }

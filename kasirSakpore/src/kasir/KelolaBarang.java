@@ -102,8 +102,8 @@ public class KelolaBarang extends javax.swing.JPanel {
         }
         });
 
-        btDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl d"), "delete");
-        btDelete.getActionMap().put("delete", new AbstractAction() {
+        btDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl D"), "hapus");
+        btDelete.getActionMap().put("hapus", new AbstractAction() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
         btDelete.doClick();
@@ -175,7 +175,7 @@ public class KelolaBarang extends javax.swing.JPanel {
          PreparedStatement pst = conn.prepareStatement(sql)) {
 
         // Set semua parameter dengan key pencarian
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             pst.setString(i, "%" + key + "%");
         }
 
@@ -184,6 +184,7 @@ public class KelolaBarang extends javax.swing.JPanel {
         while (rs.next()) {
             Object[] row = {
                 no++,
+                rs.getInt("kodebarang"),
                 rs.getString("skubarang"),
                 rs.getString("nama"),
                 rs.getString("kategori"),
@@ -236,7 +237,7 @@ public class KelolaBarang extends javax.swing.JPanel {
     
     private void generateKodeBarang() {
     Connection conn = null;
-    PreparedStatement pst = null;
+    PreparedStatement pst = null;    
     ResultSet rs = null;
 
     try {
@@ -267,23 +268,14 @@ public class KelolaBarang extends javax.swing.JPanel {
 
     // tampilkan data user di tabel
     private void tampilData() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No");
-        model.addColumn("Kode Barang");
-        model.addColumn("SKU Barang");
-        model.addColumn("Nama Barang");
-        model.addColumn("Kategori");
-        model.addColumn("Satuan");
-        model.addColumn("Harga Pokok");
-        model.addColumn("PPN");
-        model.addColumn("Harga Jual");
-        model.addColumn("Stok");
-        
+        DefaultTableModel model = (DefaultTableModel) tblBarang.getModel();
+        model.setRowCount(0); // hapus semua baris lama
+
         try (Connection conn = kasir.koneksi.dbKonek()) {
-            String sql = "SELECT *FROM barang ORDER BY kodebarang ASC";
+            String sql = "SELECT * FROM barang ORDER BY kodebarang ASC";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
+
             int no = 1;
             while (rs.next()) {
                 model.addRow(new Object[]{
@@ -299,12 +291,6 @@ public class KelolaBarang extends javax.swing.JPanel {
                     rs.getInt("stok"),
                 });
             }
-            tblBarang.setModel(model);
-            
-            // sembunyikan kolom ID (jangan ditampilkan ke user)
-            tblBarang.getColumnModel().getColumn(1).setMinWidth(0);
-            tblBarang.getColumnModel().getColumn(1).setMaxWidth(0);
-            
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error tampil data: " + ex.getMessage());
         }
@@ -525,13 +511,13 @@ public class KelolaBarang extends javax.swing.JPanel {
 
         tblBarang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No. ", "Kode Barang", "SKU ", "Nama", "Kategori", "Harga", "Stok"
+                "No. ", "Kode Barang", "SKU Barang", "Nama Barang", "Kategori", "Satuan", "Harga Pokok", "PPN", "Harga Jual", "Stok"
             }
         ));
         jScrollPane1.setViewportView(tblBarang);
@@ -650,7 +636,7 @@ public class KelolaBarang extends javax.swing.JPanel {
                
                 if (!editMode) { 
                     // mode tambah user baru
-                    String sql = "INSERT INTO barang (kodebarang, skubarang, nama, hargabarang, kategori, hargapokok, ppn, satuan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO barang (kodebarang, skubarang, nama, hargabarang, kategori, hargapokok, ppn, satuan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setInt(1, kode);
                     ps.setString(2, skubarang);
@@ -659,7 +645,7 @@ public class KelolaBarang extends javax.swing.JPanel {
                     ps.setString(5, kategori);
                     ps.setInt(6, hargapokok);
                     ps.setInt(7, ppn);
-                    ps.setString(9, satuan);
+                    ps.setString(8, satuan);
                     ps.executeUpdate();
                     JOptionPane.showMessageDialog(this, "Barang berhasil ditambahkan!");
                     
@@ -720,6 +706,8 @@ public class KelolaBarang extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(this, "Error hapus: " + ex.getMessage());
                 }
             }
+            
+            tampilData();
     }//GEN-LAST:event_btDeleteActionPerformed
 
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
