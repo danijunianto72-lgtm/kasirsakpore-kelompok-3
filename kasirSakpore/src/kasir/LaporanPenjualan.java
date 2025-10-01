@@ -4,6 +4,11 @@
  */
 package kasir;
 
+import java.awt.Frame;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 /**
  *
  * @author LAB FO-05
@@ -15,7 +20,35 @@ public class LaporanPenjualan extends javax.swing.JPanel {
      */
     public LaporanPenjualan() {
         initComponents();
+        loadDataTransaksi();
     }
+    
+private void loadDataTransaksi() {
+    DefaultTableModel model = (DefaultTableModel) tblTransaksi.getModel();
+    model.setRowCount(0); // kosongkan tabel dulu
+
+    try (Connection conn = koneksi.dbKonek()) {
+        String sql = "SELECT idtransaksi, notransaksi, tgl_transaksi, namapengguna, grand_total " +
+                     "FROM transaksi ORDER BY idtransaksi DESC";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        
+        int no = 1;
+        while (rs.next()) {
+            Object[] row = {
+                no++,
+                rs.getString("notransaksi"),
+                rs.getTimestamp("tgl_transaksi"),
+                rs.getString("namapengguna"),
+                rs.getBigDecimal("grand_total")
+            };
+            model.addRow(row);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,6 +84,11 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         btnDetail.setBackground(new java.awt.Color(0, 0, 102));
         btnDetail.setForeground(new java.awt.Color(255, 255, 255));
         btnDetail.setText("Detail");
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 140, 160, 50));
 
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
@@ -60,13 +98,13 @@ public class LaporanPenjualan extends javax.swing.JPanel {
 
         tblTransaksi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Kode Transaksi", "Tanggal", "Nama Kasir", "Total", "Total Akhir"
+                "Kode Transaksi", "Tanggal", "Nama Kasir", "Total Akhir"
             }
         ));
         jScrollPane2.setViewportView(tblTransaksi);
@@ -110,6 +148,22 @@ public class LaporanPenjualan extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
+int row = tblTransaksi.getSelectedRow();
+if (row != -1) {
+    int idTransaksi = Integer.parseInt(tblTransaksi.getValueAt(row, 0).toString());
+
+    // ambil frame dari panel
+    Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+
+    // buka popup
+    new PopupDetailTransaksi(parent, true, idTransaksi).setVisible(true);
+} else {
+    JOptionPane.showMessageDialog(this, "Pilih transaksi dulu!");
+}
+
+    }//GEN-LAST:event_btnDetailActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
