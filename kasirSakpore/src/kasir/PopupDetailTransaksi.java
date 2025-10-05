@@ -148,7 +148,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 490, 570, 220));
 
-        jLabel2.setFont(new java.awt.Font("UD Digi Kyokasho NP-R", 0, 48)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 48)); // NOI18N
         jLabel2.setText("Sakpore");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 200, 100));
 

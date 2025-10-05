@@ -180,17 +180,19 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         btnPembelian = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(47, 47, 47));
 
         panelUtama.setBackground(new java.awt.Color(255, 255, 255));
         panelUtama.setPreferredSize(new java.awt.Dimension(1740, 960));
         panelUtama.setLayout(new java.awt.BorderLayout());
 
-        navbar.setBackground(new java.awt.Color(51, 51, 255));
+        navbar.setBackground(new java.awt.Color(30, 58, 158));
         navbar.setMinimumSize(new java.awt.Dimension(1980, 140));
         navbar.setPreferredSize(new java.awt.Dimension(1920, 150));
         navbar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTanggal.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        lblTanggal.setForeground(new java.awt.Color(255, 255, 255));
         lblTanggal.setText("WEDNESDAY 99, OKTOVER 2025");
         navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 30, 840, 90));
 
@@ -200,7 +202,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPembelianActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 90, 200, 40));
+        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 100, 200, 40));
 
         btnLaporanPenjualan.setText("[F8] LAPORAN PENJUALAN");
         btnLaporanPenjualan.addActionListener(new java.awt.event.ActionListener() {
@@ -208,7 +210,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPenjualanActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 90, 200, 40));
+        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 10, 200, 40));
 
         btnLaporanKeuangan.setText("[F9] LAPORAN KEUANGAN");
         btnLaporanKeuangan.addActionListener(new java.awt.event.ActionListener() {
@@ -216,9 +218,9 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanKeuanganActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 90, 200, 40));
+        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 55, 200, 40));
 
-        sidebar.setBackground(new java.awt.Color(51, 51, 255));
+        sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
 
         btnAdmin.setText("ADMIN");
@@ -315,8 +317,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65))
+                .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, 1805, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
@@ -327,7 +328,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

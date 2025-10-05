@@ -43,10 +43,8 @@ getTotalStokKurang();
     // ambil tanggal hari ini (akhir rentang default)
     String endDate = today.toString(); 
 
-    // panggil fungsi loadChart untuk menampilkan chart
     loadChart(startDate, endDate);
     
-    // set warna (sepertinya fungsi kamu untuk styling UI)
     warna();
 
     try {
