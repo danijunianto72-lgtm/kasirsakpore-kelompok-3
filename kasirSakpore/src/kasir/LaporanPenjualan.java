@@ -12,6 +12,16 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import javax.swing.*;
 public class LaporanPenjualan extends javax.swing.JPanel {
 
     /**
@@ -21,6 +31,7 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         initComponents();
         loadDataTransaksi();
         setFilterDefault();
+        element();       
     }
     private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
@@ -105,7 +116,51 @@ private void LoadDataTransaksi(java.util.Date startDate, java.util.Date endDate)
         JOptionPane.showMessageDialog(this, "Gagal load transaksi: " + e.getMessage());
     }
 }
+private void element(){
+    List<Component> tabOrder = Arrays.asList(
+    jdcStart,
+    jdcEnd
+);
 
+setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+setFocusCycleRoot(true);
+
+}
+public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
+    private final List<Component> order;
+
+    public CustomFocusTraversalPolicy(List<Component> order) {
+        this.order = new ArrayList<>(order);
+    }
+
+    @Override
+    public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+        int idx = (order.indexOf(aComponent) + 1) % order.size();
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+        int idx = order.indexOf(aComponent) - 1;
+        if (idx < 0) idx = order.size() - 1;
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getFirstComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+
+    @Override
+    public Component getLastComponent(Container focusCycleRoot) {
+        return order.get(order.size() - 1);
+    }
+
+    @Override
+    public Component getDefaultComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+}
 
 
     /**

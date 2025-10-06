@@ -323,11 +323,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
-                      <Component id="jDateChooser2" min="-2" pref="151" max="-2" attributes="0"/>
+                      <Component id="jdcStart" min="-2" pref="151" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="jDateChooser1" min="-2" pref="143" max="-2" attributes="0"/>
+                      <Component id="jdcEnd" min="-2" pref="143" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                       <Component id="btnRefresh" min="-2" pref="130" max="-2" attributes="0"/>
                       <EmptySpace pref="924" max="32767" attributes="0"/>
@@ -346,8 +346,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="btnRefresh" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
-                          <Component id="jDateChooser2" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
-                          <Component id="jDateChooser1" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="jdcStart" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="jdcEnd" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="304" max="-2" attributes="0"/>
@@ -441,7 +441,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser2">
+            <Component class="com.toedter.calendar.JDateChooser" name="jdcStart">
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
@@ -451,7 +451,7 @@
                 <Property name="text" type="java.lang.String" value="Sampai"/>
               </Properties>
             </Component>
-            <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser1">
+            <Component class="com.toedter.calendar.JDateChooser" name="jdcEnd">
             </Component>
             <Component class="javax.swing.JButton" name="btnRefresh">
               <Properties>

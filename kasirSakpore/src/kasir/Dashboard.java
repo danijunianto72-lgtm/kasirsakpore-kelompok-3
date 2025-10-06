@@ -204,9 +204,9 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         btnBarang = new javax.swing.JButton();
         btnUser = new javax.swing.JButton();
         btnKeuangan = new javax.swing.JButton();
-        btnSupplier = new javax.swing.JButton();
         btnKasir = new javax.swing.JButton();
         btnPembelian = new javax.swing.JButton();
+        btnSupplier = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(47, 47, 47));
@@ -252,52 +252,52 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
 
-        btnAdmin.setText("ADMIN");
+        btnAdmin.setText("[F1] ADMIN");
         btnAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdminActionPerformed(evt);
             }
         });
 
-        btnBarang.setText(" BARANG");
+        btnBarang.setText("[F2] BARANG");
         btnBarang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBarangActionPerformed(evt);
             }
         });
 
-        btnUser.setText(" USER");
+        btnUser.setText("[F3] USER");
         btnUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUserActionPerformed(evt);
             }
         });
 
-        btnKeuangan.setText(" KEUANGAN");
+        btnKeuangan.setText("[F4] KEUANGAN");
         btnKeuangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKeuanganActionPerformed(evt);
             }
         });
 
-        btnSupplier.setText(" SUPPLIER");
-        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSupplierActionPerformed(evt);
-            }
-        });
-
-        btnKasir.setText("KASIR");
+        btnKasir.setText("[F7] KASIR");
         btnKasir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKasirActionPerformed(evt);
             }
         });
 
-        btnPembelian.setText("PEMBELIAN");
+        btnPembelian.setText("[F6] PEMBELIAN");
         btnPembelian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPembelianActionPerformed(evt);
+            }
+        });
+
+        btnSupplier.setText("[F5] SUPPLIER");
+        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSupplierActionPerformed(evt);
             }
         });
 
@@ -308,8 +308,8 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -324,13 +324,13 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(22, 22, 22)
+                .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
                 .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
                 .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
                 .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)

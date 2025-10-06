@@ -402,7 +402,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel1.setText("Kelola Barang");
 
         pnForm.setBackground(new java.awt.Color(255, 255, 255));
-        pnForm.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnForm.setBorder(javax.swing.BorderFactory.createLineBorder(null));
 
         jLabel2.setText("Input Barang");
 
@@ -428,6 +428,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btTambah.setBackground(new java.awt.Color(255, 255, 51));
         btTambah.setText("SUBMIT");
+        btTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btTambahActionPerformed(evt);
@@ -531,7 +532,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         );
 
         pnDaftarBarang.setBackground(new java.awt.Color(255, 255, 255));
-        pnDaftarBarang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnDaftarBarang.setBorder(javax.swing.BorderFactory.createLineBorder(null));
 
         jLabel11.setText("Daftar Barang");
 
