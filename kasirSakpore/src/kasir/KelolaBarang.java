@@ -8,6 +8,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -93,27 +96,27 @@ public class KelolaBarang extends javax.swing.JPanel {
         });
         
         
-        btTambah.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "tambah");
-        btTambah.getActionMap().put("tambah", new AbstractAction() {
+        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "tambah");
+        btnSubmit.getActionMap().put("tambah", new AbstractAction() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            btTambah.doClick(); // seakan tombol diklik
+            btnSubmit.doClick(); // seakan tombol diklik
         }
         });
         
-        btEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl E"), "edit");
-        btEdit.getActionMap().put("edit", new AbstractAction() {
+        btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl E"), "edit");
+        btnEdit.getActionMap().put("edit", new AbstractAction() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-        btEdit.doClick();
+        btnEdit.doClick();
         }
         });
 
-        btDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl D"), "hapus");
-        btDelete.getActionMap().put("hapus", new AbstractAction() {
+        btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl D"), "hapus");
+        btnDelete.getActionMap().put("hapus", new AbstractAction() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-        btDelete.doClick();
+        btnDelete.doClick();
         }
         });
         
@@ -129,6 +132,56 @@ public class KelolaBarang extends javax.swing.JPanel {
         // angka 2 = index kolom kategori di tabel
         }
         });
+        
+        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+    "ctrlS"
+);
+
+btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSubmit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+);
+
+btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
+        btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBatal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
     }
     
     private void hitungHargaJual() {
@@ -384,7 +437,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tNamaBarang = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         tHargaJual = new javax.swing.JTextField();
-        btTambah = new javax.swing.JButton();
+        btnSubmit = new javax.swing.JButton();
         pnDaftarBarang = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -392,9 +445,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tCari = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         cbfJenis = new javax.swing.JComboBox<>();
-        btEdit = new javax.swing.JButton();
-        btDelete = new javax.swing.JButton();
-        btCancel = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnBatal = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -402,7 +455,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel1.setText("Kelola Barang");
 
         pnForm.setBackground(new java.awt.Color(255, 255, 255));
-        pnForm.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        pnForm.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel2.setText("Input Barang");
 
@@ -426,12 +479,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jLabel10.setText("Harga Jual");
 
-        btTambah.setBackground(new java.awt.Color(255, 255, 51));
-        btTambah.setText("SUBMIT");
-        btTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btTambah.addActionListener(new java.awt.event.ActionListener() {
+        btnSubmit.setBackground(new java.awt.Color(255, 255, 51));
+        btnSubmit.setText("SUBMIT");
+        btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btTambahActionPerformed(evt);
+                btnSubmitActionPerformed(evt);
             }
         });
 
@@ -476,7 +529,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                                         .addGroup(pnFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel10)
                                             .addComponent(tHargaJual, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(pnFormLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel2)))
@@ -527,12 +580,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(tHargaJual, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(33, 33, 33)))
-                .addComponent(btTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(66, 66, 66))
         );
 
         pnDaftarBarang.setBackground(new java.awt.Color(255, 255, 255));
-        pnDaftarBarang.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        pnDaftarBarang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel11.setText("Daftar Barang");
 
@@ -553,27 +606,27 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         cbfJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua" }));
 
-        btEdit.setBackground(new java.awt.Color(255, 153, 51));
-        btEdit.setText("Edit");
-        btEdit.addActionListener(new java.awt.event.ActionListener() {
+        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
+        btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btEditActionPerformed(evt);
+                btnEditActionPerformed(evt);
             }
         });
 
-        btDelete.setBackground(new java.awt.Color(255, 51, 51));
-        btDelete.setText("Delete");
-        btDelete.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setBackground(new java.awt.Color(255, 51, 51));
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btDeleteActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
 
-        btCancel.setBackground(new java.awt.Color(204, 204, 204));
-        btCancel.setText("Batal");
-        btCancel.addActionListener(new java.awt.event.ActionListener() {
+        btnBatal.setBackground(new java.awt.Color(204, 204, 204));
+        btnBatal.setText("Batal");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCancelActionPerformed(evt);
+                btnBatalActionPerformed(evt);
             }
         });
 
@@ -594,11 +647,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cbfJenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(891, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
@@ -612,9 +665,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                     .addComponent(tCari, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbfJenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(69, 69, 69))
@@ -645,7 +698,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditActionPerformed
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
         int row = tblBarang.getSelectedRow();
             if (row == -1) {
@@ -676,9 +729,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             
             editMode = true;
             editId = kode;
-    }//GEN-LAST:event_btEditActionPerformed
+    }//GEN-LAST:event_btnEditActionPerformed
 
-    private void btTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTambahActionPerformed
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         // TODO add your handling code here:
             int kode = Integer.parseInt(tKdBarang.getText().trim());
             String skubarang = tSKU.getText().trim();
@@ -738,9 +791,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
                 ex.printStackTrace();
             }
-    }//GEN-LAST:event_btTambahActionPerformed
+    }//GEN-LAST:event_btnSubmitActionPerformed
 
-    private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         int row = tblBarang.getSelectedRow();
             if (row == -1) {
@@ -768,20 +821,20 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             }
             
             tampilData();
-    }//GEN-LAST:event_btDeleteActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         // TODO add your handling code here:
         resetForm();
         tblBarang.clearSelection();
-    }//GEN-LAST:event_btCancelActionPerformed
+    }//GEN-LAST:event_btnBatalActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btCancel;
-    private javax.swing.JButton btDelete;
-    private javax.swing.JButton btEdit;
-    private javax.swing.JButton btTambah;
+    private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> cbJenis;
     private javax.swing.JComboBox<String> cbfJenis;
     private javax.swing.JLabel jLabel1;

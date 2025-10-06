@@ -7,6 +7,8 @@ import java.sql.*;
 import javax.swing.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -41,6 +43,58 @@ public class Kasir extends javax.swing.JPanel {
           SwingUtilities.invokeLater(() -> {
         txtSku.requestFocusInWindow();
     });
+          
+          btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+);
+
+btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
+btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBatal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
+    "ctrlP"
+);
+
+btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPembayaran.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
+
     }
   
  
