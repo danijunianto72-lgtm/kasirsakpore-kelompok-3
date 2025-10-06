@@ -28,8 +28,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -137,6 +139,7 @@ public class KelolaBarang extends javax.swing.JPanel {
     KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
     "ctrlS"
 );
+        
 
 btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
     @Override
@@ -181,8 +184,29 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
         btnBatal.doClick(); // Menjalankan aksi tombol
     }
 });
-
+setKeyBindings();
     }
+private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblBarang.requestFocus();
+                if (tblBarang.getRowCount() > 0) {
+                    tblBarang.setRowSelectionInterval(0, 0);
+                    tblBarang.setColumnSelectionInterval(0, 0);
+                    tblBarang.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
+
     
     private void hitungHargaJual() {
     try {
@@ -199,7 +223,6 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
 }
     
     private void resetForm() {
-        tKdBarang.setText("");
         tSKU.setText("");
         tNamaBarang.setText("");
         cbJenis.setSelectedIndex(0);
@@ -479,7 +502,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jLabel10.setText("Harga Jual");
 
-        btnSubmit.setBackground(new java.awt.Color(255, 255, 51));
+        btnSubmit.setBackground(new java.awt.Color(0, 255, 0));
         btnSubmit.setText("SUBMIT");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {

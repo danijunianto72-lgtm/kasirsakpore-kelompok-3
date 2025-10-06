@@ -92,12 +92,34 @@ btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
         btnPembayaran.doClick(); // Menjalankan aksi tombol
     }
 });
+setKeyBindings();
 
 
 
     }
   
  
+
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblKasir.requestFocus();
+                if (tblKasir.getRowCount() > 0) {
+                    tblKasir.setRowSelectionInterval(0, 0);
+                    tblKasir.setColumnSelectionInterval(0, 0);
+                    tblKasir.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
 
     private void loadMenu(String keyword) {
     pnlMenu.removeAll();

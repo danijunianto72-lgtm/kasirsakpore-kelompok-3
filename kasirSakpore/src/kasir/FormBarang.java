@@ -23,6 +23,38 @@ public class FormBarang extends javax.swing.JDialog {
     public FormBarang(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+           // panggil method untuk load data
+    loadBarang("", "Semua");   // kosong artinya load semua
+    loadKategori();    
+    tblBarang.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int column) {
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+        // Ambil nilai stok dari kolom yang sesuai
+        int stokCol = 5; // kolom ke-6 (indeks mulai dari 0)
+        int stok = 0;
+        try {
+            stok = Integer.parseInt(table.getValueAt(row, stokCol).toString());
+        } catch (Exception ex) {
+            stok = 0;
+        }
+
+        // Atur warna latar berdasarkan stok
+        if (!isSelected) { 
+            if (stok < 5) {
+                c.setBackground(new java.awt.Color(255, 102, 102)); // merah muda
+            } else {
+                c.setBackground(java.awt.Color.WHITE); // normal
+            }
+        } else {
+            c.setBackground(table.getSelectionBackground()); // tetap warna seleksi
+        }
+
+        return c;
+    }
+});
     } 
 public FormBarang(java.awt.Frame parent, boolean modal, Pembelian form) {
     super(parent, modal);
@@ -161,7 +193,7 @@ private void loadBarang(String keyword, String filter) {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Kode", "Nama", "Satuan", "Harga", "Stok", "sku"
+                "Kode", "Nama", "Satuan", "Harga", "sku", "Stok"
             }
         ));
         tblBarang.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -175,6 +207,9 @@ private void loadBarang(String keyword, String filter) {
             }
         });
         jScrollPane1.setViewportView(tblBarang);
+        if (tblBarang.getColumnModel().getColumnCount() > 0) {
+            tblBarang.getColumnModel().getColumn(0).setMaxWidth(40);
+        }
 
         txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {

@@ -95,7 +95,30 @@ btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
         btnDelete.doClick(); // Menjalankan aksi tombol
     }
 });
+setKeyBindings();
     }
+   
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblKeuangan.requestFocus();
+                if (tblKeuangan.getRowCount() > 0) {
+                    tblKeuangan.setRowSelectionInterval(0, 0);
+                    tblKeuangan.setColumnSelectionInterval(0, 0);
+                    tblKeuangan.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
+
 boolean isEditMode = false; 
 int selectedId = -1; // untuk simpan idkeuangan yang dipilih
 // taruh di atas class

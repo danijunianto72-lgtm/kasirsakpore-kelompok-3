@@ -88,11 +88,9 @@
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jdcEnd" min="-2" pref="151" max="-2" attributes="0"/>
-                      <EmptySpace pref="32" max="32767" attributes="0"/>
-                      <Component id="btnFilter" min="-2" pref="111" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="btnReset" min="-2" pref="98" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="782" max="-2" attributes="0"/>
+                      <EmptySpace pref="925" max="32767" attributes="0"/>
                   </Group>
                   <Component id="panelChart" alignment="1" max="32767" attributes="0"/>
               </Group>
@@ -113,8 +111,7 @@
                               </Group>
                               <Component id="jdcStart" alignment="0" max="32767" attributes="0"/>
                               <Component id="jdcEnd" max="32767" attributes="0"/>
-                              <Component id="btnFilter" pref="37" max="32767" attributes="0"/>
-                              <Component id="btnReset" max="32767" attributes="0"/>
+                              <Component id="btnReset" pref="37" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
@@ -142,24 +139,15 @@
             </Container>
             <Component class="com.toedter.calendar.JDateChooser" name="jdcStart">
               <Events>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jdcStartPropertyChange"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jdcStartKeyPressed"/>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jdcStartKeyTyped"/>
               </Events>
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="jdcEnd">
               <Events>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jdcEndPropertyChange"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jdcEndKeyPressed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="btnFilter">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="66" green="99" red="0" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="FIlter"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFilterActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnReset">

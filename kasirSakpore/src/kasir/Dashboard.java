@@ -251,7 +251,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanKeuanganActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 60, 200, 40));
+        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 55, 200, 40));
 
         txtPengguna.setBackground(new java.awt.Color(255, 255, 255));
         txtPengguna.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -273,7 +273,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnInfoActionPerformed(evt);
             }
         });
-        navbar.add(btnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1810, 80, -1, 40));
+        navbar.add(btnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1810, 80, 80, 40));
 
         sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));

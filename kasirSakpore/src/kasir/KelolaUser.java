@@ -7,6 +7,9 @@ package kasir;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,8 +38,31 @@ public class KelolaUser extends javax.swing.JPanel {
         isiComboBox();
         tampilData();
         element();
+        setKeyBindings();
+
     }
    
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblUser.requestFocus();
+                if (tblUser.getRowCount() > 0) {
+                    tblUser.setRowSelectionInterval(0, 0);
+                    tblUser.setColumnSelectionInterval(0, 0);
+                    tblUser.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
+
     
     // tampilkan data user di tabel
     private void tampilData() {
@@ -260,7 +286,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 110, 90, 40));
 
-        btEdit.setBackground(new java.awt.Color(255, 255, 51));
+        btEdit.setBackground(new java.awt.Color(255, 153, 51));
         btEdit.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btEdit.setText("Edit");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -270,7 +296,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, 90, 40));
 
-        Batal.setBackground(new java.awt.Color(102, 102, 255));
+        Batal.setBackground(new java.awt.Color(204, 204, 204));
         Batal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Batal.setText("Batal");
         Batal.addActionListener(new java.awt.event.ActionListener() {

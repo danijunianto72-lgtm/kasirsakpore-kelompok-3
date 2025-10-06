@@ -4,6 +4,7 @@
  */
 package kasir;
 
+import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -23,8 +24,15 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JRootPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 public class LaporanKeuangan extends javax.swing.JPanel {
 
@@ -38,6 +46,8 @@ public class LaporanKeuangan extends javax.swing.JPanel {
         setFilterDefault();
         setListenerTable();
         element();
+            setupDateChooserBehavior(); // ⬅️ tambahkan ini
+
           btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
     "ctrlF"
@@ -61,8 +71,121 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         btnCetak.doClick(); // Menjalankan aksi tombol
     }
 });
-    }
+    SwingUtilities.invokeLater(() -> {
+        jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
+        setupGlobalShortcuts(); // ⬅️ tambahkan di sini
+    });  
     
+    }
+private void setupGlobalShortcuts() {
+    JRootPane root = SwingUtilities.getRootPane(this);
+    if (root == null) return;
+
+    InputMap im = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap am = root.getActionMap();
+
+    // --- CTRL + 1 → Fokus ke jdcStart ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_DOWN_MASK), "focusStart");
+    am.put("focusStart", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField tf = (JTextField) jdcStart.getDateEditor().getUiComponent();
+            tf.requestFocusInWindow();
+        }
+    });
+
+    // --- CTRL + 2 → Fokus ke jdcEnd ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_DOWN_MASK), "focusEnd");
+    am.put("focusEnd", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField tf = (JTextField) jdcEnd.getDateEditor().getUiComponent();
+            tf.requestFocusInWindow();
+        }
+    });
+
+    // --- CTRL + 3 → Fokus ke JMonthChooser ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_DOWN_MASK), "focusMonth");
+    am.put("focusMonth", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jmcBulan.getComboBox().requestFocusInWindow(); // jmcBulan = JMonthChooser
+        }
+    });
+
+
+
+    // --- CTRL + J → buka popup kalender dari JDateChooser yang aktif ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK), "openCalendar");
+    am.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (isFocused(jdcStart)) {
+                clickDateButton(jdcStart);
+            } else if (isFocused(jdcEnd)) {
+                clickDateButton(jdcEnd);
+            }
+        }
+    });
+}
+
+// 🔍 Helper untuk cek apakah date chooser atau textfield-nya sedang fokus
+private boolean isFocused(JDateChooser chooser) {
+    return chooser.isFocusOwner() ||
+           ((JTextField) chooser.getDateEditor().getUiComponent()).isFocusOwner();
+}
+
+// 🔘 Helper untuk klik tombol kalender JDateChooser
+private void clickDateButton(JDateChooser chooser) {
+    for (Component comp : chooser.getComponents()) {
+        if (comp instanceof JButton) {
+            ((JButton) comp).doClick();
+            break;
+        }
+    }
+}
+
+    private void setupDateChooserBehavior() {
+    JTextField tfStart = (JTextField) jdcStart.getDateEditor().getUiComponent();
+    JButton btnStart = findDateChooserButton(jdcStart);
+
+    JTextField tfEnd = (JTextField) jdcEnd.getDateEditor().getUiComponent();
+    JButton btnEnd = findDateChooserButton(jdcEnd);
+
+    tfStart.setFocusTraversalKeysEnabled(false);
+    tfEnd.setFocusTraversalKeysEnabled(false);
+
+    InputMap imStart = tfStart.getInputMap(JComponent.WHEN_FOCUSED);
+    ActionMap amStart = tfStart.getActionMap();
+    imStart.put(KeyStroke.getKeyStroke("control J"), "openCalendar");
+    amStart.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (btnStart != null) btnStart.doClick();
+        }
+    });
+
+    InputMap imEnd = tfEnd.getInputMap(JComponent.WHEN_FOCUSED);
+    ActionMap amEnd = tfEnd.getActionMap();
+    imEnd.put(KeyStroke.getKeyStroke("control J"), "openCalendar");
+    amEnd.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (btnEnd != null) btnEnd.doClick();
+        }
+    });
+}
+
+// Helper untuk cari tombol kalender di JDateChooser
+private JButton findDateChooserButton(JDateChooser chooser) {
+    for (Component comp : chooser.getComponents()) {
+        if (comp instanceof JButton) {
+            return (JButton) comp;
+        }
+    }
+    return null;
+}
+
     private void setListenerTable(){
         tblSemua.getSelectionModel().addListSelectionListener(e -> {
     if (!e.getValueIsAdjusting()) {
@@ -443,20 +566,22 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         JOptionPane.showMessageDialog(this, "Gagal load detail: " + e.getMessage());
     }
 }
-private void element(){
+private void element() {
     List<Component> tabOrder = Arrays.asList(
-   jdcStart,
-   jdcEnd,
-   jycTahun,
-   jmcBulan
+        (JTextField) jdcStart.getDateEditor().getUiComponent(),
+        (JTextField) jdcEnd.getDateEditor().getUiComponent(),
+        jycTahun,
+        jmcBulan
+    );
 
-            
-);
+    setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+    setFocusCycleRoot(true);
 
-setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
-setFocusCycleRoot(true);
-
+    // pastikan TAB tidak ditangkap di dalam textfield date chooser
+    ((JTextField) jdcStart.getDateEditor().getUiComponent()).setFocusTraversalKeysEnabled(false);
+    ((JTextField) jdcEnd.getDateEditor().getUiComponent()).setFocusTraversalKeysEnabled(false);
 }
+
 public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private final List<Component> order;
 
@@ -520,7 +645,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jmcBulan = new com.toedter.calendar.JMonthChooser();
         jycTahun = new com.toedter.calendar.JYearChooser();
         jLabel3 = new javax.swing.JLabel();
-        lblSetKeuntungan = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
@@ -545,7 +669,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, -1, -1));
 
         btnFilter.setBackground(new java.awt.Color(102, 255, 255));
-        btnFilter.setText("Filter");
+        btnFilter.setText("REFRESH");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFilterActionPerformed(evt);
@@ -670,10 +794,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel3.setText("Laporan Keuangan");
         panelUtama.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
-        lblSetKeuntungan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblSetKeuntungan.setText("Total Keuntungan:");
-        panelUtama.add(lblSetKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 530, 360, -1));
-
         lblTotalBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTotalBulan.setText("lblTotalBulan");
         panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
@@ -746,7 +866,6 @@ loadDataBulanTahun();// TODO add your handling code here:
     private com.toedter.calendar.JDateChooser jdcStart;
     private com.toedter.calendar.JMonthChooser jmcBulan;
     private com.toedter.calendar.JYearChooser jycTahun;
-    private javax.swing.JLabel lblSetKeuntungan;
     private javax.swing.JLabel lblTotalBulan;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JTable tblDetails;
