@@ -15,22 +15,22 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.time.LocalDate;
-/**
- *
- * @author LABFO-14
- */
+
 public class LaporanKeuangan extends javax.swing.JPanel {
 
-    /**
-     * Creates new form LaporanKeuangan
-     */
+   
     public LaporanKeuangan() {
         initComponents();
         loadDataKeuangan();
         loadDataSemua();
         hitungTotalBulanan();
-            loadDataBulanTahun();
-tblSemua.getSelectionModel().addListSelectionListener(e -> {
+        loadDataBulanTahun();
+        setFilterDefault();
+        setListenerTable();
+    }
+    
+    private void setListenerTable(){
+        tblSemua.getSelectionModel().addListSelectionListener(e -> {
     if (!e.getValueIsAdjusting()) {
         int row = tblSemua.getSelectedRow();
         if (row != -1) {
@@ -42,10 +42,7 @@ tblSemua.getSelectionModel().addListSelectionListener(e -> {
         }
     }
 });
-
-        setFilterDefault();
     }
-    
     private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
 
@@ -75,7 +72,7 @@ tblSemua.getSelectionModel().addListSelectionListener(e -> {
         ps.setInt(2, tahun);
         ResultSet rs = ps.executeQuery();
 
-        if (rs.next()) {
+        if (rs.next()) { 
             double totalMasuk = rs.getDouble("total_masuk");
             double totalKeluar = rs.getDouble("total_keluar");
             double totalAkhir = totalMasuk - totalKeluar;
@@ -162,7 +159,6 @@ tblSemua.getSelectionModel().addListSelectionListener(e -> {
 
         // Set label total dan keuntungan
         lblTotalBulan.setText(String.format("Total Bulan %s %d: Rp %, .0f", namaBulan, tahun, totalAkhir));
-        lblSetKeuntungan.setText(String.format("Keuntungan Bulan %s %d: Rp %, .0f", namaBulan, tahun, totalAkhir));
 
 
         rs.close();
@@ -439,10 +435,10 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         jScrollPane3 = new javax.swing.JScrollPane();
         tblSemua = new javax.swing.JTable();
         jmcBulan = new com.toedter.calendar.JMonthChooser();
-        lblTotalBulan = new javax.swing.JLabel();
         jycTahun = new com.toedter.calendar.JYearChooser();
         jLabel3 = new javax.swing.JLabel();
         lblSetKeuntungan = new javax.swing.JLabel();
+        lblTotalBulan = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -451,8 +447,8 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         panelUtama.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Laporan Keuangan Harian");
-        panelUtama.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 510, -1, -1));
+        jLabel1.setText("Laporan Harian");
+        panelUtama.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 500, -1, -1));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -525,26 +521,7 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
 
         tblDetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "No", "Tanggal", "Jenis Keuangan", "Masuk", "Keluar"
@@ -553,7 +530,7 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         tblDetails.setRowHeight(30);
         jScrollPane2.setViewportView(tblDetails);
 
-        panelUtama.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 550, 620, 280));
+        panelUtama.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 570, 620, 280));
 
         tblSemua.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -590,25 +567,21 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         });
         jScrollPane3.setViewportView(tblSemua);
 
-        panelUtama.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 550, 980, 280));
+        panelUtama.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 570, 980, 280));
 
         jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jmcBulanPropertyChange(evt);
             }
         });
-        panelUtama.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 510, 130, 30));
-
-        lblTotalBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblTotalBulan.setText("jLabel3");
-        panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 520, 190, -1));
+        panelUtama.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 530, 130, 30));
 
         jycTahun.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jycTahunPropertyChange(evt);
             }
         });
-        panelUtama.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 510, 130, 30));
+        panelUtama.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 530, 130, 30));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel3.setText("Laporan Keuangan");
@@ -616,7 +589,11 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
 
         lblSetKeuntungan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblSetKeuntungan.setText("Total Keuntungan:");
-        panelUtama.add(lblSetKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 520, 360, -1));
+        panelUtama.add(lblSetKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 530, 360, -1));
+
+        lblTotalBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblTotalBulan.setText("lblTotalBulan");
+        panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
 
         add(panelUtama, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents

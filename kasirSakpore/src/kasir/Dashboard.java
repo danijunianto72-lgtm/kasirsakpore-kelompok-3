@@ -32,11 +32,40 @@ public class Dashboard extends javax.swing.JFrame {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy");
     String tgl = sdf.format(new Date());
     lblTanggal.setText(tgl);
+    Login();
     fungsibutton () ;
     }
+private void Login(){
+        String role = Session.getRole();
 
+      if ("kasir".equalsIgnoreCase(role)) {
+        btnKasir.setVisible(true);
+        btnAdmin.setVisible(false);
+        btnBarang.setVisible(false);
+        btnUser.setVisible(false);
+        btnKeuangan.setVisible(false);
+        btnSupplier.setVisible(false);
+        btnPembelian.setVisible(false);
+        btnLaporanPenjualan.setVisible(false);
+        btnLaporanPembelian.setVisible(false);
+        btnLaporanKeuangan.setVisible(false);
+    } else if ("manager".equalsIgnoreCase(role)) {
+        btnAdmin.setVisible(false);
+        btnBarang.setVisible(false);
+        btnUser.setVisible(false);
+        btnKeuangan.setVisible(false);
+        btnSupplier.setVisible(false);        btnLaporanPenjualan.setVisible(true);
+        btnLaporanPembelian.setVisible(true);
+        btnLaporanKeuangan.setVisible(true);
+    } else if ("admin".equalsIgnoreCase(role)) {
+        btnKasir.setVisible(true);
+ 
+    }
+}
+    
+    
+    
     private void fungsibutton (){
-    // Misalnya btnMenu adalah JButton kamu
 btnAdmin.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
     .put(KeyStroke.getKeyStroke("F1"), "f1Action");
 
@@ -292,20 +321,20 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(59, 59, 59)
-                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
-                .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(354, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

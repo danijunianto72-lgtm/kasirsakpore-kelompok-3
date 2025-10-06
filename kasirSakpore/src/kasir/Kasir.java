@@ -27,16 +27,15 @@ public class Kasir extends javax.swing.JPanel {
     public Kasir() {
         initComponents();
         loadMenu(null);
-                setupSkuScanner(); // panggil fungsi setup disini
-
-            jdcTanggal.setDate(new Date());
-
+        setupSkuScanner(); 
+        txtPengguna.setText(Session.getUsername());
+        jdcTanggal.setDate(new Date());
 
         try (Connection conn = koneksi.dbKonek()) {
             txtNo.setText(generateNoTransaksi(conn));
         } catch (Exception e) {
             e.printStackTrace();
-            txtNo.setText("TERROR"); // fallback kalau error
+            txtNo.setText("TERROR");
         }
 
           SwingUtilities.invokeLater(() -> {
