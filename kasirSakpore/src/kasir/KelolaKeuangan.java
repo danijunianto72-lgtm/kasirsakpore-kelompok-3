@@ -7,6 +7,9 @@ package kasir;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.sql.*;
@@ -26,13 +29,72 @@ public class KelolaKeuangan extends javax.swing.JPanel {
     /**
      * Creates new form LaporanTransaksi
      */
-    public KelolaKeuangan() {
+   public KelolaKeuangan() {
         initComponents();
         loadDataKeuangan();
                     jdcTanggal.setDate(new java.util.Date());
                     setFilterDefault();
                     element();
+                    
+                    
+btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+    "ctrlS"
+);
 
+btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSubmit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnReset.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
+
+btnReset.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnReset.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
+    "ctrlF"
+);
+
+btnFilter.getActionMap().put("ctrlF", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnFilter.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+);
+
+btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
     }
 boolean isEditMode = false; 
 int selectedId = -1; // untuk simpan idkeuangan yang dipilih
