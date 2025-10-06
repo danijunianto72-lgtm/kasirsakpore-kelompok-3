@@ -28,7 +28,8 @@ public class Dashboard extends javax.swing.JFrame {
      */
     public Dashboard() {
         initComponents();
-    
+            txtPengguna.setText(Session.getUsername());
+
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy");
     String tgl = sdf.format(new Date());
     lblTanggal.setText(tgl);
@@ -199,6 +200,9 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         btnLaporanPembelian = new javax.swing.JButton();
         btnLaporanPenjualan = new javax.swing.JButton();
         btnLaporanKeuangan = new javax.swing.JButton();
+        txtPengguna = new javax.swing.JLabel();
+        btnLogout = new javax.swing.JButton();
+        btnInfo = new javax.swing.JButton();
         sidebar = new javax.swing.JPanel();
         btnAdmin = new javax.swing.JButton();
         btnBarang = new javax.swing.JButton();
@@ -223,7 +227,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         lblTanggal.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         lblTanggal.setForeground(new java.awt.Color(255, 255, 255));
         lblTanggal.setText("WEDNESDAY 99, OKTOVER 2025");
-        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 30, 840, 90));
+        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 30, 790, 90));
 
         btnLaporanPembelian.setText("[F10] LAPORAN PEMBELIAN");
         btnLaporanPembelian.addActionListener(new java.awt.event.ActionListener() {
@@ -231,7 +235,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPembelianActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 100, 200, 40));
+        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 100, 200, 40));
 
         btnLaporanPenjualan.setText("[F8] LAPORAN PENJUALAN");
         btnLaporanPenjualan.addActionListener(new java.awt.event.ActionListener() {
@@ -239,7 +243,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPenjualanActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 10, 200, 40));
+        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 10, 200, 40));
 
         btnLaporanKeuangan.setText("[F9] LAPORAN KEUANGAN");
         btnLaporanKeuangan.addActionListener(new java.awt.event.ActionListener() {
@@ -247,7 +251,29 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanKeuanganActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 55, 200, 40));
+        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 60, 200, 40));
+
+        txtPengguna.setBackground(new java.awt.Color(255, 255, 255));
+        txtPengguna.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        txtPengguna.setForeground(new java.awt.Color(255, 255, 255));
+        txtPengguna.setText("sri mulyani");
+        navbar.add(txtPengguna, new org.netbeans.lib.awtextra.AbsoluteConstraints(1700, 20, -1, -1));
+
+        btnLogout.setText("LOGOUT");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+        navbar.add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(1700, 80, 100, 40));
+
+        btnInfo.setText("Info");
+        btnInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInfoActionPerformed(evt);
+            }
+        });
+        navbar.add(btnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1810, 80, -1, 40));
 
         sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
@@ -455,6 +481,25 @@ panelUtama.removeAll();
     panelUtama.repaint();          // TODO add your handling code here:
     }//GEN-LAST:event_btnLaporanKeuanganActionPerformed
 
+    private void btnInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfoActionPerformed
+  java.awt.Frame parent = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+
+    // Buat instance dari JDialog Info
+    Info dialog = new Info(parent, true); // true = modal popup
+
+    // (opsional) posisi di tengah layar
+    dialog.setLocationRelativeTo(null);
+
+    // Tampilkan popup
+    dialog.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnInfoActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+ Session.clear();
+    new loginForm().setVisible(true);
+    this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -493,11 +538,13 @@ panelUtama.removeAll();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdmin;
     private javax.swing.JButton btnBarang;
+    private javax.swing.JButton btnInfo;
     private javax.swing.JButton btnKasir;
     private javax.swing.JButton btnKeuangan;
     private javax.swing.JButton btnLaporanKeuangan;
     private javax.swing.JButton btnLaporanPembelian;
     private javax.swing.JButton btnLaporanPenjualan;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPembelian;
     private javax.swing.JButton btnSupplier;
     private javax.swing.JButton btnUser;
@@ -505,5 +552,6 @@ panelUtama.removeAll();
     private javax.swing.JPanel navbar;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JPanel sidebar;
+    private javax.swing.JLabel txtPengguna;
     // End of variables declaration//GEN-END:variables
 }
