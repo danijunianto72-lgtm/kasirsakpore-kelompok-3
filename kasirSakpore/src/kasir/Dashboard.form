@@ -163,8 +163,8 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="btnKasir" min="-2" pref="138" max="-2" attributes="0"/>
                       <Component id="btnSupplier" min="-2" pref="138" max="-2" attributes="0"/>
+                      <Component id="btnKasir" min="-2" pref="138" max="-2" attributes="0"/>
                       <Component id="btnKeuangan" min="-2" pref="138" max="-2" attributes="0"/>
                       <Component id="btnUser" min="-2" pref="138" max="-2" attributes="0"/>
                       <Component id="btnBarang" min="-2" pref="138" max="-2" attributes="0"/>
@@ -182,13 +182,13 @@
                   <Component id="btnKasir" min="-2" pref="56" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnPembelian" min="-2" pref="56" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="btnUser" min="-2" pref="56" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                  <Component id="btnSupplier" min="-2" pref="56" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                   <Component id="btnKeuangan" min="-2" pref="56" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                  <Component id="btnSupplier" min="-2" pref="56" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="btnUser" min="-2" pref="56" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   <Component id="btnBarang" min="-2" pref="56" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="btnAdmin" min="-2" pref="56" max="-2" attributes="0"/>
@@ -200,7 +200,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnAdmin">
           <Properties>
-            <Property name="text" type="java.lang.String" value="ADMIN"/>
+            <Property name="text" type="java.lang.String" value="[F1] ADMIN"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAdminActionPerformed"/>
@@ -208,7 +208,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnBarang">
           <Properties>
-            <Property name="text" type="java.lang.String" value=" BARANG"/>
+            <Property name="text" type="java.lang.String" value="[F2] BARANG"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBarangActionPerformed"/>
@@ -216,7 +216,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnUser">
           <Properties>
-            <Property name="text" type="java.lang.String" value=" USER"/>
+            <Property name="text" type="java.lang.String" value="[F3] USER"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUserActionPerformed"/>
@@ -224,23 +224,15 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnKeuangan">
           <Properties>
-            <Property name="text" type="java.lang.String" value=" KEUANGAN"/>
+            <Property name="text" type="java.lang.String" value="[F4] KEUANGAN"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKeuanganActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnSupplier">
-          <Properties>
-            <Property name="text" type="java.lang.String" value=" SUPPLIER"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSupplierActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JButton" name="btnKasir">
           <Properties>
-            <Property name="text" type="java.lang.String" value="KASIR"/>
+            <Property name="text" type="java.lang.String" value="[F7] KASIR"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKasirActionPerformed"/>
@@ -248,10 +240,18 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnPembelian">
           <Properties>
-            <Property name="text" type="java.lang.String" value="PEMBELIAN"/>
+            <Property name="text" type="java.lang.String" value="[F6] PEMBELIAN"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPembelianActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnSupplier">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="[F5] SUPPLIER"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSupplierActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
