@@ -7,6 +7,8 @@ package kasir;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +22,9 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 
 public class LaporanKeuangan extends javax.swing.JPanel {
 
@@ -33,6 +38,29 @@ public class LaporanKeuangan extends javax.swing.JPanel {
         setFilterDefault();
         setListenerTable();
         element();
+          btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
+    "ctrlF"
+);
+
+btnFilter.getActionMap().put("ctrlF", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnFilter.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnCetak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+    "ctrlC"
+);
+
+btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak.doClick(); // Menjalankan aksi tombol
+    }
+});
     }
     
     private void setListenerTable(){
@@ -481,10 +509,10 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jLabel2 = new javax.swing.JLabel();
-        btnFIlter = new javax.swing.JButton();
+        btnFilter = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKeuangan = new javax.swing.JTable();
-        btnCetak1 = new javax.swing.JButton();
+        btnCetak = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblDetails = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -516,14 +544,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel2.setText("Sampai");
         panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, -1, -1));
 
-        btnFIlter.setBackground(new java.awt.Color(102, 255, 255));
-        btnFIlter.setText("Filter");
-        btnFIlter.addActionListener(new java.awt.event.ActionListener() {
+        btnFilter.setBackground(new java.awt.Color(102, 255, 255));
+        btnFilter.setText("Filter");
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFIlterActionPerformed(evt);
+                btnFilterActionPerformed(evt);
             }
         });
-        panelUtama.add(btnFIlter, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 130, 40));
+        panelUtama.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 130, 40));
 
         tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -565,14 +593,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         panelUtama.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 1630, 370));
 
-        btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
-        btnCetak1.setText("Cetak");
-        btnCetak1.addActionListener(new java.awt.event.ActionListener() {
+        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak.setText("Cetak");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetak1ActionPerformed(evt);
+                btnCetakActionPerformed(evt);
             }
         });
-        panelUtama.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 70, 130, 40));
+        panelUtama.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 70, 130, 40));
 
         tblDetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -664,14 +692,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     }        // TODO add your handling code here:
     }//GEN-LAST:event_jdcEndPropertyChange
 
-    private void btnFIlterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFIlterActionPerformed
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
 loadDataKeuangan();  
 setFilterDefault();// TODO add your handling code here:
-    }//GEN-LAST:event_btnFIlterActionPerformed
+    }//GEN-LAST:event_btnFilterActionPerformed
 
-    private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnCetak1ActionPerformed
+    }//GEN-LAST:event_btnCetakActionPerformed
 
     private void tblKeuanganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblKeuanganKeyPressed
   if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -706,8 +734,8 @@ loadDataBulanTahun();// TODO add your handling code here:
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCetak1;
-    private javax.swing.JButton btnFIlter;
+    private javax.swing.JButton btnCetak;
+    private javax.swing.JButton btnFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

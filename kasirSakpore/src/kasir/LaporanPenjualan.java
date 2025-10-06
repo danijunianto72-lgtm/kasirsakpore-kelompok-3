@@ -15,6 +15,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
@@ -31,7 +34,44 @@ public class LaporanPenjualan extends javax.swing.JPanel {
         initComponents();
         loadDataTransaksi();
         setFilterDefault();
-        element();       
+        element();
+        btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
+
+btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnRefresh.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnCetak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+    "ctrlC"
+);
+
+btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDetail.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
     }
     private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
@@ -174,7 +214,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        btnCetak = new javax.swing.JButton();
+        btnDetail = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblTransaksi = new javax.swing.JTable();
         jdcStart = new com.toedter.calendar.JDateChooser();
@@ -184,7 +224,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel9 = new javax.swing.JLabel();
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jLabel10 = new javax.swing.JLabel();
-        btnCetak1 = new javax.swing.JButton();
+        btnCetak = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -194,15 +234,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel6.setText("/");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 140, 10, 40));
 
-        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
-        btnCetak.setForeground(new java.awt.Color(255, 255, 255));
-        btnCetak.setText("Detail");
-        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+        btnDetail.setBackground(new java.awt.Color(0, 102, 102));
+        btnDetail.setForeground(new java.awt.Color(255, 255, 255));
+        btnDetail.setText("Detail");
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetakActionPerformed(evt);
+                btnDetailActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 140, 160, 50));
+        jPanel1.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 140, 160, 50));
 
         tblTransaksi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -257,10 +297,10 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel10.setText("Selesai");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 140, -1, 40));
 
-        btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
-        btnCetak1.setForeground(new java.awt.Color(255, 255, 255));
-        btnCetak1.setText("Cetak");
-        jPanel1.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
+        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak.setForeground(new java.awt.Color(255, 255, 255));
+        btnCetak.setText("Cetak");
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -282,7 +322,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             // TODO add your handling code here:
     }//GEN-LAST:event_tblTransaksiMouseClicked
 
-    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
 int selectedRow = tblTransaksi.getSelectedRow();
 if (selectedRow == -1) {
     JOptionPane.showMessageDialog(this, "Pilih transaksi dulu!");
@@ -300,7 +340,7 @@ popup.pack(); // ukurannya menyesuaikan isi
 popup.setLocationRelativeTo(SwingUtilities.getWindowAncestor(this)); // tengah parent
 popup.setVisible(true);
 
-    }//GEN-LAST:event_btnCetakActionPerformed
+    }//GEN-LAST:event_btnDetailActionPerformed
 
     private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
  if ("date".equals(evt.getPropertyName())) {
@@ -316,7 +356,7 @@ popup.setVisible(true);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnCetak1;
+    private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;

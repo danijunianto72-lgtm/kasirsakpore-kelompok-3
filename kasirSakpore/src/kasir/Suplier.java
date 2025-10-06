@@ -7,6 +7,9 @@ package kasir;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +18,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import kasir.koneksi;
 
@@ -36,6 +42,56 @@ public class Suplier extends javax.swing.JPanel {
         isiComboBox();
         tampilData();
         element();
+        btnSimpan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+    "ctrlS"
+);
+
+btnSimpan.getActionMap().put("ctrlS", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSimpan.doClick(); // Menjalankan aksi tombol
+    }
+});
+    
+btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBatal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
+btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+);
+
+btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
     }
 
       // tampilkan data user di tabel
