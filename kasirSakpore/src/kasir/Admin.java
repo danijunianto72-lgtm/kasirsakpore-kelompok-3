@@ -244,6 +244,7 @@ private void loadChart(String startDate, String endDate) {
         pnlStok = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         lblStok = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         pnlBarang = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         lblPemasukan7 = new javax.swing.JLabel();
@@ -508,6 +509,14 @@ private void loadChart(String startDate, String endDate) {
         lblStok.setRequestFocusEnabled(false);
         pnlStok.add(lblStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
 
+        jButton1.setText("LIHAT DETAIL");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        pnlStok.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, -1, -1));
+
         jPanel2.add(pnlStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 10, 180, 160));
 
         pnlBarang.setToolTipText("focus");
@@ -586,10 +595,20 @@ private void loadChart(String startDate, String endDate) {
  
     }//GEN-LAST:event_jdcEndKeyPressed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+   java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(this);
+
+    // buat dan tampilkan JDialog FormBarang
+    FormBarang dialog = new FormBarang(parentFrame, true, null); 
+    dialog.setLocationRelativeTo(parentFrame); // tampil di tengah
+    dialog.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnReset;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
