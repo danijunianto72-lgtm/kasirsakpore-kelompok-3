@@ -4,6 +4,9 @@
  */
 package kasir;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -40,6 +46,7 @@ public class KelolaBarang extends javax.swing.JPanel {
     public KelolaBarang() {
         initComponents();
         tampilData();
+        element();
         loadKategori();
         filterKategori();
         generateKodeBarang();
@@ -296,7 +303,59 @@ public class KelolaBarang extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Error tampil data: " + ex.getMessage());
         }
     }
+private void element(){
+    List<Component> tabOrder = Arrays.asList(
+    tKdBarang,
+    cbJenis,
+    tHargaPokok,
+    tPajak,
+    tSKU,
+    tSatuan,
+    tNamaBarang,
+    tHargaJual,
+    tCari,
+    cbfJenis
+);
 
+setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+setFocusCycleRoot(true);
+
+}
+public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
+    private final List<Component> order;
+
+    public CustomFocusTraversalPolicy(List<Component> order) {
+        this.order = new ArrayList<>(order);
+    }
+
+    @Override
+    public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+        int idx = (order.indexOf(aComponent) + 1) % order.size();
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+        int idx = order.indexOf(aComponent) - 1;
+        if (idx < 0) idx = order.size() - 1;
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getFirstComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+
+    @Override
+    public Component getLastComponent(Container focusCycleRoot) {
+        return order.get(order.size() - 1);
+    }
+
+    @Override
+    public Component getDefaultComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
