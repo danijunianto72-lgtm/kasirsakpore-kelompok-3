@@ -4,11 +4,20 @@
  */
 package kasir;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -27,8 +36,33 @@ public class KelolaUser extends javax.swing.JPanel {
     public KelolaUser() {
         initComponents();
         isiComboBox();
-        tampilData(); 
+        tampilData();
+        element();
+        setKeyBindings();
+
     }
+   
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblUser.requestFocus();
+                if (tblUser.getRowCount() > 0) {
+                    tblUser.setRowSelectionInterval(0, 0);
+                    tblUser.setColumnSelectionInterval(0, 0);
+                    tblUser.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
+
     
     // tampilkan data user di tabel
     private void tampilData() {
@@ -77,6 +111,53 @@ public class KelolaUser extends javax.swing.JPanel {
     }
     
 
+private void element(){
+    List<Component> tabOrder = Arrays.asList(
+    tfUsername,
+    tfPassword,
+    cbRole,
+    cbStatus            
+);
+
+setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+setFocusCycleRoot(true);
+
+}
+public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
+    private final List<Component> order;
+
+    public CustomFocusTraversalPolicy(List<Component> order) {
+        this.order = new ArrayList<>(order);
+    }
+
+    @Override
+    public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+        int idx = (order.indexOf(aComponent) + 1) % order.size();
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+        int idx = order.indexOf(aComponent) - 1;
+        if (idx < 0) idx = order.size() - 1;
+        return order.get(idx);
+    }
+
+    @Override
+    public Component getFirstComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+
+    @Override
+    public Component getLastComponent(Container focusCycleRoot) {
+        return order.get(order.size() - 1);
+    }
+
+    @Override
+    public Component getDefaultComponent(Container focusCycleRoot) {
+        return order.get(0);
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -205,7 +286,7 @@ public class KelolaUser extends javax.swing.JPanel {
         });
         pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 110, 90, 40));
 
-        btEdit.setBackground(new java.awt.Color(255, 255, 51));
+        btEdit.setBackground(new java.awt.Color(255, 153, 51));
         btEdit.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btEdit.setText("Edit");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -215,7 +296,7 @@ public class KelolaUser extends javax.swing.JPanel {
         });
         pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, 90, 40));
 
-        Batal.setBackground(new java.awt.Color(102, 102, 255));
+        Batal.setBackground(new java.awt.Color(204, 204, 204));
         Batal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Batal.setText("Batal");
         Batal.addActionListener(new java.awt.event.ActionListener() {

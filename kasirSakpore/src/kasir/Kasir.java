@@ -7,6 +7,8 @@ import java.sql.*;
 import javax.swing.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -27,24 +29,97 @@ public class Kasir extends javax.swing.JPanel {
     public Kasir() {
         initComponents();
         loadMenu(null);
-                setupSkuScanner(); // panggil fungsi setup disini
-
-            jdcTanggal.setDate(new Date());
-
+        setupSkuScanner(); 
+        txtPengguna.setText(Session.getUsername());
+        jdcTanggal.setDate(new Date());
 
         try (Connection conn = koneksi.dbKonek()) {
             txtNo.setText(generateNoTransaksi(conn));
         } catch (Exception e) {
             e.printStackTrace();
-            txtNo.setText("TERROR"); // fallback kalau error
+            txtNo.setText("TERROR");
         }
 
           SwingUtilities.invokeLater(() -> {
         txtSku.requestFocusInWindow();
     });
+          
+          btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+);
+
+btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+
+btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBatal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
+    "ctrlP"
+);
+
+btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPembayaran.doClick(); // Menjalankan aksi tombol
+    }
+});
+setKeyBindings();
+
+
+
     }
   
  
+
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblKasir.requestFocus();
+                if (tblKasir.getRowCount() > 0) {
+                    tblKasir.setRowSelectionInterval(0, 0);
+                    tblKasir.setColumnSelectionInterval(0, 0);
+                    tblKasir.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+
 
     private void loadMenu(String keyword) {
     pnlMenu.removeAll();

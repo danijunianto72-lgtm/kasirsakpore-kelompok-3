@@ -190,35 +190,41 @@ public class loginForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:                             
-    String username = txtUsername.getText();
-    String password = new String(txtPassword.getPassword());
+       // TODO add your handling code here:
+String username = txtUsername.getText().trim();
+String password = new String(txtPassword.getPassword()).trim();
 
-    try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT * FROM pengguna WHERE username=? AND password=? AND status='aktif'";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setString(1, username);
-        pst.setString(2, password);
+try (Connection conn = koneksi.dbKonek()) {
+    String sql = "SELECT * FROM pengguna WHERE username=? AND password=? AND status='aktif'";
+    PreparedStatement pst = conn.prepareStatement(sql);
+    pst.setString(1, username);
+    pst.setString(2, password);
 
-        ResultSet rs = pst.executeQuery();
-        
-        if (rs.next()) {
-            // login sukses
-            String role = rs.getString("role");
-            JOptionPane.showMessageDialog(this, "Login berhasil sebagai " + role);
+    ResultSet rs = pst.executeQuery();
 
-            // arahkan ke dashboard
-            Dashboard dash = new Dashboard();
-            dash.setVisible(true);
-            this.dispose(); // menutup form login
-        } else {
-            // login gagal
-            JOptionPane.showMessageDialog(this, "Username atau password salah / tidak aktif");
-        }
+    if (rs.next()) {
+        // login sukses
+        String role = rs.getString("role");
+        JOptionPane.showMessageDialog(this, "Login berhasil sebagai " + role);
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        // simpan ke session
+        Session.setUsername(username);
+        Session.setRole(role);
+
+        // buka dashboard
+        Dashboard dash = new Dashboard();
+        dash.setVisible(true);
+        this.dispose();
+
+    } else {
+        // login gagal
+        JOptionPane.showMessageDialog(this, "Username atau password salah / tidak aktif");
     }
+
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+}
+
     }//GEN-LAST:event_btnLoginActionPerformed
 
     /**

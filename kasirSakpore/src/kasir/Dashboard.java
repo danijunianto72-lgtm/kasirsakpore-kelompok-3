@@ -28,15 +28,45 @@ public class Dashboard extends javax.swing.JFrame {
      */
     public Dashboard() {
         initComponents();
-    
+            txtPengguna.setText(Session.getUsername());
+
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy");
     String tgl = sdf.format(new Date());
     lblTanggal.setText(tgl);
+    Login();
     fungsibutton () ;
     }
+private void Login(){
+        String role = Session.getRole();
 
+      if ("kasir".equalsIgnoreCase(role)) {
+        btnKasir.setVisible(true);
+        btnAdmin.setVisible(false);
+        btnBarang.setVisible(false);
+        btnUser.setVisible(false);
+        btnKeuangan.setVisible(false);
+        btnSupplier.setVisible(false);
+        btnPembelian.setVisible(false);
+        btnLaporanPenjualan.setVisible(false);
+        btnLaporanPembelian.setVisible(false);
+        btnLaporanKeuangan.setVisible(false);
+    } else if ("manager".equalsIgnoreCase(role)) {
+        btnAdmin.setVisible(false);
+        btnBarang.setVisible(false);
+        btnUser.setVisible(false);
+        btnKeuangan.setVisible(false);
+        btnSupplier.setVisible(false);        btnLaporanPenjualan.setVisible(true);
+        btnLaporanPembelian.setVisible(true);
+        btnLaporanKeuangan.setVisible(true);
+    } else if ("admin".equalsIgnoreCase(role)) {
+        btnKasir.setVisible(true);
+ 
+    }
+}
+    
+    
+    
     private void fungsibutton (){
-    // Misalnya btnMenu adalah JButton kamu
 btnAdmin.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
     .put(KeyStroke.getKeyStroke("F1"), "f1Action");
 
@@ -170,29 +200,34 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         btnLaporanPembelian = new javax.swing.JButton();
         btnLaporanPenjualan = new javax.swing.JButton();
         btnLaporanKeuangan = new javax.swing.JButton();
+        txtPengguna = new javax.swing.JLabel();
+        btnLogout = new javax.swing.JButton();
+        btnInfo = new javax.swing.JButton();
         sidebar = new javax.swing.JPanel();
         btnAdmin = new javax.swing.JButton();
         btnBarang = new javax.swing.JButton();
         btnUser = new javax.swing.JButton();
         btnKeuangan = new javax.swing.JButton();
-        btnSupplier = new javax.swing.JButton();
         btnKasir = new javax.swing.JButton();
         btnPembelian = new javax.swing.JButton();
+        btnSupplier = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(47, 47, 47));
 
         panelUtama.setBackground(new java.awt.Color(255, 255, 255));
         panelUtama.setPreferredSize(new java.awt.Dimension(1740, 960));
         panelUtama.setLayout(new java.awt.BorderLayout());
 
-        navbar.setBackground(new java.awt.Color(51, 51, 255));
+        navbar.setBackground(new java.awt.Color(30, 58, 158));
         navbar.setMinimumSize(new java.awt.Dimension(1980, 140));
         navbar.setPreferredSize(new java.awt.Dimension(1920, 150));
         navbar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTanggal.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        lblTanggal.setForeground(new java.awt.Color(255, 255, 255));
         lblTanggal.setText("WEDNESDAY 99, OKTOVER 2025");
-        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 30, 840, 90));
+        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 30, 790, 90));
 
         btnLaporanPembelian.setText("[F10] LAPORAN PEMBELIAN");
         btnLaporanPembelian.addActionListener(new java.awt.event.ActionListener() {
@@ -200,7 +235,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPembelianActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 90, 200, 40));
+        navbar.add(btnLaporanPembelian, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 100, 200, 40));
 
         btnLaporanPenjualan.setText("[F8] LAPORAN PENJUALAN");
         btnLaporanPenjualan.addActionListener(new java.awt.event.ActionListener() {
@@ -208,7 +243,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanPenjualanActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 90, 200, 40));
+        navbar.add(btnLaporanPenjualan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 10, 200, 40));
 
         btnLaporanKeuangan.setText("[F9] LAPORAN KEUANGAN");
         btnLaporanKeuangan.addActionListener(new java.awt.event.ActionListener() {
@@ -216,57 +251,79 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 btnLaporanKeuanganActionPerformed(evt);
             }
         });
-        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 90, 200, 40));
+        navbar.add(btnLaporanKeuangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 55, 200, 40));
 
-        sidebar.setBackground(new java.awt.Color(51, 51, 255));
+        txtPengguna.setBackground(new java.awt.Color(255, 255, 255));
+        txtPengguna.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        txtPengguna.setForeground(new java.awt.Color(255, 255, 255));
+        txtPengguna.setText("sri mulyani");
+        navbar.add(txtPengguna, new org.netbeans.lib.awtextra.AbsoluteConstraints(1700, 20, -1, -1));
+
+        btnLogout.setText("LOGOUT");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+        navbar.add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(1700, 80, 100, 40));
+
+        btnInfo.setText("Info");
+        btnInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInfoActionPerformed(evt);
+            }
+        });
+        navbar.add(btnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1810, 80, 80, 40));
+
+        sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
 
-        btnAdmin.setText("ADMIN");
+        btnAdmin.setText("[F1] ADMIN");
         btnAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdminActionPerformed(evt);
             }
         });
 
-        btnBarang.setText(" BARANG");
+        btnBarang.setText("[F2] BARANG");
         btnBarang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBarangActionPerformed(evt);
             }
         });
 
-        btnUser.setText(" USER");
+        btnUser.setText("[F3] USER");
         btnUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUserActionPerformed(evt);
             }
         });
 
-        btnKeuangan.setText(" KEUANGAN");
+        btnKeuangan.setText("[F4] KEUANGAN");
         btnKeuangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKeuanganActionPerformed(evt);
             }
         });
 
-        btnSupplier.setText(" SUPPLIER");
-        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSupplierActionPerformed(evt);
-            }
-        });
-
-        btnKasir.setText("KASIR");
+        btnKasir.setText("[F7] KASIR");
         btnKasir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKasirActionPerformed(evt);
             }
         });
 
-        btnPembelian.setText("PEMBELIAN");
+        btnPembelian.setText("[F6] PEMBELIAN");
         btnPembelian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPembelianActionPerformed(evt);
+            }
+        });
+
+        btnSupplier.setText("[F5] SUPPLIER");
+        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSupplierActionPerformed(evt);
             }
         });
 
@@ -277,8 +334,8 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -290,20 +347,20 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(59, 59, 59)
-                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
                 .addComponent(btnKeuangan, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addComponent(btnSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(btnBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(btnPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
-                .addComponent(btnKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addComponent(btnAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(354, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -315,8 +372,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65))
+                .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, 1805, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
@@ -327,7 +383,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(navbar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelUtama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -425,6 +481,25 @@ panelUtama.removeAll();
     panelUtama.repaint();          // TODO add your handling code here:
     }//GEN-LAST:event_btnLaporanKeuanganActionPerformed
 
+    private void btnInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfoActionPerformed
+  java.awt.Frame parent = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+
+    // Buat instance dari JDialog Info
+    Info dialog = new Info(parent, true); // true = modal popup
+
+    // (opsional) posisi di tengah layar
+    dialog.setLocationRelativeTo(null);
+
+    // Tampilkan popup
+    dialog.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnInfoActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+ Session.clear();
+    new loginForm().setVisible(true);
+    this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -463,11 +538,13 @@ panelUtama.removeAll();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdmin;
     private javax.swing.JButton btnBarang;
+    private javax.swing.JButton btnInfo;
     private javax.swing.JButton btnKasir;
     private javax.swing.JButton btnKeuangan;
     private javax.swing.JButton btnLaporanKeuangan;
     private javax.swing.JButton btnLaporanPembelian;
     private javax.swing.JButton btnLaporanPenjualan;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnPembelian;
     private javax.swing.JButton btnSupplier;
     private javax.swing.JButton btnUser;
@@ -475,5 +552,6 @@ panelUtama.removeAll();
     private javax.swing.JPanel navbar;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JPanel sidebar;
+    private javax.swing.JLabel txtPengguna;
     // End of variables declaration//GEN-END:variables
 }

@@ -102,7 +102,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/sis.png"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 189, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 189, -1));
 
         lblKode.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblKode.setText("KODE : ");
@@ -148,9 +148,9 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 490, 570, 220));
 
-        jLabel2.setFont(new java.awt.Font("UD Digi Kyokasho NP-R", 0, 48)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Segoe UI Light", 0, 48)); // NOI18N
         jLabel2.setText("Sakpore");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 200, 100));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 200, 100));
 
         jButton1.setText("CETAK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
