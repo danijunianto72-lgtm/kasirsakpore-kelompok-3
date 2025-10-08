@@ -360,7 +360,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel1.add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 90, 250, 50));
         jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 210, 250, 50));
 
-        btnBeli1.setBackground(new java.awt.Color(51, 255, 51));
+        btnBeli1.setBackground(new java.awt.Color(51, 255, 0));
         btnBeli1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         btnBeli1.setText("Beli");
         btnBeli1.addActionListener(new java.awt.event.ActionListener() {
@@ -443,7 +443,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Sampai");
 
-        btnRefresh.setBackground(new java.awt.Color(204, 204, 204));
         btnRefresh.setText("Refresh");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

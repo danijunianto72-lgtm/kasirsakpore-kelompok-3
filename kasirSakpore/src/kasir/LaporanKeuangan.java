@@ -33,7 +33,14 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 public class LaporanKeuangan extends javax.swing.JPanel {
 
    
@@ -385,6 +392,7 @@ private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) 
 
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
+Session.updateSaldo(tblKeuangan, lblMasuk, lblKeluar, lblSaldo);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -646,6 +654,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jycTahun = new com.toedter.calendar.JYearChooser();
         jLabel3 = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lblSaldo = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        lblMasuk = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        lblKeluar = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -668,7 +682,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel2.setText("Sampai");
         panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, -1, -1));
 
-        btnFilter.setBackground(new java.awt.Color(102, 255, 255));
+        btnFilter.setBackground(new java.awt.Color(0, 153, 153));
         btnFilter.setText("REFRESH");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -798,6 +812,33 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblTotalBulan.setText("lblTotalBulan");
         panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblSaldo.setText("jLabel4");
+        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 10, 190, 100));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblMasuk.setText("jLabel4");
+        jPanel2.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, 190, 100));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblKeluar.setText("jLabel4");
+        jPanel3.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 10, 190, 100));
+
         add(panelUtama, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -818,7 +859,88 @@ setFilterDefault();// TODO add your handling code here:
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:
+   // Dialog pilih lokasi file
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Simpan Laporan Keuangan");
+    chooser.setSelectedFile(new File("LaporanKeuangan.pdf"));
+
+    int userSelection = chooser.showSaveDialog(this);
+    if (userSelection != JFileChooser.APPROVE_OPTION) {
+        return; // batal
+    }
+
+    File fileToSave = chooser.getSelectedFile();
+    String filePath = fileToSave.getAbsolutePath();
+
+    // Format tanggal
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+    Date startDate = jdcStart.getDate();
+    Date endDate = jdcEnd.getDate();
+    String startStr = (startDate != null) ? sdf.format(startDate) : "-";
+    String endStr = (endDate != null) ? sdf.format(endDate) : "-";
+
+    JTable table = tblKeuangan;
+    TableModel model = table.getModel();
+
+    Document document = new Document(PageSize.A4.rotate()); // landscape
+    try {
+        PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        document.open();
+
+        // Judul
+        Paragraph title = new Paragraph("LAPORAN KEUANGAN\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18));
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        // Keterangan periode
+        Paragraph info = new Paragraph(
+                "Periode: " + startStr + " s/d " + endStr + "\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA, 12));
+        info.setAlignment(Element.ALIGN_CENTER);
+        document.add(info);
+
+        // Tabel PDF
+        PdfPTable pdfTable = new PdfPTable(model.getColumnCount());
+        pdfTable.setWidthPercentage(100);
+        pdfTable.setSpacingBefore(10f);
+
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            PdfPCell headerCell = new PdfPCell(new Phrase(model.getColumnName(i)));
+            headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTable.addCell(headerCell);
+        }
+
+        for (int r = 0; r < model.getRowCount(); r++) {
+            for (int c = 0; c < model.getColumnCount(); c++) {
+                Object val = model.getValueAt(r, c);
+                PdfPCell cell = new PdfPCell(new Phrase(val == null ? "" : val.toString()));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                pdfTable.addCell(cell);
+            }
+        }
+
+        document.add(pdfTable);
+
+        Paragraph footer = new Paragraph(
+                "\nDicetak pada: " + sdf.format(new java.util.Date()),
+                FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10));
+        footer.setAlignment(Element.ALIGN_RIGHT);
+        document.add(footer);
+
+        document.close();
+
+        JOptionPane.showMessageDialog(this,
+                "PDF berhasil dibuat:\n" + filePath,
+                "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+                "Gagal membuat PDF:\n" + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }        // TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void tblKeuanganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblKeuanganKeyPressed
@@ -859,6 +981,9 @@ loadDataBulanTahun();// TODO add your handling code here:
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -866,6 +991,9 @@ loadDataBulanTahun();// TODO add your handling code here:
     private com.toedter.calendar.JDateChooser jdcStart;
     private com.toedter.calendar.JMonthChooser jmcBulan;
     private com.toedter.calendar.JYearChooser jycTahun;
+    private javax.swing.JLabel lblKeluar;
+    private javax.swing.JLabel lblMasuk;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JLabel lblTotalBulan;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JTable tblDetails;

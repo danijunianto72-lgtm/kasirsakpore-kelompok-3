@@ -18,6 +18,7 @@ import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
@@ -150,6 +151,15 @@ private void LoadDataTransaksi(java.util.Date startDate, java.util.Date endDate)
         tblTransaksi.getColumnModel().getColumn(1).setMinWidth(0);
         tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(0);
         tblTransaksi.getColumnModel().getColumn(1).setWidth(0);
+double totalMasuk = Session.hitungTotalTransaksi(startDate, endDate);
+NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+lblKeterangan.setText(nf.format(totalMasuk));
+
+// === Tambahan: tampilkan keterangan ===
+SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+String dari = sdf.format(startDate);
+String sampai = sdf.format(endDate);
+lblKeterangan.setText("Pemasukan dari " + dari + " sampai " + sampai + " adalah: " + nf.format(totalMasuk));
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -225,6 +235,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jLabel10 = new javax.swing.JLabel();
         btnCetak = new javax.swing.JButton();
+        lblKeterangan = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -234,8 +245,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel6.setText("/");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 140, 10, 40));
 
-        btnDetail.setBackground(new java.awt.Color(0, 102, 102));
-        btnDetail.setForeground(new java.awt.Color(255, 255, 255));
+        btnDetail.setBackground(new java.awt.Color(255, 255, 0));
         btnDetail.setText("Detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -302,6 +312,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         btnCetak.setText("Cetak");
         jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
 
+        lblKeterangan.setText("jLabel1");
+        jPanel1.add(lblKeterangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 60, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -313,8 +326,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 954, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -367,6 +380,7 @@ popup.setVisible(true);
     private javax.swing.JScrollPane jScrollPane2;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;
+    private javax.swing.JLabel lblKeterangan;
     private javax.swing.JTable tblTransaksi;
     // End of variables declaration//GEN-END:variables
 }
