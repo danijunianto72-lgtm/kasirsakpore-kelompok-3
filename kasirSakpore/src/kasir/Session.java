@@ -64,9 +64,9 @@ public class Session {
             double saldo = totalMasuk - totalKeluar;
 
             // Format jadi string angka (bisa juga rupiah)
-            lblMasuk.setText(String.format("%.2f", totalMasuk));
-            lblKeluar.setText(String.format("%.2f", totalKeluar));
-            lblSaldo.setText(String.format("%.2f", saldo));
+            lblMasuk.setText(String.format("Total pemasukan "+"%.2f", totalMasuk));
+            lblKeluar.setText(String.format("Total pengeluaran "+"%.2f", totalKeluar));
+            lblSaldo.setText(String.format("Keuntungan "+"%.2f", saldo));
 
         } catch (Exception e) {
             lblMasuk.setText("0.00");
@@ -97,6 +97,37 @@ public class Session {
 
             if (rs.next()) {
                 total = rs.getDouble("total_pemasukan");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
+    
+    public static double hitungPengeluaran(Date tglMulai, Date tglSelesai) {
+        double total = 0.0;
+
+        try (Connection conn = koneksi.dbKonek()) {
+
+            String sql = "SELECT SUM(totalharga) AS totalharga "
+                       + "FROM barangmasuk "
+                       + "WHERE tanggal >= ? AND tanggal < ?";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+
+            // konversi java.util.Date ke LocalDate
+            LocalDate startLocal = tglMulai.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate endLocal = tglSelesai.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            pst.setTimestamp(1, Timestamp.valueOf(startLocal.atStartOfDay()));
+            pst.setTimestamp(2, Timestamp.valueOf(endLocal.plusDays(1).atStartOfDay()));
+
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("totalharga");
             }
 
         } catch (Exception e) {
