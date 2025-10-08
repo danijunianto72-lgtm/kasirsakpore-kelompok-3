@@ -392,6 +392,7 @@ private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) 
 
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
+Session.updateSaldo(tblKeuangan, lblMasuk, lblKeluar, lblSaldo);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -653,6 +654,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jycTahun = new com.toedter.calendar.JYearChooser();
         jLabel3 = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lblSaldo = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        lblMasuk = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        lblKeluar = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -805,6 +812,33 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblTotalBulan.setText("lblTotalBulan");
         panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblSaldo.setText("jLabel4");
+        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 10, 190, 100));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblMasuk.setText("jLabel4");
+        jPanel2.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, 190, 100));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblKeluar.setText("jLabel4");
+        jPanel3.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+
+        panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 10, 190, 100));
+
         add(panelUtama, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -947,6 +981,9 @@ loadDataBulanTahun();// TODO add your handling code here:
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -954,6 +991,9 @@ loadDataBulanTahun();// TODO add your handling code here:
     private com.toedter.calendar.JDateChooser jdcStart;
     private com.toedter.calendar.JMonthChooser jmcBulan;
     private com.toedter.calendar.JYearChooser jycTahun;
+    private javax.swing.JLabel lblKeluar;
+    private javax.swing.JLabel lblMasuk;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JLabel lblTotalBulan;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JTable tblDetails;
