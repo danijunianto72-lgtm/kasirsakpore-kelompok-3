@@ -33,7 +33,14 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 public class LaporanKeuangan extends javax.swing.JPanel {
 
    
@@ -818,7 +825,88 @@ setFilterDefault();// TODO add your handling code here:
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:
+   // Dialog pilih lokasi file
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Simpan Laporan Keuangan");
+    chooser.setSelectedFile(new File("LaporanKeuangan.pdf"));
+
+    int userSelection = chooser.showSaveDialog(this);
+    if (userSelection != JFileChooser.APPROVE_OPTION) {
+        return; // batal
+    }
+
+    File fileToSave = chooser.getSelectedFile();
+    String filePath = fileToSave.getAbsolutePath();
+
+    // Format tanggal
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+    Date startDate = jdcStart.getDate();
+    Date endDate = jdcEnd.getDate();
+    String startStr = (startDate != null) ? sdf.format(startDate) : "-";
+    String endStr = (endDate != null) ? sdf.format(endDate) : "-";
+
+    JTable table = tblKeuangan;
+    TableModel model = table.getModel();
+
+    Document document = new Document(PageSize.A4.rotate()); // landscape
+    try {
+        PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        document.open();
+
+        // Judul
+        Paragraph title = new Paragraph("LAPORAN KEUANGAN\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18));
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        // Keterangan periode
+        Paragraph info = new Paragraph(
+                "Periode: " + startStr + " s/d " + endStr + "\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA, 12));
+        info.setAlignment(Element.ALIGN_CENTER);
+        document.add(info);
+
+        // Tabel PDF
+        PdfPTable pdfTable = new PdfPTable(model.getColumnCount());
+        pdfTable.setWidthPercentage(100);
+        pdfTable.setSpacingBefore(10f);
+
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            PdfPCell headerCell = new PdfPCell(new Phrase(model.getColumnName(i)));
+            headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTable.addCell(headerCell);
+        }
+
+        for (int r = 0; r < model.getRowCount(); r++) {
+            for (int c = 0; c < model.getColumnCount(); c++) {
+                Object val = model.getValueAt(r, c);
+                PdfPCell cell = new PdfPCell(new Phrase(val == null ? "" : val.toString()));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                pdfTable.addCell(cell);
+            }
+        }
+
+        document.add(pdfTable);
+
+        Paragraph footer = new Paragraph(
+                "\nDicetak pada: " + sdf.format(new java.util.Date()),
+                FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10));
+        footer.setAlignment(Element.ALIGN_RIGHT);
+        document.add(footer);
+
+        document.close();
+
+        JOptionPane.showMessageDialog(this,
+                "PDF berhasil dibuat:\n" + filePath,
+                "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+                "Gagal membuat PDF:\n" + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }        // TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void tblKeuanganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblKeuanganKeyPressed
