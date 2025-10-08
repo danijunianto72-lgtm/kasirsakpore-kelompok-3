@@ -86,7 +86,7 @@
             <Component class="javax.swing.JButton" name="btnDelete">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="33" red="ff" type="rgb"/>
+                  <Color blue="33" green="33" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Delete"/>
               </Properties>
@@ -102,7 +102,7 @@
             <Component class="javax.swing.JButton" name="btnBatal">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="99" green="99" red="99" type="rgb"/>
+                  <Color blue="cc" green="cc" red="cc" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Batal"/>
               </Properties>
@@ -118,7 +118,7 @@
             <Component class="javax.swing.JButton" name="btnEdit">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="99" red="ff" type="rgb"/>
+                  <Color blue="33" green="99" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Edit"/>
               </Properties>
@@ -270,7 +270,7 @@
             <Component class="javax.swing.JButton" name="btnSimpan">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="66" green="ff" red="0" type="rgb"/>
+                  <Color blue="0" green="ff" red="33" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Simpan"/>
               </Properties>

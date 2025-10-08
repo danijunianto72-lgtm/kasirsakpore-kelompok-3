@@ -668,7 +668,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel2.setText("Sampai");
         panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, -1, -1));
 
-        btnFilter.setBackground(new java.awt.Color(102, 255, 255));
+        btnFilter.setBackground(new java.awt.Color(0, 153, 153));
         btnFilter.setText("REFRESH");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

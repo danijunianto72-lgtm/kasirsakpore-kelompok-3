@@ -238,7 +238,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnFormUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 1030, 510));
 
-        btnDelete.setBackground(new java.awt.Color(255, 51, 0));
+        btnDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnDelete.setText("Delete");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -247,7 +247,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnFormUser.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 130, 170, 40));
 
-        btnBatal.setBackground(new java.awt.Color(153, 153, 153));
+        btnBatal.setBackground(new java.awt.Color(204, 204, 204));
         btnBatal.setText("Batal");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,7 +256,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnFormUser.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 130, 170, 40));
 
-        btnEdit.setBackground(new java.awt.Color(255, 153, 0));
+        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
         btnEdit.setText("Edit");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -315,7 +315,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lStatus3.setText("Status :");
         pnFormUser1.add(lStatus3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 280, 60, 30));
 
-        btnSimpan.setBackground(new java.awt.Color(0, 255, 102));
+        btnSimpan.setBackground(new java.awt.Color(51, 255, 0));
         btnSimpan.setText("Simpan");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

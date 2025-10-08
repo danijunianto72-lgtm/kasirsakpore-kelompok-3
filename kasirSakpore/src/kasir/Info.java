@@ -99,7 +99,7 @@ public class Info extends javax.swing.JDialog {
         });
         jPanel2.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, 130, 40));
 
-        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
+        btnEdit.setBackground(new java.awt.Color(0, 102, 102));
         btnEdit.setText("Cetak");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -139,7 +139,7 @@ public class Info extends javax.swing.JDialog {
         });
         jPanel2.add(btnEdit1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 90, 40));
 
-        btnEdit2.setBackground(new java.awt.Color(255, 153, 51));
+        btnEdit2.setBackground(new java.awt.Color(0, 153, 153));
         btnEdit2.setText("Refresh");
         btnEdit2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -157,7 +157,7 @@ public class Info extends javax.swing.JDialog {
         });
         jPanel2.add(btnEdit3, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 130, 90, 40));
 
-        btnEdit4.setBackground(new java.awt.Color(255, 153, 51));
+        btnEdit4.setBackground(new java.awt.Color(255, 255, 0));
         btnEdit4.setText("Detail");
         btnEdit4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,10 +195,10 @@ public class Info extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jLabel1)
-                .addContainerGap(864, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1040, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -208,7 +208,7 @@ public class Info extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addGap(28, 28, 28)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(208, Short.MAX_VALUE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);

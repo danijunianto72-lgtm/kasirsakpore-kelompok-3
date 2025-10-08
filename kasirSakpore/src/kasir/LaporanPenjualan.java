@@ -234,8 +234,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel6.setText("/");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 140, 10, 40));
 
-        btnDetail.setBackground(new java.awt.Color(0, 102, 102));
-        btnDetail.setForeground(new java.awt.Color(255, 255, 255));
+        btnDetail.setBackground(new java.awt.Color(255, 255, 0));
         btnDetail.setText("Detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
