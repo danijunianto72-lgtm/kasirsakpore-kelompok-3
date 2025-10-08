@@ -55,6 +55,9 @@ public class KelolaBarang extends javax.swing.JPanel {
         loadKategori();
         filterKategori();
         generateKodeBarang();
+        tampilkanDiagram();
+
+
         
         tPajak.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -206,8 +209,18 @@ private void setKeyBindings() {
     });
 }
 
+private void setPeriodeHariIni() {
+    java.time.LocalDate today = java.time.LocalDate.now();
+    java.util.Date tanggalHariIni = java.sql.Date.valueOf(today);
 
-    
+    // Set JDateChooser ke tanggal hari ini
+    jdcStart.setDate(tanggalHariIni);
+    jdcEnd.setDate(tanggalHariIni);
+
+    // Tampilkan diagram langsung
+}
+
+ 
     private void hitungHargaJual() {
     try {
         int hargaPokok = Integer.parseInt(tHargaPokok.getText().trim());
@@ -285,6 +298,25 @@ private void setKeyBindings() {
     }
 }
     
+    private void tampilkanDiagram() {
+    java.util.Date start = jdcStart.getDate();
+    java.util.Date end = jdcEnd.getDate();
+    if (start == null || end == null) return;
+
+    java.sql.Date sqlStart = new java.sql.Date(start.getTime());
+    java.sql.Date sqlEnd = new java.sql.Date(end.getTime());
+
+    panelGrafik.removeAll();
+
+    DiagramBatang diagram = new DiagramBatang(sqlStart, sqlEnd);
+    diagram.setPreferredSize(panelGrafik.getSize());
+
+    panelGrafik.setLayout(new java.awt.BorderLayout());
+    panelGrafik.add(diagram, java.awt.BorderLayout.CENTER);
+    panelGrafik.revalidate();
+    panelGrafik.repaint();
+}
+
     private void loadKategori() {
     cbJenis.removeAllItems(); // kosongkan dulu
     try (Connection conn = koneksi.dbKonek()) {
@@ -471,6 +503,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
+        panelGrafik = new javax.swing.JPanel();
+        jdcEnd = new com.toedter.calendar.JDateChooser();
+        jdcStart = new com.toedter.calendar.JDateChooser();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -556,7 +591,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                     .addGroup(pnFormLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel2)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         pnFormLayout.setVerticalGroup(
             pnFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -675,7 +710,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(891, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         pnDaftarBarangLayout.setVerticalGroup(
@@ -696,6 +731,29 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 .addGap(69, 69, 69))
         );
 
+        javax.swing.GroupLayout panelGrafikLayout = new javax.swing.GroupLayout(panelGrafik);
+        panelGrafik.setLayout(panelGrafikLayout);
+        panelGrafikLayout.setHorizontalGroup(
+            panelGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 769, Short.MAX_VALUE)
+        );
+        panelGrafikLayout.setVerticalGroup(
+            panelGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
+
+        jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcStartPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -703,18 +761,32 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1)
-                    .addComponent(pnForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnDaftarBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pnDaftarBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pnForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jdcStart, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jdcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(panelGrafik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(jdcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jdcStart, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(pnForm, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelGrafik, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnForm, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnDaftarBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(24, Short.MAX_VALUE))
@@ -852,6 +924,16 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblBarang.clearSelection();
     }//GEN-LAST:event_btnBatalActionPerformed
 
+    private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
+    tampilkanDiagram();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcStartPropertyChange
+
+    private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
+    tampilkanDiagram();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcEndPropertyChange
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
@@ -873,6 +955,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private com.toedter.calendar.JDateChooser jdcEnd;
+    private com.toedter.calendar.JDateChooser jdcStart;
+    private javax.swing.JPanel panelGrafik;
     private javax.swing.JPanel pnDaftarBarang;
     private javax.swing.JPanel pnForm;
     private javax.swing.JTextField tCari;

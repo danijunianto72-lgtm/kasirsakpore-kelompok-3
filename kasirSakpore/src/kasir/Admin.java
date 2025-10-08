@@ -247,6 +247,7 @@ private void loadChart(String startDate, String endDate) {
         pnlBarang = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         lblPemasukan7 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setFocusable(false);
         setMinimumSize(new java.awt.Dimension(20000, 20000));
@@ -535,6 +536,14 @@ private void loadChart(String startDate, String endDate) {
         lblPemasukan7.setRequestFocusEnabled(false);
         pnlBarang.add(lblPemasukan7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 100, 90));
 
+        jButton2.setText("LIHAT DETAIL");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        pnlBarang.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, -1, -1));
+
         jPanel2.add(pnlBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 190, 180, 160));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1740, 960));
@@ -590,10 +599,15 @@ private void loadChart(String startDate, String endDate) {
     }        // TODO add your handling code here:
     }//GEN-LAST:event_jdcEndPropertyChange
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
