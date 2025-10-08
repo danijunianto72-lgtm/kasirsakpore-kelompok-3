@@ -152,6 +152,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
         jLabel2.setText("Sakpore");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 200, 100));
 
+        jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setText("CETAK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

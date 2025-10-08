@@ -725,7 +725,7 @@ private void setupSkuScanner() {
         jLabel3.setText("SKU barang");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 57, -1, -1));
 
-        btnBatal.setBackground(new java.awt.Color(153, 153, 153));
+        btnBatal.setBackground(new java.awt.Color(204, 204, 204));
         btnBatal.setText("BATAL");
         jPanel1.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 790, 130, 50));
 
@@ -742,7 +742,7 @@ private void setupSkuScanner() {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 930, 350));
 
-        btnPembayaran.setBackground(new java.awt.Color(0, 204, 102));
+        btnPembayaran.setBackground(new java.awt.Color(51, 255, 0));
         btnPembayaran.setText("PEMBAYARAN");
         btnPembayaran.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

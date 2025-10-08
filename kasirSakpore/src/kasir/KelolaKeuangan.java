@@ -345,6 +345,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel1.setText("Daftar Keuangan");
         pnDaftarUser.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
+        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
         btnEdit.setText("EDIT");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -353,6 +354,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnDaftarUser.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 110, 120, 40));
 
+        btnDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnDelete.setText("DELETE");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,6 +368,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel2.setText("SAMPAI");
         pnDaftarUser.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 120, -1, -1));
 
+        btnFilter.setBackground(new java.awt.Color(255, 153, 51));
         btnFilter.setText("FILTER");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -374,6 +377,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnDaftarUser.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 110, 120, 40));
 
+        btnReset.setBackground(new java.awt.Color(0, 153, 153));
         btnReset.setText("REFRESH");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
