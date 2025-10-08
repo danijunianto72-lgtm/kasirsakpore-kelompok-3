@@ -36,8 +36,7 @@ public class KelolaKeuangan extends javax.swing.JPanel {
                     setFilterDefault();
                     element();
                     
-                    
-btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
     "ctrlS"
 );
@@ -187,9 +186,13 @@ private void setFilterDefault() {
 
 private void clearForm() {
     txtJenis.setText("");
-    txtMasuk.setText("");
-    txtKeluar.setText("");
-    jdcTanggal.setDate(null);
+    txtMasuk.setText("0");
+    txtKeluar.setText("0");
+    Calendar cal = Calendar.getInstance();
+
+    // awal bulan
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
 
     isEditMode = false;
     selectedId = -1;
