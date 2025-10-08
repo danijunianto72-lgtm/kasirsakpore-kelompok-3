@@ -297,11 +297,18 @@ private void setPeriodeHariIni() {
         e.printStackTrace();
     }
 }
-private void tampilkanDiagram() {
+    
+    private void tampilkanDiagram() {
+    java.util.Date start = jdcStart.getDate();
+    java.util.Date end = jdcEnd.getDate();
+    if (start == null || end == null) return;
+
+    java.sql.Date sqlStart = new java.sql.Date(start.getTime());
+    java.sql.Date sqlEnd = new java.sql.Date(end.getTime());
+
     panelGrafik.removeAll();
 
-    // Tanpa parameter → otomatis hari ini
-    DiagramBatang diagram = new DiagramBatang();
+    DiagramBatang diagram = new DiagramBatang(sqlStart, sqlEnd);
     diagram.setPreferredSize(panelGrafik.getSize());
 
     panelGrafik.setLayout(new java.awt.BorderLayout());
@@ -309,7 +316,6 @@ private void tampilkanDiagram() {
     panelGrafik.revalidate();
     panelGrafik.repaint();
 }
-
 
     private void loadKategori() {
     cbJenis.removeAllItems(); // kosongkan dulu
