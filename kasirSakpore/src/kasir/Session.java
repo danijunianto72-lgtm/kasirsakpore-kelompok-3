@@ -105,6 +105,37 @@ public class Session {
 
         return total;
     }
+    
+    public static double hitungPengeluaran(Date tglMulai, Date tglSelesai) {
+        double total = 0.0;
+
+        try (Connection conn = koneksi.dbKonek()) {
+
+            String sql = "SELECT SUM(totalharga) AS totalharga "
+                       + "FROM barangmasuk "
+                       + "WHERE tanggal >= ? AND tanggal < ?";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+
+            // konversi java.util.Date ke LocalDate
+            LocalDate startLocal = tglMulai.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate endLocal = tglSelesai.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            pst.setTimestamp(1, Timestamp.valueOf(startLocal.atStartOfDay()));
+            pst.setTimestamp(2, Timestamp.valueOf(endLocal.plusDays(1).atStartOfDay()));
+
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("totalharga");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
 
 
 

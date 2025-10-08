@@ -14,13 +14,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
@@ -91,7 +95,9 @@ public class LaporanPembelian extends javax.swing.JPanel {
                     rs.getInt("hargabarang"),
                     rs.getInt("jumlahmasuk"),
                     rs.getInt("totalharga")
+                        
                 });
+
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error tampil data: " + ex.getMessage());
@@ -162,6 +168,14 @@ public class LaporanPembelian extends javax.swing.JPanel {
                 rs.getInt("totalharga")
             });
         }
+double totalKeluar = Session.hitungPengeluaran(tglMulai, tglSelesai);
+NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+lblKeluar.setText(nf.format(totalKeluar));
+SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+String dari = sdf.format(tglMulai);
+String sampai = sdf.format(tglSelesai);
+lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: " + nf.format(totalKeluar));
+
     } catch (SQLException ex) {
         JOptionPane.showMessageDialog(this, "Error filter data: " + ex.getMessage());
     }
@@ -203,7 +217,7 @@ public class LaporanPembelian extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblKeluar = new javax.swing.JLabel();
         btnRefresh = new javax.swing.JButton();
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -211,6 +225,7 @@ public class LaporanPembelian extends javax.swing.JPanel {
         btnCetak = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         cbfSupplier = new javax.swing.JComboBox<>();
+        jLabel5 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -231,9 +246,9 @@ public class LaporanPembelian extends javax.swing.JPanel {
         jLabel3.setText(" /");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 140, 20, 30));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("Selesai");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, -1, 40));
+        lblKeluar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblKeluar.setText("Selesai");
+        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 110, -1, 40));
 
         btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
         btnRefresh.setText("Refresh");
@@ -264,6 +279,11 @@ public class LaporanPembelian extends javax.swing.JPanel {
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
         btnCetak.setText("Cetak");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1530, 140, 140, 40));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -273,12 +293,103 @@ public class LaporanPembelian extends javax.swing.JPanel {
         cbfSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel1.add(cbfSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 140, 140, 40));
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setText("Selesai");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, -1, 40));
+
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
 
     }//GEN-LAST:event_jdcEndPropertyChange
+
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+    // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Simpan Laporan Pembelian");
+
+    // Default nama file
+    fileChooser.setSelectedFile(new java.io.File("LaporanPembelian.pdf"));
+
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        java.io.File fileToSave = fileChooser.getSelectedFile();
+
+        // Pastikan file berekstensi .pdf
+        if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".pdf")) {
+            fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".pdf");
+        }
+
+        try {
+            // === Buat PDF pakai iText ===
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(fileToSave));
+            document.open();
+
+            // Judul laporan
+            com.itextpdf.text.Font fontJudul = new com.itextpdf.text.Font(
+                    com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Paragraph judul = new com.itextpdf.text.Paragraph("Laporan Pembelian", fontJudul);
+            judul.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(judul);
+
+            document.add(new com.itextpdf.text.Paragraph(
+                    "Tanggal Cetak: " + new java.util.Date().toString()));
+            document.add(new com.itextpdf.text.Paragraph(" ")); // spasi kosong
+
+            // Buat tabel PDF sesuai JTable
+            int colCount = tblPembelian.getColumnCount();
+            com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(colCount);
+            pdfTable.setWidthPercentage(100); // tabel full lebar halaman
+
+            // Header kolom
+            for (int i = 0; i < colCount; i++) {
+                com.itextpdf.text.pdf.PdfPCell headerCell = new com.itextpdf.text.pdf.PdfPCell(
+                        new com.itextpdf.text.Phrase(tblPembelian.getColumnName(i)));
+                headerCell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                headerCell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                pdfTable.addCell(headerCell);
+            }
+
+            // Isi data baris
+            int rowCount = tblPembelian.getRowCount();
+            for (int row = 0; row < rowCount; row++) {
+                for (int col = 0; col < colCount; col++) {
+                    Object value = tblPembelian.getValueAt(row, col);
+                    com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(
+                            new com.itextpdf.text.Phrase(value != null ? value.toString() : ""));
+                    cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                    pdfTable.addCell(cell);
+                }
+            }
+
+            document.add(pdfTable);
+
+            // === Tambahkan jarak antar tabel dan keterangan total ===
+            document.add(new com.itextpdf.text.Paragraph("\n"));
+
+            com.itextpdf.text.Font fontKeterangan = new com.itextpdf.text.Font(
+                    com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+
+            com.itextpdf.text.Paragraph paragrafKeterangan =
+                    new com.itextpdf.text.Paragraph(lblKeluar.getText(), fontKeterangan);
+
+            paragrafKeterangan.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(paragrafKeterangan);
+
+            // Tutup dokumen
+            document.close();
+
+            JOptionPane.showMessageDialog(this, "Laporan berhasil disimpan di:\n" + fileToSave.getAbsolutePath());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencetak PDF: " + ex.getMessage());
+        }
+    }
+    }//GEN-LAST:event_btnCetakActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -288,12 +399,13 @@ public class LaporanPembelian extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;
+    private javax.swing.JLabel lblKeluar;
     private javax.swing.JTable tblPembelian;
     // End of variables declaration//GEN-END:variables
 }

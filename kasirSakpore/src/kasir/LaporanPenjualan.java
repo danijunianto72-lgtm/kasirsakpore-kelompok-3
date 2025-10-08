@@ -318,7 +318,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
 
         lblKeterangan.setText("jLabel1");
-        jPanel1.add(lblKeterangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 60, -1, -1));
+        jPanel1.add(lblKeterangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1220, 170, 450, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
