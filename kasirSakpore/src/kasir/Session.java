@@ -64,9 +64,9 @@ public class Session {
             double saldo = totalMasuk - totalKeluar;
 
             // Format jadi string angka (bisa juga rupiah)
-            lblMasuk.setText(String.format("%.2f", totalMasuk));
-            lblKeluar.setText(String.format("%.2f", totalKeluar));
-            lblSaldo.setText(String.format("%.2f", saldo));
+            lblMasuk.setText(String.format("Total pemasukan "+"%.2f", totalMasuk));
+            lblKeluar.setText(String.format("Total pengeluaran "+"%.2f", totalKeluar));
+            lblSaldo.setText(String.format("Keuntungan "+"%.2f", saldo));
 
         } catch (Exception e) {
             lblMasuk.setText("0.00");

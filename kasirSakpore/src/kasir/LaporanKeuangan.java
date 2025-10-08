@@ -654,11 +654,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jycTahun = new com.toedter.calendar.JYearChooser();
         jLabel3 = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
         lblSaldo = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
         lblMasuk = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
         lblKeluar = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
@@ -812,32 +809,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblTotalBulan.setText("lblTotalBulan");
         panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        lblSaldo.setText("lblSaldo");
+        panelUtama.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1280, 90, 400, -1));
 
-        lblSaldo.setText("jLabel4");
-        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
+        lblMasuk.setText("lblMasuk");
+        panelUtama.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1280, 50, 390, -1));
 
-        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 10, 190, 100));
-
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblMasuk.setText("jLabel4");
-        jPanel2.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
-
-        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, 190, 100));
-
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblKeluar.setText("jLabel4");
-        jPanel3.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 170, 40));
-
-        panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 10, 190, 100));
+        lblKeluar.setText("lblKeluar");
+        panelUtama.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1280, 70, 400, -1));
 
         add(panelUtama, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -859,20 +838,18 @@ setFilterDefault();// TODO add your handling code here:
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-   // Dialog pilih lokasi file
     JFileChooser chooser = new JFileChooser();
     chooser.setDialogTitle("Simpan Laporan Keuangan");
     chooser.setSelectedFile(new File("LaporanKeuangan.pdf"));
 
     int userSelection = chooser.showSaveDialog(this);
     if (userSelection != JFileChooser.APPROVE_OPTION) {
-        return; // batal
+        return;
     }
 
     File fileToSave = chooser.getSelectedFile();
     String filePath = fileToSave.getAbsolutePath();
 
-    // Format tanggal
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
     Date startDate = jdcStart.getDate();
     Date endDate = jdcEnd.getDate();
@@ -882,7 +859,7 @@ setFilterDefault();// TODO add your handling code here:
     JTable table = tblKeuangan;
     TableModel model = table.getModel();
 
-    Document document = new Document(PageSize.A4.rotate()); // landscape
+    Document document = new Document(PageSize.A4.rotate());
     try {
         PdfWriter.getInstance(document, new FileOutputStream(filePath));
         document.open();
@@ -893,18 +870,19 @@ setFilterDefault();// TODO add your handling code here:
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
 
-        // Keterangan periode
+        // Periode
         Paragraph info = new Paragraph(
                 "Periode: " + startStr + " s/d " + endStr + "\n\n",
                 FontFactory.getFont(FontFactory.HELVETICA, 12));
         info.setAlignment(Element.ALIGN_CENTER);
         document.add(info);
 
-        // Tabel PDF
+        // Tabel data
         PdfPTable pdfTable = new PdfPTable(model.getColumnCount());
         pdfTable.setWidthPercentage(100);
         pdfTable.setSpacingBefore(10f);
 
+        // Header kolom
         for (int i = 0; i < model.getColumnCount(); i++) {
             PdfPCell headerCell = new PdfPCell(new Phrase(model.getColumnName(i)));
             headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
@@ -912,6 +890,7 @@ setFilterDefault();// TODO add your handling code here:
             pdfTable.addCell(headerCell);
         }
 
+        // Isi tabel
         for (int r = 0; r < model.getRowCount(); r++) {
             for (int c = 0; c < model.getColumnCount(); c++) {
                 Object val = model.getValueAt(r, c);
@@ -923,6 +902,25 @@ setFilterDefault();// TODO add your handling code here:
 
         document.add(pdfTable);
 
+        // Tambahkan ringkasan total di bawah tabel
+        document.add(new Paragraph("\n\n", FontFactory.getFont(FontFactory.HELVETICA, 10)));
+
+        Paragraph totalMasuk = new Paragraph("Total pemasukan: " + lblMasuk.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+        Paragraph totalKeluar = new Paragraph("Total pengeluaran: " + lblKeluar.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+        Paragraph totalSaldo = new Paragraph("Keuntungan: " + lblSaldo.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+
+        totalMasuk.setAlignment(Element.ALIGN_LEFT);
+        totalKeluar.setAlignment(Element.ALIGN_LEFT);
+        totalSaldo.setAlignment(Element.ALIGN_LEFT);
+
+        document.add(totalMasuk);
+        document.add(totalKeluar);
+        document.add(totalSaldo);
+
+        // Footer tanggal cetak
         Paragraph footer = new Paragraph(
                 "\nDicetak pada: " + sdf.format(new java.util.Date()),
                 FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10));
@@ -940,7 +938,8 @@ setFilterDefault();// TODO add your handling code here:
         JOptionPane.showMessageDialog(this,
                 "Gagal membuat PDF:\n" + e.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
-    }        // TODO add your handling code here:
+    }
+// TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void tblKeuanganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblKeuanganKeyPressed
@@ -981,9 +980,6 @@ loadDataBulanTahun();// TODO add your handling code here:
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
