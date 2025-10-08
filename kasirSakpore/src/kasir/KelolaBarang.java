@@ -4,6 +4,7 @@
  */
 package kasir;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -20,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
@@ -56,7 +59,16 @@ public class KelolaBarang extends javax.swing.JPanel {
         filterKategori();
         generateKodeBarang();
         tampilkanDiagram();
+panelGrafik.setLayout(new BorderLayout());
 
+// ambil tanggal hari ini
+LocalDate today = LocalDate.now();
+// ambil tanggal awal bulan ini
+String startDate = today.withDayOfMonth(1).toString();
+// ambil tanggal hari ini (akhir rentang default)
+String endDate = today.toString();
+
+loadChart(startDate, endDate);
 
         
         tPajak.getDocument().addDocumentListener(new DocumentListener() {
@@ -298,21 +310,22 @@ private void setPeriodeHariIni() {
     }
 }
     
-    private void tampilkanDiagram() {
+private void tampilkanDiagram() {
     java.util.Date start = jdcStart.getDate();
     java.util.Date end = jdcEnd.getDate();
     if (start == null || end == null) return;
 
-    java.sql.Date sqlStart = new java.sql.Date(start.getTime());
-    java.sql.Date sqlEnd = new java.sql.Date(end.getTime());
+    String startDate = new java.sql.Date(start.getTime()).toString();
+    String endDate = new java.sql.Date(end.getTime()).toString();
+
+    DiagramBatang diagram = new DiagramBatang(startDate, endDate);
+    JScrollPane scrollPane = new JScrollPane(diagram,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     panelGrafik.removeAll();
-
-    DiagramBatang diagram = new DiagramBatang(sqlStart, sqlEnd);
-    diagram.setPreferredSize(panelGrafik.getSize());
-
     panelGrafik.setLayout(new java.awt.BorderLayout());
-    panelGrafik.add(diagram, java.awt.BorderLayout.CENTER);
+    panelGrafik.add(scrollPane, java.awt.BorderLayout.CENTER);
     panelGrafik.revalidate();
     panelGrafik.repaint();
 }
@@ -349,6 +362,19 @@ private void setPeriodeHariIni() {
         ex.printStackTrace();
     }
     }
+    private void loadChart(String startDate, String endDate) {
+    DiagramBatang chart = new DiagramBatang(startDate, endDate);
+
+    JScrollPane scrollPane = new JScrollPane(chart,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+    panelGrafik.removeAll();
+    panelGrafik.add(scrollPane, BorderLayout.CENTER);
+    panelGrafik.revalidate();
+    panelGrafik.repaint();
+}
+
     
     private void generateKodeBarang() {
     Connection conn = null;

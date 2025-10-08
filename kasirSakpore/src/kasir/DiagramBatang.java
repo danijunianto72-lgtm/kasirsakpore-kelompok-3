@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package kasir;
+
 import java.awt.*;
 import java.sql.*;
 import java.util.*;
@@ -12,10 +13,10 @@ public class DiagramBatang extends JPanel {
     private final java.util.List<String> namaBarang = new ArrayList<>();
     private final java.util.List<Integer> totalTerjual = new ArrayList<>();
 
-    private final java.sql.Date startDate;
-    private final java.sql.Date endDate;
+    private final String startDate;
+    private final String endDate;
 
-    public DiagramBatang(java.sql.Date start, java.sql.Date end) {
+    public DiagramBatang(String start, String end) {
         this.startDate = start;
         this.endDate = end;
         loadData();
@@ -45,15 +46,17 @@ public class DiagramBatang extends JPanel {
                     total_terjual DESC
                 LIMIT 3
             """;
+
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setDate(1, startDate);
-            pst.setDate(2, endDate);
+            pst.setDate(1, java.sql.Date.valueOf(startDate));
+            pst.setDate(2, java.sql.Date.valueOf(endDate));
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
                 namaBarang.add(rs.getString("namabarang"));
                 totalTerjual.add(rs.getInt("total_terjual"));
             }
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Gagal mengambil data: " + e.getMessage());
         }
@@ -81,8 +84,7 @@ public class DiagramBatang extends JPanel {
         // Judul dengan periode
         g2.setFont(new Font("Segoe UI", Font.BOLD, 18));
         g2.setColor(new Color(40, 40, 40));
-        String title = String.format("3 Produk Terlaris (%s s.d %s)",
-                startDate.toString(), endDate.toString());
+        String title = String.format("3 Produk Terlaris (%s s.d %s)", startDate, endDate);
         int titleWidth = g2.getFontMetrics().stringWidth(title);
         g2.drawString(title, (width - titleWidth) / 2, 40);
 
@@ -107,7 +109,7 @@ public class DiagramBatang extends JPanel {
                     x, y + barHeight, new Color(140, 190, 255)
             );
             g2.setPaint(gradient);
-            g2.fillRoundRect(x, y, barWidth, barHeight);
+            g2.fillRoundRect(x, y, barWidth, barHeight, 20, 20);
 
             // Nilai di atas batang
             g2.setColor(new Color(50, 50, 50));
