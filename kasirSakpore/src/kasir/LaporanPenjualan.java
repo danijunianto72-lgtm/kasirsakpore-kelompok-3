@@ -310,6 +310,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
         btnCetak.setText("Cetak");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 140, 160, 50));
 
         lblKeterangan.setText("jLabel1");
@@ -365,6 +370,93 @@ popup.setVisible(true);
         }
     }         // TODO add your handling code here:
     }//GEN-LAST:event_jdcEndPropertyChange
+
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Simpan Laporan Keuangan");
+
+    // Default nama file
+    fileChooser.setSelectedFile(new java.io.File("LaporanTransaksi.pdf"));
+
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        java.io.File fileToSave = fileChooser.getSelectedFile();
+
+        // Pastikan file berekstensi .pdf
+        if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".pdf")) {
+            fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".pdf");
+        }
+
+        try {
+            // === Buat PDF pakai iText ===
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(fileToSave));
+            document.open();
+
+            // Judul laporan
+            com.itextpdf.text.Font fontJudul = new com.itextpdf.text.Font(
+                    com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Paragraph judul = new com.itextpdf.text.Paragraph("Laporan Transaksi", fontJudul);
+            judul.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(judul);
+
+            document.add(new com.itextpdf.text.Paragraph(
+                    "Tanggal Cetak: " + new java.util.Date().toString()));
+            document.add(new com.itextpdf.text.Paragraph(" ")); // spasi kosong
+
+            // Buat tabel PDF sesuai JTable
+            int colCount = tblTransaksi.getColumnCount();
+            com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(colCount);
+            pdfTable.setWidthPercentage(100); // tabel full lebar halaman
+
+            // Header kolom
+            for (int i = 0; i < colCount; i++) {
+                com.itextpdf.text.pdf.PdfPCell headerCell = new com.itextpdf.text.pdf.PdfPCell(
+                        new com.itextpdf.text.Phrase(tblTransaksi.getColumnName(i)));
+                headerCell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                headerCell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                pdfTable.addCell(headerCell);
+            }
+
+            // Isi data baris
+            int rowCount = tblTransaksi.getRowCount();
+            for (int row = 0; row < rowCount; row++) {
+                for (int col = 0; col < colCount; col++) {
+                    Object value = tblTransaksi.getValueAt(row, col);
+                    com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(
+                            new com.itextpdf.text.Phrase(value != null ? value.toString() : ""));
+                    cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                    pdfTable.addCell(cell);
+                }
+            }
+
+            document.add(pdfTable);
+
+            // === Tambahkan jarak antar tabel dan keterangan total ===
+            document.add(new com.itextpdf.text.Paragraph("\n"));
+
+            com.itextpdf.text.Font fontKeterangan = new com.itextpdf.text.Font(
+                    com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+
+            com.itextpdf.text.Paragraph paragrafKeterangan =
+                    new com.itextpdf.text.Paragraph(lblKeterangan.getText(), fontKeterangan);
+
+            paragrafKeterangan.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(paragrafKeterangan);
+
+            // Tutup dokumen
+            document.close();
+
+            JOptionPane.showMessageDialog(this, "Laporan berhasil disimpan di:\n" + fileToSave.getAbsolutePath());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencetak PDF: " + ex.getMessage());
+        }
+    }
+    }//GEN-LAST:event_btnCetakActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
