@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.sql.*;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import javax.swing.SwingUtilities;
 /**
  *
@@ -32,6 +33,7 @@ public class Admin extends javax.swing.JPanel {
 
  public Admin() {
     initComponents();
+    setFilterDefault();
 getTotalStokKurang();
     // atur layout panelChart
     panelChart.setLayout(new BorderLayout());
@@ -60,6 +62,15 @@ getTotalStokKurang();
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
     });
+}
+     private void setFilterDefault() {
+    Calendar cal = Calendar.getInstance();
+
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
 }
 public void getTotalStokKurang() {
     try {

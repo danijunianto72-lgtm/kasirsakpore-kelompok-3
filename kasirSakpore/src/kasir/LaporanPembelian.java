@@ -46,7 +46,16 @@ public class LaporanPembelian extends javax.swing.JPanel {
         tampilData();
         loadSupplier();
         setFilterDefault();
-       
+        java.util.Date tglMulai = jdcStart.getDate();
+    java.util.Date tglSelesai = jdcEnd.getDate();
+       double totalKeluar = Session.hitungPengeluaran(tglMulai, tglSelesai);
+NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+lblKeluar.setText(nf.format(totalKeluar));
+SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+String dari = sdf.format(tglMulai);
+String sampai = sdf.format(tglSelesai);
+lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: " + nf.format(totalKeluar));
+
         
          // filter otomatis saat tanggal berubah
     jdcStart.addPropertyChangeListener(evt -> {
@@ -61,13 +70,13 @@ public class LaporanPembelian extends javax.swing.JPanel {
     });
 
     // event filter supplier
-    cbfSupplier.addActionListener(evt -> {
+    cmbSupplier.addActionListener(evt -> {
         filterData();
     });
 
     // tombol refresh
     btnRefresh.addActionListener(evt -> {
-        cbfSupplier.setSelectedIndex(0);
+        cmbSupplier.setSelectedIndex(0);
         tampilData();
         setFilterDefault();
     });
@@ -99,6 +108,7 @@ public class LaporanPembelian extends javax.swing.JPanel {
                 });
 
             }
+            
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error tampil data: " + ex.getMessage());
         }
@@ -117,7 +127,7 @@ public class LaporanPembelian extends javax.swing.JPanel {
   private void filterData() {
     java.util.Date tglMulai = jdcStart.getDate();
     java.util.Date tglSelesai = jdcEnd.getDate();
-    String supplierDipilih = (String) cbfSupplier.getSelectedItem();
+    String supplierDipilih = (String) cmbSupplier.getSelectedItem();
 
     DefaultTableModel model = (DefaultTableModel) tblPembelian.getModel();
     model.setRowCount(0);
@@ -183,8 +193,8 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
 
    
     private void loadSupplier() {
-    cbfSupplier.removeAllItems();
-    cbfSupplier.addItem("Semua Supplier"); // default untuk tampil semua data
+    cmbSupplier.removeAllItems();
+    cmbSupplier.addItem("Semua Supplier"); // default untuk tampil semua data
 
     try (Connection conn = kasir.koneksi.dbKonek()) {
         String sql = "SELECT namasupplier FROM supplier ORDER BY namasupplier ASC";
@@ -192,7 +202,7 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         ResultSet rs = pst.executeQuery();
 
         while (rs.next()) {
-            cbfSupplier.addItem(rs.getString("namasupplier"));
+            cmbSupplier.addItem(rs.getString("namasupplier"));
         }
     } catch (SQLException ex) {
         JOptionPane.showMessageDialog(this, "Error load supplier: " + ex.getMessage());
@@ -213,19 +223,17 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jdcStart = new com.toedter.calendar.JDateChooser();
-        jLabel3 = new javax.swing.JLabel();
         lblKeluar = new javax.swing.JLabel();
-        btnRefresh = new javax.swing.JButton();
-        jdcEnd = new com.toedter.calendar.JDateChooser();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPembelian = new javax.swing.JTable();
+        btnRefresh = new javax.swing.JButton();
         btnCetak = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        cbfSupplier = new javax.swing.JComboBox<>();
-        jLabel5 = new javax.swing.JLabel();
+        cmbSupplier = new javax.swing.JComboBox<>();
+        jdcEnd = new com.toedter.calendar.JDateChooser();
+        jdcStart = new com.toedter.calendar.JDateChooser();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -233,33 +241,21 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setText("Laporan Pembelian");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("Mulai");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 140, -1, 40));
-        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 140, 160, 40));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 2, 24)); // NOI18N
-        jLabel3.setText(" /");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 140, 20, 30));
-
         lblKeluar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblKeluar.setText("Selesai");
-        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 110, -1, 40));
+        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 90, -1, 40));
 
-        btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
-        btnRefresh.setText("Refresh");
-        jPanel1.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(1350, 140, 130, 40));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setText("Daftar Pembelian");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, -1, -1));
 
-        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jdcEndPropertyChange(evt);
-            }
-        });
-        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 140, 160, 40));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setText("Sampai");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, -1, 40));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tblPembelian.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -274,7 +270,11 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         ));
         jScrollPane1.setViewportView(tblPembelian);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, 1630, 570));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 1630, 490));
+
+        btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
+        btnRefresh.setText("Refresh");
+        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(1330, 110, 130, 40));
 
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
@@ -284,18 +284,20 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
                 btnCetakActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1530, 140, 140, 40));
+        jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 110, 140, 40));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("Daftar Pembelian");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, -1, -1));
+        cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 110, 140, 40));
 
-        cbfSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(cbfSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 140, 140, 40));
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
+        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 160, 40));
+        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 110, 160, 40));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setText("Selesai");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, -1, 40));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 1660, 680));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -395,13 +397,11 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnRefresh;
-    private javax.swing.JComboBox<String> cbfSupplier;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JComboBox<String> cmbSupplier;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;

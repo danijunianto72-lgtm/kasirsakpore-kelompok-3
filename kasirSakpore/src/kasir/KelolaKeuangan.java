@@ -4,9 +4,12 @@
  */
 package kasir;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -19,6 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -41,6 +45,8 @@ public class KelolaKeuangan extends javax.swing.JPanel {
     "ctrlS"
 );
 
+        txtMasuk.setText("0");
+        txtKeluar.setText("0");
 btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -60,17 +66,6 @@ btnReset.getActionMap().put("ctrlR", new AbstractAction() {
     }
 });
 
-btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
-    "ctrlF"
-);
-
-btnFilter.getActionMap().put("ctrlF", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnFilter.doClick(); // Menjalankan aksi tombol
-    }
-});
 
 btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
@@ -95,6 +90,27 @@ btnDelete.getActionMap().put("ctrlD", new AbstractAction() {
     }
 });
 setKeyBindings();
+// Misalnya tabel kamu bernama table1
+JTableHeader header = tblKeuangan.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
     }
    
    private void setKeyBindings() {
@@ -121,13 +137,26 @@ setKeyBindings();
 boolean isEditMode = false; 
 int selectedId = -1; // untuk simpan idkeuangan yang dipilih
 // taruh di atas class
+
+
 private java.util.List<Integer> idList = new ArrayList<>(); // buat simpan id
 
 private void loadDataKeuangan() {
+    java.util.Date start = java.sql.Date.valueOf(
+        java.time.LocalDate.now().withDayOfMonth(1) // awal bulan
+    );
+    java.util.Date end = java.sql.Date.valueOf(
+        java.time.LocalDate.now().withDayOfMonth(
+            java.time.LocalDate.now().lengthOfMonth() // akhir bulan
+        )
+    );
+    loadDataKeuangan(start, end);
+}
+private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) {
     DefaultTableModel model = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false; // tabel tidak bisa diubah langsung
+            return false;
         }
     };
 
@@ -138,21 +167,25 @@ private void loadDataKeuangan() {
     model.addColumn("Tanggal");
 
     try (Connection conn = koneksi.dbKonek()) {
-String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
-           + "FROM keuangan "
-           + "WHERE tanggal::date >= date_trunc('month', CURRENT_DATE) "
-           + "AND tanggal::date < (date_trunc('month', CURRENT_DATE) + interval '1 month') "
-           + "ORDER BY tanggal DESC";
-PreparedStatement pst = conn.prepareStatement(sql);
+        String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
+                   + "FROM keuangan "
+                   + "WHERE tanggal::date BETWEEN ? AND ? "
+                   + "ORDER BY tanggal DESC";
+        PreparedStatement pst = conn.prepareStatement(sql);
+
+        // konversi java.util.Date -> java.sql.Date
+        pst.setDate(1, new java.sql.Date(startDate.getTime()));
+        pst.setDate(2, new java.sql.Date(endDate.getTime()));
+
         ResultSet rs = pst.executeQuery();
 
-        idList.clear(); // reset dulu list id
+        idList.clear();
         int no = 1;
 
         while (rs.next()) {
-            idList.add(rs.getInt("idkeuangan")); // simpan ID ke list
+            idList.add(rs.getInt("idkeuangan"));
             model.addRow(new Object[]{
-                no++, // nomor urut
+                no++,
                 rs.getString("jeniskeuangan"),
                 rs.getDouble("masuk"),
                 rs.getDouble("keluar"),
@@ -162,7 +195,6 @@ PreparedStatement pst = conn.prepareStatement(sql);
 
         tblKeuangan.setModel(model);
 
-        // atur lebar kolom No biar kecil
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
 
@@ -210,10 +242,13 @@ private void element(){
             
 );
 
+
 setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
 setFocusCycleRoot(true);
 
 }
+
+
 public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private final List<Component> order;
 
@@ -266,24 +301,24 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lUsername = new javax.swing.JLabel();
         lPass = new javax.swing.JLabel();
         txtJenis = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
         txtMasuk = new javax.swing.JTextField();
         lPass1 = new javax.swing.JLabel();
         txtKeluar = new javax.swing.JTextField();
         lPass2 = new javax.swing.JLabel();
         btnSubmit = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
         pnDaftarUser = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jLabel2 = new javax.swing.JLabel();
-        btnFilter = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKeuangan = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -291,29 +326,25 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         pnFormUser.setBackground(new java.awt.Color(255, 255, 255));
         pnFormUser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnFormUser.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        pnFormUser.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 340, 60));
+        pnFormUser.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 340, 60));
 
         lUsername.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lUsername.setText("Tanggal:");
-        pnFormUser.add(lUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, -1, -1));
+        pnFormUser.add(lUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 100, -1, -1));
 
         lPass.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lPass.setText("Jenis Keuangan:");
-        pnFormUser.add(lPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
+        pnFormUser.add(lPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, -1, -1));
 
         txtJenis.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        pnFormUser.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 230, 340, 60));
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel10.setText("Kelola Keuangan");
-        pnFormUser.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+        pnFormUser.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 250, 340, 60));
 
         txtMasuk.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        pnFormUser.add(txtMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 340, 340, 60));
+        pnFormUser.add(txtMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 360, 340, 60));
 
         lPass1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lPass1.setText("Masuk:");
-        pnFormUser.add(lPass1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 310, -1, -1));
+        pnFormUser.add(lPass1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 330, -1, -1));
 
         txtKeluar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         txtKeluar.addActionListener(new java.awt.event.ActionListener() {
@@ -321,29 +352,50 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 txtKeluarActionPerformed(evt);
             }
         });
-        pnFormUser.add(txtKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 450, 340, 60));
+        pnFormUser.add(txtKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 470, 340, 60));
 
         lPass2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lPass2.setText("Keluar:");
-        pnFormUser.add(lPass2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 420, -1, -1));
+        pnFormUser.add(lPass2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 440, -1, -1));
 
         btnSubmit.setBackground(new java.awt.Color(0, 255, 51));
         btnSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnSubmit.setText("SUBMIT ");
+        btnSubmit.setText("[ENTER] SUBMIT ");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSubmitActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 640, 320, 50));
+        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 610, 330, 80));
+
+        jPanel2.setBackground(new java.awt.Color(5, 69, 162));
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Kelola Keuangan");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10)
+                .addContainerGap(270, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jLabel10)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        pnFormUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 60));
 
         pnDaftarUser.setBackground(new java.awt.Color(255, 255, 255));
         pnDaftarUser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnDaftarUser.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel1.setText("Daftar Keuangan");
-        pnDaftarUser.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 51));
         btnEdit.setText("EDIT");
@@ -362,20 +414,23 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             }
         });
         pnDaftarUser.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 110, 120, 40));
-        pnDaftarUser.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 150, 40));
+
+        jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcStartPropertyChange(evt);
+            }
+        });
+        pnDaftarUser.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 150, 40));
+
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
         pnDaftarUser.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 110, 150, 40));
 
         jLabel2.setText("SAMPAI");
-        pnDaftarUser.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 120, -1, -1));
-
-        btnFilter.setBackground(new java.awt.Color(255, 153, 51));
-        btnFilter.setText("FILTER");
-        btnFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFilterActionPerformed(evt);
-            }
-        });
-        pnDaftarUser.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 110, 120, 40));
+        pnDaftarUser.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 120, -1, -1));
 
         btnReset.setBackground(new java.awt.Color(0, 153, 153));
         btnReset.setText("REFRESH");
@@ -384,7 +439,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnResetActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 110, 120, 40));
+        pnDaftarUser.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 120, 40));
 
         tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -397,44 +452,63 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "JenisKeuangan", "Masuk", "Keluar", "Total"
             }
         ));
-        tblKeuangan.setRowHeight(25);
+        tblKeuangan.setRowHeight(30);
         tblKeuangan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblKeuanganMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblKeuangan);
+        if (tblKeuangan.getColumnModel().getColumnCount() > 0) {
+            tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
+        }
 
-        pnDaftarUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 1040, 520));
+        pnDaftarUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 170, 1040, 520));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
-        jLabel3.setText("Kelola Keungan");
+        jPanel3.setBackground(new java.awt.Color(5, 69, 162));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Daftar Keuangan");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jLabel1)
+                .addContainerGap(970, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jLabel1)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        pnDaftarUser.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1170, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(pnFormUser, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47)
-                        .addComponent(pnDaftarUser, javax.swing.GroupLayout.PREFERRED_SIZE, 1142, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addGap(24, 24, 24)
+                .addComponent(pnFormUser, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnDaftarUser, javax.swing.GroupLayout.PREFERRED_SIZE, 1142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(96, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnDaftarUser, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(26, 26, 26)
-                        .addComponent(pnFormUser, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(131, Short.MAX_VALUE))
+                    .addComponent(pnFormUser, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(199, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -483,59 +557,6 @@ int row = tblKeuangan.getSelectedRow();
         }
     }
     }//GEN-LAST:event_btnEditActionPerformed
-
-    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
-   java.util.Date tglMulai = jdcStart.getDate();
-    java.util.Date tglSelesai = jdcEnd.getDate();
-
-    if (tglMulai == null || tglSelesai == null) {
-        JOptionPane.showMessageDialog(this, "Pilih tanggal mulai dan tanggal selesai!");
-        return;
-    }
-
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("No");
-    model.addColumn("Jenis Keuangan");
-    model.addColumn("Masuk");
-    model.addColumn("Keluar");
-    model.addColumn("Tanggal");
-
-    idList.clear(); // reset list ID
-
-    try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT idkeuangan, jeniskeuangan, masuk, keluar, tanggal "
-                   + "FROM keuangan "
-                   + "WHERE tanggal BETWEEN ? AND ? "
-                   + "ORDER BY tanggal DESC";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setDate(1, new java.sql.Date(tglMulai.getTime()));
-        pst.setDate(2, new java.sql.Date(tglSelesai.getTime()));
-
-        ResultSet rs = pst.executeQuery();
-        int no = 1;
-        while (rs.next()) {
-            idList.add(rs.getInt("idkeuangan"));
-            model.addRow(new Object[]{
-                no++,
-                rs.getString("jeniskeuangan"),
-                rs.getDouble("masuk"),
-                rs.getDouble("keluar"),
-                rs.getDate("tanggal")
-            });
-        }
-
-        tblKeuangan.setModel(model);
-
-        // biar kolom No kecil
-        tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
-        tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
-        tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Gagal filter data: " + e.getMessage());
-    }        // TODO add your handling code here:
-    }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
    String jenis = txtJenis.getText();
@@ -615,18 +636,40 @@ clearForm();        // TODO add your handling code here:
 setFilterDefault();
     }//GEN-LAST:event_btnResetActionPerformed
 
+    private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
+ if ("date".equals(evt.getPropertyName())) {
+        java.util.Date start = jdcStart.getDate();
+        java.util.Date end = jdcEnd.getDate();
+
+        if (start != null && end != null) {
+            loadDataKeuangan(start, end);
+        }
+    }         // TODO add your handling code here:
+    }//GEN-LAST:event_jdcStartPropertyChange
+
+    private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
+ if ("date".equals(evt.getPropertyName())) {
+        java.util.Date start = jdcStart.getDate();
+        java.util.Date end = jdcEnd.getDate();
+
+        if (start != null && end != null) {
+            loadDataKeuangan(start, end);
+        }
+    }         // TODO add your handling code here:
+    }//GEN-LAST:event_jdcEndPropertyChange
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;

@@ -121,7 +121,7 @@ private void loadBarang(String keyword, String filter) {
     model.setRowCount(0); // reset tabel
 
     try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT kodebarang,skubarang, nama, satuan, hargabarang, stok, kategori " +
+        String sql = "SELECT kodebarang,skubarang, nama, satuan, hargapokok, stok, kategori " +
                      "FROM barang WHERE 1=1 ";
 
         // tambahkan pencarian
@@ -153,7 +153,7 @@ private void loadBarang(String keyword, String filter) {
                 rs.getInt("kodebarang"),
                 rs.getString("nama"),
                 rs.getString("satuan"),
-                rs.getBigDecimal("hargabarang"),
+                rs.getBigDecimal("hargapokok"),
                  rs.getString("skubarang"),
                 rs.getInt("stok"),
                 rs.getString("kategori")
@@ -196,6 +196,7 @@ private void loadBarang(String keyword, String filter) {
                 "Kode", "Nama", "Satuan", "Harga", "sku", "Stok"
             }
         ));
+        tblBarang.setRowHeight(30);
         tblBarang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBarangMouseClicked(evt);
@@ -239,12 +240,12 @@ private void loadBarang(String keyword, String filter) {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 10, Short.MAX_VALUE)
+                .addGap(0, 27, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

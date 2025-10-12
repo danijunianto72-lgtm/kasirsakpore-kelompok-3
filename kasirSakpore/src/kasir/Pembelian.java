@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
@@ -36,12 +37,46 @@ public class Pembelian extends javax.swing.JPanel {
         initComponents();
         loadSupplier();
         loadTransaksi();
+        loadSupplier1();
         setupSkuScanner();
         element();
                 
+      // filter otomatis saat tanggal berubah
+    jdcStart.addPropertyChangeListener(evt -> {
+        if ("date".equals(evt.getPropertyName())) {
+            filterData();
+        }
+    });
+    jdcEnd.addPropertyChangeListener(evt -> {
+        if ("date".equals(evt.getPropertyName())) {
+            filterData();
+        }
+    });
 
+    // event filter supplier
+    cmbSupplier.addActionListener(evt -> {
+        filterData();
+    });
+
+    // tombol refresh
+    btnRefresh.addActionListener(evt -> {
+        cmbSupplier.setSelectedIndex(0);
+        loadTransaksi();
+        setFilterDefault();
+    });
+        
+       
 jdcTanggal.setDate(new Date());
     }
+        private void setFilterDefault() {
+    Calendar cal = Calendar.getInstance();
+
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
+}
 private void loadSupplier() {
     try (Connection conn = koneksi.dbKonek()) {
         String sql = "SELECT namasupplier FROM supplier";
@@ -85,7 +120,7 @@ private void setupSkuScanner() {
 // fungsi query ke database
 private void cariBarangBySku(String sku) {
     try (Connection conn = koneksi.dbKonek()) {
-        String sql = "SELECT kodebarang, skubarang, nama, hargabarang, satuan " +
+        String sql = "SELECT kodebarang, skubarang, nama, hargapokok, satuan " +
                      "FROM barang WHERE skubarang = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, sku);
@@ -94,7 +129,7 @@ private void cariBarangBySku(String sku) {
         if (rs.next()) {
             txtKodeBarang.setText(String.valueOf(rs.getInt("kodebarang")));
             txtNamaBarang.setText(rs.getString("nama"));
-            txtHarga.setText(rs.getString("hargabarang"));
+            txtHarga.setText(rs.getString("hargapokok"));
             txtSatuan.setText(rs.getString("satuan"));
         } else {
             clearFields();
@@ -114,56 +149,114 @@ private void clearFields() {
     txtSatuan.setText("");
     txtSku.setText("");
 }
+  
+  private void filterData() {
+    java.util.Date tglMulai = jdcStart.getDate();
+    java.util.Date tglSelesai = jdcEnd.getDate();
+    String supplierDipilih = (String) cmbSupplier.getSelectedItem();
 
-private void loadTransaksi() {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("ID");
-    model.addColumn("Kode Barang");
-    model.addColumn("Nama");
-    model.addColumn("Satuan");
-    model.addColumn("Jumlah");
-    model.addColumn("Harga");
-    model.addColumn("Total");
-    model.addColumn("Tanggal");
-    model.addColumn("Supplier");
-    model.addColumn("Sku Barang");
+    DefaultTableModel model = (DefaultTableModel) tblPembelian.getModel();
+    model.setRowCount(0);
 
-    Connection conn = null;
-    Statement st = null;
-    ResultSet rs = null;
+    StringBuilder sql = new StringBuilder("SELECT * FROM barangmasuk WHERE 1=1");
 
-    try {
-        conn = koneksi.dbKonek(); // koneksi ke PostgreSQL
-        String sql = "SELECT idbarangmasuk, kodebarang, nama, satuan, jumlahmasuk, hargabarang, totalharga, tanggal, supplier,skubarang FROM barangmasuk ORDER BY idbarangmasuk DESC";
-        st = conn.createStatement();
-        rs = st.executeQuery(sql);
+    // filter tanggal
+    if (tglMulai != null && tglSelesai != null) {
+        sql.append(" AND tanggal BETWEEN ? AND ?");
+    }
 
-        while (rs.next()) {
-            Object[] row = {
-                rs.getInt("idbarangmasuk"),
-                rs.getInt("kodebarang"),
-                rs.getString("nama"),
-                rs.getString("satuan"),
-                rs.getInt("jumlahmasuk"),
-                rs.getBigDecimal("hargabarang"),
-                rs.getBigDecimal("totalharga"),
-                rs.getDate("tanggal"),
-                rs.getString("supplier"),
-                rs.getString("skubarang")
-            };
-            model.addRow(row);
+    // filter supplier (kecuali “Semua Supplier”)
+    if (supplierDipilih != null && !"Semua Supplier".equals(supplierDipilih)) {
+        sql.append(" AND supplier = ?");
+    }
+
+    sql.append(" ORDER BY idbarangmasuk ASC");
+
+    try (Connection conn = kasir.koneksi.dbKonek()) {
+        PreparedStatement pst = conn.prepareStatement(sql.toString());
+
+        int index = 1;
+
+        // isi parameter tanggal
+        if (tglMulai != null && tglSelesai != null) {
+            pst.setDate(index++, new java.sql.Date(tglMulai.getTime()));
+            pst.setDate(index++, new java.sql.Date(tglSelesai.getTime()));
         }
 
-        tblTransaksi.setModel(model);
+        // isi parameter supplier
+        if (supplierDipilih != null && !"Semua Supplier".equals(supplierDipilih)) {
+            pst.setString(index++, supplierDipilih);
+        }
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Gagal load transaksi: " + e.getMessage());
-    } finally {
-        try { if (rs != null) rs.close(); } catch (Exception e) {}
-        try { if (st != null) st.close(); } catch (Exception e) {}
-        try { if (conn != null) conn.close(); } catch (Exception e) {}
+        ResultSet rs = pst.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getDate("tanggal"),
+                rs.getInt("kodebarang"),
+                rs.getString("nama"),
+                rs.getString("supplier"),
+                rs.getString("satuan"),
+                rs.getInt("hargabarang"),
+                rs.getInt("jumlahmasuk"),
+                rs.getInt("totalharga")
+            });
+        }
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error filter data: " + ex.getMessage());
     }
 }
+    private void loadTransaksi() {
+        DefaultTableModel model = (DefaultTableModel) tblPembelian.getModel();
+        model.setRowCount(0); // hapus semua baris lama
+
+        try (Connection conn = kasir.koneksi.dbKonek()) {
+            String sql = "SELECT * FROM barangmasuk ORDER BY idbarangmasuk ASC";
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+
+            int no = 1;
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    rs.getDate("tanggal"),
+                    rs.getInt("kodebarang"),
+                    rs.getString("nama"),
+                    rs.getString("supplier"),
+                    rs.getString("satuan"),
+                    rs.getInt("hargabarang"),
+                    rs.getInt("jumlahmasuk"),
+                    rs.getInt("totalharga")
+                        
+                });
+
+            }
+            
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error tampil data: " + ex.getMessage());
+        }
+    }
+   
+    private void loadSupplier1() {
+    cmbSupplier.removeAllItems();
+    cmbSupplier.addItem("Semua Supplier"); // default untuk tampil semua data
+
+    try (Connection conn = kasir.koneksi.dbKonek()) {
+        String sql = "SELECT namasupplier FROM supplier ORDER BY namasupplier ASC";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+
+        while (rs.next()) {
+            cmbSupplier.addItem(rs.getString("namasupplier"));
+        }
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error load supplier: " + ex.getMessage());
+    }
+}
+
 private void simpanTransaksi() {
     Connection conn = null;
     PreparedStatement pst1 = null;
@@ -312,13 +405,18 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTransaksi = new javax.swing.JTable();
+        tblPembelian = new javax.swing.JTable();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jLabel1 = new javax.swing.JLabel();
         jdcEnd = new com.toedter.calendar.JDateChooser();
         btnRefresh = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        cmbSupplier = new javax.swing.JComboBox<>();
 
         panelUtama.setBackground(new java.awt.Color(255, 255, 255));
         panelUtama.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -327,20 +425,20 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(txtKodeBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 210, 80, 50));
+        jPanel1.add(txtKodeBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 220, 80, 50));
 
         txtSku.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSkuKeyReleased(evt);
             }
         });
-        jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 210, 130, 50));
-        jPanel1.add(txtHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 210, 260, 50));
-        jPanel1.add(txtSatuan, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 90, 260, 50));
-        jPanel1.add(txtNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 90, 260, 50));
+        jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 130, 50));
+        jPanel1.add(txtHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 220, 260, 50));
+        jPanel1.add(txtSatuan, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 100, 260, 50));
+        jPanel1.add(txtNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 260, 50));
 
         cmbSuplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Suplier Pilih", " " }));
-        jPanel1.add(cmbSuplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 210, 260, 50));
+        jPanel1.add(cmbSuplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 220, 260, 50));
 
         btnPilih.setBackground(new java.awt.Color(102, 102, 255));
         btnPilih.setText("Pilih");
@@ -349,16 +447,16 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnPilihActionPerformed(evt);
             }
         });
-        jPanel1.add(btnPilih, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 210, 80, 50));
-        jPanel1.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 290, 50));
+        jPanel1.add(btnPilih, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 220, 80, 50));
+        jPanel1.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, 290, 50));
 
         txtJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtJumlahKeyReleased(evt);
             }
         });
-        jPanel1.add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 90, 250, 50));
-        jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 210, 250, 50));
+        jPanel1.add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 100, 250, 50));
+        jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 220, 250, 50));
 
         btnBeli1.setBackground(new java.awt.Color(51, 255, 0));
         btnBeli1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -368,50 +466,61 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnBeli1ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 300, 370, 70));
+        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 310, 370, 60));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Jumlah");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 60, -1, -1));
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 70, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Nama Barang");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Suplier");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 190, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Total Harga");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 180, -1, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 190, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("SkuBarang");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 180, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 190, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Satuan");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 60, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 70, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Harga");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 180, -1, -1));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 190, -1, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Tanggal");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, -1, -1));
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 70, -1, -1));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Kode Barang");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 190, -1, -1));
+
+        jPanel3.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("Pembelian Barang");
+        jPanel3.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, -1, -1));
+
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1590, 60));
 
         panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 1590, 400));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        tblTransaksi.setModel(new javax.swing.table.DefaultTableModel(
+        tblPembelian.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -438,47 +547,34 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "Kode Barang", "Nama Barang", "Suplier", "Satuan", "Harga", "Jumlah", "Total Harga", "Stok"
             }
         ));
-        jScrollPane1.setViewportView(tblTransaksi);
+        tblPembelian.setRowHeight(30);
+        jScrollPane1.setViewportView(tblPembelian);
+
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1540, 265));
+        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 151, 40));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Sampai");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, -1, -1));
+        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 80, 143, 40));
 
         btnRefresh.setText("Refresh");
+        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 80, 130, 40));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addComponent(jdcStart, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGap(30, 30, 30)
-                .addComponent(jdcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52)
-                .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(924, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1540, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jdcStart, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jdcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63))
-        );
+        jPanel4.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 450, 1580, 390));
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("DAFTAR PEMBELIAN");
+        jPanel4.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
+
+        jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1590, 60));
+
+        cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 80, -1, -1));
+
+        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 430, 1580, 410));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -554,8 +650,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JButton btnPilih;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JComboBox<String> cmbSuplier;
+    private javax.swing.JComboBox<String> cmbSupplier;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -566,12 +665,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;
     private com.toedter.calendar.JDateChooser jdcTanggal;
     private javax.swing.JPanel panelUtama;
-    private javax.swing.JTable tblTransaksi;
+    private javax.swing.JTable tblPembelian;
     private javax.swing.JTextField txtHarga;
     private javax.swing.JTextField txtJumlah;
     private javax.swing.JTextField txtKodeBarang;

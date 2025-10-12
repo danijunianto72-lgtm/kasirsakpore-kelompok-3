@@ -4,9 +4,12 @@
  */
 package kasir;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -20,28 +23,45 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 /**
  *
  * @author user
  */
 public class KelolaUser extends javax.swing.JPanel {
 
-    /**
-     * Creates new form KelolaUser
-     */
+ 
     
     private boolean editMode = false; 
-    private int editId = -1; // simpan id user yg diedit
-    
+    private int editId = -1; 
     public KelolaUser() {
         initComponents();
         isiComboBox();
         tampilData();
+        loadRiwayatData();
+        loadUsernameCombo();
         element();
         setKeyBindings();
+        setHeader();
+
 
     }
-   
+       private void loadUsernameCombo() {
+        try (Connection conn = koneksi.dbKonek()) {
+            String sql = "SELECT username FROM pengguna ORDER BY username";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+
+            cmbUsername.removeAllItems();
+            cmbUsername.addItem("Semua");
+            while (rs.next()) {
+                cmbUsername.addItem(rs.getString("username"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal load username: " + e.getMessage());
+        }
+    }
+
    private void setKeyBindings() {
     SwingUtilities.invokeLater(() -> {
         JRootPane root = this.getRootPane();
@@ -62,7 +82,45 @@ public class KelolaUser extends javax.swing.JPanel {
     });
 }
 
+private void setHeader(){
+JTableHeader header = tblUser.getTableHeader();
+header.setOpaque(false); 
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); 
 
+header.setBackground(new java.awt.Color(5,69,162)); 
+header.setForeground(Color.WHITE);
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); 
+
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+JTableHeader garis = tblRiwayat.getTableHeader();
+garis.setOpaque(false); 
+garis.setPreferredSize(new Dimension(header.getWidth(), 40)); 
+
+garis.setBackground(new java.awt.Color(5,69,162)); 
+garis.setForeground(Color.WHITE);
+garis.setFont(new Font("Segoe UI",Font.BOLD, 14)); 
+
+garis.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+}
     
     // tampilkan data user di tabel
     private void tampilData() {
@@ -158,6 +216,61 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         return order.get(0);
     }
 }
+   private void loadRiwayatData() {
+        DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
+        model.setRowCount(0);
+
+        int bulan = jmcBulan.getMonth() + 1; // karena index dimulai dari 0
+        int tahun = jycTahun.getYear();
+        String selectedUser = (String) cmbUsername.getSelectedItem();
+        String keyword = txtCari.getText().trim();
+
+        StringBuilder sql = new StringBuilder(
+            "SELECT waktu_login, nama_pemakai, username FROM riwayat_login WHERE EXTRACT(MONTH FROM waktu_login)=? AND EXTRACT(YEAR FROM waktu_login)=? "
+        );
+
+        if (selectedUser != null && !"Semua".equals(selectedUser)) {
+            sql.append(" AND username = ? ");
+        }
+
+        if (!keyword.isEmpty()) {
+            sql.append(" AND (LOWER(nama_pemakai) LIKE ? OR LOWER(username) LIKE ?) ");
+        }
+
+        sql.append(" ORDER BY waktu_login DESC");
+
+        try (Connection conn = koneksi.dbKonek()) {
+            PreparedStatement pst = conn.prepareStatement(sql.toString());
+            int paramIndex = 1;
+
+            pst.setInt(paramIndex++, bulan);
+            pst.setInt(paramIndex++, tahun);
+
+            if (selectedUser != null && !"Semua".equals(selectedUser)) {
+                pst.setString(paramIndex++, selectedUser);
+            }
+
+            if (!keyword.isEmpty()) {
+                String like = "%" + keyword.toLowerCase() + "%";
+                pst.setString(paramIndex++, like);
+                pst.setString(paramIndex++, like);
+            }
+
+            ResultSet rs = pst.executeQuery();
+            int no = 1;
+            while (rs.next()) {
+                Object[] row = {
+                    no++,
+                    rs.getTimestamp("waktu_login"),
+                    rs.getString("nama_pemakai"),
+                    rs.getString("username")
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal load riwayat: " + e.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -178,15 +291,25 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lRole = new javax.swing.JLabel();
         cbRole = new javax.swing.JComboBox<>();
         btSubmit = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         pnDaftarUser = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblUser = new javax.swing.JTable();
         btDelete = new javax.swing.JButton();
         btEdit = new javax.swing.JButton();
         Batal = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        cmbUsername = new javax.swing.JComboBox<>();
+        jmcBulan = new com.toedter.calendar.JMonthChooser();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblRiwayat = new javax.swing.JTable();
+        jycTahun = new com.toedter.calendar.JYearChooser();
+        txtCari = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
 
         setMinimumSize(new java.awt.Dimension(1720, 960));
@@ -203,29 +326,29 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         lStatus.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lStatus.setText("Status :");
-        pnFormUser.add(lStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 350, 60, 30));
+        pnFormUser.add(lStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 360, 60, 30));
 
         lUsername.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lUsername.setText("Username :");
-        pnFormUser.add(lUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, -1, -1));
+        pnFormUser.add(lUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
 
         lPass.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lPass.setText("Password :");
-        pnFormUser.add(lPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, -1, -1));
+        pnFormUser.add(lPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, -1, -1));
 
         tfUsername.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        pnFormUser.add(tfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 260, 60));
+        pnFormUser.add(tfUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 100, 260, 60));
 
         tfPassword.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        pnFormUser.add(tfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 170, 260, 60));
+        pnFormUser.add(tfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 180, 260, 60));
 
         cbStatus.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        pnFormUser.add(cbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 340, 260, 50));
+        pnFormUser.add(cbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 350, 260, 50));
 
         lRole.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lRole.setText("Role : ");
-        pnFormUser.add(lRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 270, 50, -1));
+        pnFormUser.add(lRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, 50, -1));
 
         cbRole.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         cbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -234,7 +357,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 cbRoleActionPerformed(evt);
             }
         });
-        pnFormUser.add(cbRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 260, 260, 50));
+        pnFormUser.add(cbRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 270, 260, 50));
 
         btSubmit.setBackground(new java.awt.Color(102, 255, 102));
         btSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -246,19 +369,21 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 640, 310, 60));
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel10.setText("Form User");
-        pnFormUser.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+        jPanel1.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        pnback.add(pnFormUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 460, 740));
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 27)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Kelola Pengguna");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
+        pnFormUser.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 70));
+
+        pnback.add(pnFormUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 460, 820));
 
         pnDaftarUser.setBackground(new java.awt.Color(255, 255, 255));
         pnDaftarUser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnDaftarUser.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
-        jLabel1.setText("Daftar User");
-        pnDaftarUser.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -273,8 +398,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         ));
         tblUser.setRowHeight(30);
         jScrollPane2.setViewportView(tblUser);
+        if (tblUser.getColumnModel().getColumnCount() > 0) {
+            tblUser.getColumnModel().getColumn(0).setMaxWidth(45);
+            tblUser.getColumnModel().getColumn(1).setMaxWidth(45);
+        }
 
-        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 1060, 550));
+        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 1080, 210));
 
         btDelete.setBackground(new java.awt.Color(255, 51, 51));
         btDelete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -284,7 +413,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btDeleteActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 110, 90, 40));
+        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 80, 90, 40));
 
         btEdit.setBackground(new java.awt.Color(255, 153, 51));
         btEdit.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -294,7 +423,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btEditActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, 90, 40));
+        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 80, 90, 40));
 
         Batal.setBackground(new java.awt.Color(204, 204, 204));
         Batal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -304,15 +433,79 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 BatalActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 110, 90, 40));
+        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 80, 90, 40));
 
-        pnback.add(pnDaftarUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, 1100, 740));
+        jPanel2.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
-        jLabel2.setText("Kelola User");
-        pnback.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 10, -1, -1));
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 27)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Daftar Pengguna");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
-        add(pnback, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1720, 920));
+        pnDaftarUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 70));
+
+        pnback.add(pnDaftarUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 20, 1110, 360));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel4.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 27)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Riwayat Pengguna");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
+        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 70));
+
+        cmbUsername.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbUsernameActionPerformed(evt);
+            }
+        });
+        jPanel3.add(cmbUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 120, 40));
+
+        jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jmcBulanPropertyChange(evt);
+            }
+        });
+        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 140, 40));
+
+        tblRiwayat.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "No", "tanggal", "Nama Pengguna", "username"
+            }
+        ));
+        tblRiwayat.setRowHeight(30);
+        jScrollPane1.setViewportView(tblRiwayat);
+        if (tblRiwayat.getColumnModel().getColumnCount() > 0) {
+            tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(45);
+        }
+
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 1090, 280));
+        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 90, 40));
+
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+        });
+        jPanel3.add(txtCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 90, 410, 50));
+
+        pnback.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 390, 1110, 450));
+
+        add(pnback, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1740, 920));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 36)); // NOI18N
         jLabel3.setText("Kelola User");
@@ -440,6 +633,19 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
     }//GEN-LAST:event_BatalActionPerformed
 
+    private void cmbUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbUsernameActionPerformed
+loadRiwayatData();        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbUsernameActionPerformed
+
+    private void jmcBulanPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jmcBulanPropertyChange
+loadRiwayatData();        // TODO add your handling code here:
+    }//GEN-LAST:event_jmcBulanPropertyChange
+
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+                loadRiwayatData();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Batal;
@@ -448,11 +654,19 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JButton btSubmit;
     private javax.swing.JComboBox<String> cbRole;
     private javax.swing.JComboBox<String> cbStatus;
+    private javax.swing.JComboBox<String> cmbUsername;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private com.toedter.calendar.JMonthChooser jmcBulan;
+    private com.toedter.calendar.JYearChooser jycTahun;
     private javax.swing.JLabel lPass;
     private javax.swing.JLabel lRole;
     private javax.swing.JLabel lStatus;
@@ -460,8 +674,10 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JPanel pnDaftarUser;
     private javax.swing.JPanel pnFormUser;
     private javax.swing.JPanel pnback;
+    private javax.swing.JTable tblRiwayat;
     private javax.swing.JTable tblUser;
     private javax.swing.JTextField tfPassword;
     private javax.swing.JTextField tfUsername;
+    private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
 }

@@ -109,7 +109,7 @@ public class DiagramBatang extends JPanel {
                     x, y + barHeight, new Color(140, 190, 255)
             );
             g2.setPaint(gradient);
-            g2.fillRoundRect(x, y, barWidth, barHeight, 20, 20);
+            g2.fillRoundRect(x, y, barWidth, barHeight, 0, 0);
 
             // Nilai di atas batang
             g2.setColor(new Color(50, 50, 50));
