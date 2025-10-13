@@ -96,6 +96,30 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         btnCetak.doClick(); // Menjalankan aksi tombol
     }
 });
+
+         btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+    "ctrlV"
+); 
+        
+              btnFilter.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnFilter.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
         setupGlobalShortcuts(); // ⬅️ tambahkan di sini
@@ -157,7 +181,7 @@ JTableHeader header = tblKeuangan.getTableHeader();
 header.setOpaque(false); // Matikan transparansi bawaan
 header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
 
-header.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50)); // Warna #2c3e50
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
 header.setForeground(Color.WHITE); // Warna font putih
 header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
 
@@ -165,7 +189,7 @@ header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
 header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     JLabel label = new JLabel(value.toString());
     label.setOpaque(true);
-    label.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50));
+    label.setBackground(new java.awt.Color(5,69,162));
     label.setForeground(Color.WHITE);
     label.setFont(new Font("Segoe UI", Font.BOLD, 15));
     label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
@@ -173,6 +197,45 @@ header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     return label;
 });
 
+JTableHeader Header = tblDetails.getTableHeader();
+Header.setOpaque(false); // Matikan transparansi bawaan
+Header.setPreferredSize(new Dimension(Header.getWidth(), 40)); // 30 = tinggi header (px)
+
+Header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+Header.setForeground(Color.WHITE); // Warna font putih
+Header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+Header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+JTableHeader setHeader = tblSemua.getTableHeader();
+setHeader.setOpaque(false); // Matikan transparansi bawaan
+setHeader.setPreferredSize(new Dimension(setHeader.getWidth(), 40)); // 30 = tinggi header (px)
+
+setHeader.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+setHeader.setForeground(Color.WHITE); // Warna font putih
+setHeader.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+setHeader.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
 }
 
 // 🔍 Helper untuk cek apakah date chooser atau textfield-nya sedang fokus

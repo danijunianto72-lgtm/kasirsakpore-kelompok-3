@@ -43,7 +43,78 @@ public class KelolaUser extends javax.swing.JPanel {
         element();
         setKeyBindings();
         setHeader();
+        
+        
+    // Tambahkan shortcut CTRL + ENTER untuk tombol Submit
+  btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
 
+btSubmit.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btSubmit.doClick();
+    }
+});
+
+
+//  btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+//    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+//    "ctrlS"
+//);
+//
+//btSubmit.getActionMap().put("ctrlS", new AbstractAction() {
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        btSubmit.doClick();
+//    }
+//});
+
+  this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
+
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btSubmit.doClick(); // klik tombol submit
+        }
+    });
+     Batal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Batal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        Batal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+); 
+        
+             btEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+); 
+        
+           btDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+); 
 
     }
        private void loadUsernameCombo() {
@@ -372,6 +443,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btSubmitActionPerformed(evt);
             }
         });
+        btSubmit.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                btSubmitKeyReleased(evt);
+            }
+        });
         pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 640, 310, 60));
 
         jPanel1.setBackground(new java.awt.Color(5, 69, 162));
@@ -666,6 +742,10 @@ loadRiwayatData();        // TODO add your handling code here:
                 loadRiwayatData();
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariKeyReleased
+
+    private void btSubmitKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btSubmitKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btSubmitKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

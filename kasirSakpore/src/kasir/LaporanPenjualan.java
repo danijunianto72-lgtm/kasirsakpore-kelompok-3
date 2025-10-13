@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.JTableHeader;
 public class LaporanPenjualan extends javax.swing.JPanel {
 
     /**
@@ -44,6 +45,7 @@ public class LaporanPenjualan extends javax.swing.JPanel {
 
     public LaporanPenjualan() {
         initComponents();
+        header();
         loadDataTransaksi();
         setFilterDefault();
     try {
@@ -87,6 +89,33 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
     }
 });
 
+           btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+    "ctrlV"
+); 
+        
+        
+            btnDetail1.getActionMap().put("ctrlX", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDetail1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnDetail1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
+    "ctrlX"
+);      
+    
+    
+
 btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
     "ctrlD"
@@ -101,6 +130,69 @@ btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
 
 
     }
+    
+    private void header(){
+    JTableHeader header = tblTransaksi.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+JTableHeader Header = tblDetail.getTableHeader();
+Header.setOpaque(false); // Matikan transparansi bawaan
+Header.setPreferredSize(new Dimension(Header.getWidth(), 40)); // 30 = tinggi header (px)
+
+Header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+Header.setForeground(Color.WHITE); // Warna font putih
+Header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+Header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+JTableHeader setHeader = tblBulan.getTableHeader();
+setHeader.setOpaque(false); // Matikan transparansi bawaan
+setHeader.setPreferredSize(new Dimension(setHeader.getWidth(), 40)); // 30 = tinggi header (px)
+
+setHeader.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+setHeader.setForeground(Color.WHITE); // Warna font putih
+setHeader.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+setHeader.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+    }
+    
     private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
 
@@ -448,7 +540,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(30);
         }
 
+<<<<<<< HEAD
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 1620, 250));
+=======
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1620, 270));
+>>>>>>> 7c583d710ff24ceb3834ac3539ff869c0a01e8cb
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setText("Daftar Transaksi");

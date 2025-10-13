@@ -12,6 +12,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
@@ -21,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 // setelah loadSupplier dipanggil
 
@@ -35,11 +39,62 @@ public class Pembelian extends javax.swing.JPanel {
      */
     public Pembelian() {
         initComponents();
+        header();
         loadSupplier();
         loadTransaksi();
         loadSupplier1();
         setupSkuScanner();
         element();
+        
+     btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnRefresh.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);   
+        
+     btnPilih.getActionMap().put("ctrlP", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPilih.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnPilih.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
+    "ctrlP"
+);   
+        
+        
+     btnBeli1.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBeli1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+); 
+        
+        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
+
+btnBeli1.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBeli1.doClick();
+    }
+});
+   
                 
       // filter otomatis saat tanggal berubah
     jdcStart.addPropertyChangeListener(evt -> {
@@ -68,6 +123,30 @@ public class Pembelian extends javax.swing.JPanel {
        
 jdcTanggal.setDate(new Date());
     }
+    
+    private void header(){
+     JTableHeader header = tblPembelian.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+    }
+    
+    
         private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
 
