@@ -35,6 +35,7 @@ public class KelolaKeuangan extends javax.swing.JPanel {
      */
    public KelolaKeuangan() {
         initComponents();
+        header();
         loadDataKeuangan();
                     jdcTanggal.setDate(new java.util.Date());
                     setFilterDefault();
@@ -111,8 +112,32 @@ header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     return label;
 });
 
-    }
+
+}
+
+    
    
+private void header(){
+ JTableHeader header = tblKeuangan.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+}
    private void setKeyBindings() {
     SwingUtilities.invokeLater(() -> {
         JRootPane root = this.getRootPane();

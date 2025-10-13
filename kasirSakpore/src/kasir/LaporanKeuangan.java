@@ -157,7 +157,7 @@ JTableHeader header = tblKeuangan.getTableHeader();
 header.setOpaque(false); // Matikan transparansi bawaan
 header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
 
-header.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50)); // Warna #2c3e50
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
 header.setForeground(Color.WHITE); // Warna font putih
 header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
 
@@ -165,7 +165,7 @@ header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
 header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     JLabel label = new JLabel(value.toString());
     label.setOpaque(true);
-    label.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50));
+    label.setBackground(new java.awt.Color(5,69,162));
     label.setForeground(Color.WHITE);
     label.setFont(new Font("Segoe UI", Font.BOLD, 15));
     label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
@@ -173,6 +173,45 @@ header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     return label;
 });
 
+JTableHeader Header = tblDetails.getTableHeader();
+Header.setOpaque(false); // Matikan transparansi bawaan
+Header.setPreferredSize(new Dimension(Header.getWidth(), 40)); // 30 = tinggi header (px)
+
+Header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+Header.setForeground(Color.WHITE); // Warna font putih
+Header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+Header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+JTableHeader setHeader = tblSemua.getTableHeader();
+setHeader.setOpaque(false); // Matikan transparansi bawaan
+setHeader.setPreferredSize(new Dimension(setHeader.getWidth(), 40)); // 30 = tinggi header (px)
+
+setHeader.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+setHeader.setForeground(Color.WHITE); // Warna font putih
+setHeader.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+setHeader.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
 }
 
 // 🔍 Helper untuk cek apakah date chooser atau textfield-nya sedang fokus

@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 // setelah loadSupplier dipanggil
 
@@ -35,6 +36,7 @@ public class Pembelian extends javax.swing.JPanel {
      */
     public Pembelian() {
         initComponents();
+        header();
         loadSupplier();
         loadTransaksi();
         loadSupplier1();
@@ -68,6 +70,30 @@ public class Pembelian extends javax.swing.JPanel {
        
 jdcTanggal.setDate(new Date());
     }
+    
+    private void header(){
+     JTableHeader header = tblPembelian.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+    }
+    
+    
         private void setFilterDefault() {
     Calendar cal = Calendar.getInstance();
 

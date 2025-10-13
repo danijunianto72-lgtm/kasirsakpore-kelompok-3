@@ -310,7 +310,7 @@ private void loadChart(String startDate, String endDate) {
         });
 
         btnReset.setBackground(new java.awt.Color(51, 102, 255));
-        btnReset.setText("reset");
+        btnReset.setText("Reset");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);
