@@ -30,7 +30,13 @@ public class Kasir extends javax.swing.JPanel {
         initComponents();
         loadMenu(null);
         setupSkuScanner(); 
-        txtPengguna.setText(Session.getUsername());
+String nama = Session.getNama();
+if (nama == null || nama.isEmpty()) {
+    nama = Session.getUsername();
+}
+ loadRiwayatHariIni();
+ 
+txtPengguna.setText(nama);
         jdcTanggal.setDate(new Date());
 
         try (Connection conn = koneksi.dbKonek()) {
@@ -92,12 +98,91 @@ btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
         btnPembayaran.doClick(); // Menjalankan aksi tombol
     }
 });
+setKeyBindings();
 
 
 
     }
   
  
+
+   private void setKeyBindings() {
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = this.getRootPane();
+        if (root == null) return; // jaga-jaga null
+        KeyStroke ctrlT = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlT, "focusTable");
+        root.getActionMap().put("focusTable", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tblKasir.requestFocus();
+                if (tblKasir.getRowCount() > 0) {
+                    tblKasir.setRowSelectionInterval(0, 0);
+                    tblKasir.setColumnSelectionInterval(0, 0);
+                    tblKasir.editCellAt(0, 0);
+                }
+            }
+        });
+    });
+}
+private void loadRiwayatHariIni() {
+    DefaultTableModel model = new DefaultTableModel();
+model.addColumn("No");
+model.addColumn("Tanggal & Jam");
+model.addColumn("Total Transaksi");
+model.addColumn("ID Transaksi"); // kolom tambahan untuk disembunyikan
+
+    String namaKasir = Session.getNama();
+    if (namaKasir == null || namaKasir.isEmpty()) {
+        namaKasir = Session.getUsername();
+    }
+
+    double totalHariIni = 0.0;
+
+    try (Connection conn = koneksi.dbKonek()) {
+        // Query transaksi hari ini untuk kasir login
+        String sql = """
+            SELECT idtransaksi, tgl_transaksi, grand_total
+            FROM transaksi
+            WHERE namapengguna = ?
+              AND DATE(tgl_transaksi) = CURRENT_DATE
+            ORDER BY tgl_transaksi DESC
+        """;
+
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, namaKasir);
+        ResultSet rs = pst.executeQuery();
+
+    int no = 1;
+while (rs.next()) {
+    int idTransaksi = rs.getInt("idtransaksi");
+    Timestamp ts = rs.getTimestamp("tgl_transaksi");
+    double total = rs.getDouble("grand_total");
+    totalHariIni += total;
+
+    String tglFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ts);
+
+    model.addRow(new Object[]{no, tglFormat, String.format("Rp %,.2f", total), idTransaksi});
+    no++;
+}
+
+
+        tblRiwayat.setModel(model);
+tblRiwayat.removeColumn(tblRiwayat.getColumnModel().getColumn(3)); // sembunyikan kolom ID
+tblRiwayat.getColumnModel().getColumn(0).setPreferredWidth(40);
+tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(50);
+tblRiwayat.getColumnModel().getColumn(0).setMinWidth(30);
+        // tampilkan total harian
+        lblTotal.setText(String.format("Total Hari Ini: Rp %, .2f", totalHariIni));
+
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Belum ada transaksi hari ini untuk kasir: " + namaKasir);
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+    }
+}
 
     private void loadMenu(String keyword) {
     pnlMenu.removeAll();
@@ -420,6 +505,8 @@ btnSelesai.addActionListener(ev -> {
         ((DefaultTableModel) tblKasir.getModel()).setRowCount(0);
         txtTotal.setText("0");
         txtNo.setText(generateNoTransaksi(conn));
+         loadRiwayatHariIni();
+
   SwingUtilities.invokeLater(() -> {
         txtSku.requestFocusInWindow();
     });
@@ -615,62 +702,43 @@ private void setupSkuScanner() {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        txtNo = new javax.swing.JTextField();
-        txtTotal = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         txtSku = new javax.swing.JTextField();
-        txtPengguna = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        btnBatal = new javax.swing.JButton();
+        btnPembayaran = new javax.swing.JButton();
+        txtTotal = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKasir = new javax.swing.JTable();
-        btnPembayaran = new javax.swing.JButton();
+        txtPengguna = new javax.swing.JTextField();
+        btnDelete = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        btnEdit = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jdcTanggal = new com.toedter.calendar.JDateChooser();
+        jLabel5 = new javax.swing.JLabel();
+        btnBatal = new javax.swing.JButton();
+        txtNo = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         pnlMenu = new javax.swing.JPanel();
         txtSku1 = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jdcTanggal = new com.toedter.calendar.JDateChooser();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        btnDetail = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblRiwayat = new javax.swing.JTable();
+        lblTotal = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtNo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jPanel1.add(txtNo, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 94, 281, 51));
-
-        txtTotal.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 200, 301, 51));
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel1.setText("No transaksi");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 57, -1, -1));
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel5.setText("CARI");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 70, -1, -1));
-
-        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
-        btnEdit.setText("EDIT");
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 310, 90, 50));
-
-        btnDelete.setBackground(new java.awt.Color(255, 51, 51));
-        btnDelete.setText("DELETE");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 310, 90, 50));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtSku.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         txtSku.addActionListener(new java.awt.event.ActionListener() {
@@ -686,26 +754,23 @@ private void setupSkuScanner() {
                 txtSkuKeyReleased(evt);
             }
         });
-        jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 94, 301, 51));
-
-        txtPengguna.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jPanel1.add(txtPengguna, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 200, 281, 51));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel4.setText("Tanggal");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 269, -1, -1));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel2.setText("Nama Pengguna");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 163, -1, -1));
+        jPanel2.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 301, 51));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel3.setText("SKU barang");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 57, -1, -1));
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
 
-        btnBatal.setBackground(new java.awt.Color(153, 153, 153));
-        btnBatal.setText("BATAL");
-        jPanel1.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 790, 130, 50));
+        btnPembayaran.setBackground(new java.awt.Color(51, 255, 0));
+        btnPembayaran.setText("PEMBAYARAN");
+        btnPembayaran.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPembayaranActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnPembayaran, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 770, 210, 50));
+
+        txtTotal.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jPanel2.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 230, 301, 51));
 
         tblKasir.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -718,22 +783,62 @@ private void setupSkuScanner() {
         tblKasir.setRowHeight(30);
         jScrollPane1.setViewportView(tblKasir);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 930, 350));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 630, 350));
 
-        btnPembayaran.setBackground(new java.awt.Color(0, 204, 102));
-        btnPembayaran.setText("PEMBAYARAN");
-        btnPembayaran.addActionListener(new java.awt.event.ActionListener() {
+        txtPengguna.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jPanel2.add(txtPengguna, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 281, 51));
+
+        btnDelete.setBackground(new java.awt.Color(255, 51, 51));
+        btnDelete.setText("DELETE");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPembayaranActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
-        jPanel1.add(btnPembayaran, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 790, 210, 50));
+        jPanel2.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 340, 90, 50));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setText("No transaksi");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setText("Nama Pengguna");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, -1, -1));
+
+        btnEdit.setBackground(new java.awt.Color(255, 153, 51));
+        btnEdit.setText("EDIT");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 340, 90, 50));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel6.setText("TOTAL");
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 190, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel4.setText("Tanggal");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, -1, -1));
+        jPanel2.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 340, 290, 60));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel5.setText("CARI");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 80, -1, -1));
+
+        btnBatal.setBackground(new java.awt.Color(204, 204, 204));
+        btnBatal.setText("BATAL");
+        jPanel2.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 770, 130, 50));
+
+        txtNo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jPanel2.add(txtNo, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 281, 51));
 
         pnlMenu.setBackground(new java.awt.Color(255, 255, 255));
         pnlMenu.setPreferredSize(new java.awt.Dimension(662, 858));
         jScrollPane2.setViewportView(pnlMenu);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 120, -1, 704));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 140, -1, 670));
 
         txtSku1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         txtSku1.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -741,12 +846,90 @@ private void setupSkuScanner() {
                 txtSku1KeyReleased(evt);
             }
         });
-        jPanel1.add(txtSku1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1051, 60, 610, 51));
+        jPanel2.add(txtSku1, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 70, 610, 51));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel6.setText("TOTAL");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(359, 163, -1, -1));
-        jPanel1.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 310, 290, 60));
+        jPanel3.setBackground(new java.awt.Color(5, 69, 162));
+
+        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("KASIR SAKPORE");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jLabel7)
+                .addContainerGap(1175, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jLabel7)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, 0, 1390, 60));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 1380, 840));
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel5.setBackground(new java.awt.Color(5, 69, 162));
+
+        btnDetail.setText("jButton1");
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(209, Short.MAX_VALUE)
+                .addComponent(btnDetail)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(btnDetail)
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 290, 60));
+
+        tblRiwayat.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "No", "Tanggal", "Total"
+            }
+        ));
+        jScrollPane3.setViewportView(tblRiwayat);
+        if (tblRiwayat.getColumnModel().getColumnCount() > 0) {
+            tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(40);
+        }
+
+        jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 270, 720));
+
+        lblTotal.setText("jLabel8");
+        jPanel4.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 796, 270, 30));
+
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(1410, 10, 290, 840));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -869,10 +1052,59 @@ showPopupPembayaran();        // TODO add your handling code here:
 
     }//GEN-LAST:event_txtSkuKeyReleased
 
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
+  int selectedRow = tblRiwayat.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Pilih transaksi terlebih dahulu!");
+        return;
+    }
+
+    // Karena kolom idtransaksi disembunyikan, ambil nilainya dari model sebenarnya
+    int idTransaksi = (int) tblRiwayat.getModel().getValueAt(selectedRow, 0);
+
+    try (Connection conn = koneksi.dbKonek()) {
+        String sql = """
+            SELECT namabarang, jumlah, harga, subtotal, keterangan
+            FROM detailtransaksi
+            WHERE idtransaksi = ?
+        """;
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setInt(1, idTransaksi);
+        ResultSet rs = pst.executeQuery();
+
+        StringBuilder detail = new StringBuilder();
+        double total = 0;
+
+        detail.append("Detail Transaksi ID: ").append(idTransaksi).append("\n");
+        detail.append("---------------------------------------------------\n");
+        while (rs.next()) {
+            String namaBarang = rs.getString("namabarang");
+            int jumlah = rs.getInt("jumlah");
+            double harga = rs.getDouble("harga");
+            double subtotal = rs.getDouble("subtotal");
+            String ket = rs.getString("keterangan");
+
+            detail.append(String.format("%s (%s)\n  %d x Rp %, .2f = Rp %, .2f\n\n",
+                    namaBarang, ket, jumlah, harga, subtotal));
+            total += subtotal;
+        }
+
+        detail.append("---------------------------------------------------\n");
+        detail.append(String.format("Total: Rp %, .2f", total));
+
+        JOptionPane.showMessageDialog(this, detail.toString(), 
+                "Detail Transaksi", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat detail: " + e.getMessage());
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetailActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnPembayaran;
     private javax.swing.JLabel jLabel1;
@@ -881,12 +1113,20 @@ showPopupPembayaran();        // TODO add your handling code here:
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private com.toedter.calendar.JDateChooser jdcTanggal;
+    private javax.swing.JLabel lblTotal;
     private javax.swing.JPanel pnlMenu;
     private javax.swing.JTable tblKasir;
+    private javax.swing.JTable tblRiwayat;
     private javax.swing.JTextField txtNo;
     private javax.swing.JTextField txtPengguna;
     private javax.swing.JTextField txtSku;

@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.sql.*;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import javax.swing.SwingUtilities;
 /**
  *
@@ -32,6 +33,7 @@ public class Admin extends javax.swing.JPanel {
 
  public Admin() {
     initComponents();
+    setFilterDefault();
 getTotalStokKurang();
     // atur layout panelChart
     panelChart.setLayout(new BorderLayout());
@@ -60,6 +62,15 @@ getTotalStokKurang();
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
     });
+}
+     private void setFilterDefault() {
+    Calendar cal = Calendar.getInstance();
+
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
 }
 public void getTotalStokKurang() {
     try {
@@ -216,7 +227,6 @@ private void loadChart(String startDate, String endDate) {
         panelChart = new javax.swing.JPanel();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jdcEnd = new com.toedter.calendar.JDateChooser();
-        btnFilter = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         merah = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -248,6 +258,7 @@ private void loadChart(String startDate, String endDate) {
         pnlBarang = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         lblPemasukan7 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setFocusable(false);
         setMinimumSize(new java.awt.Dimension(20000, 20000));
@@ -273,6 +284,11 @@ private void loadChart(String startDate, String endDate) {
         panelChart.setRequestFocusEnabled(false);
         panelChart.setLayout(new java.awt.BorderLayout());
 
+        jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcStartPropertyChange(evt);
+            }
+        });
         jdcStart.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jdcStartKeyPressed(evt);
@@ -282,17 +298,14 @@ private void loadChart(String startDate, String endDate) {
             }
         });
 
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
         jdcEnd.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jdcEndKeyPressed(evt);
-            }
-        });
-
-        btnFilter.setBackground(new java.awt.Color(0, 153, 102));
-        btnFilter.setText("FIlter");
-        btnFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFilterActionPerformed(evt);
             }
         });
 
@@ -346,11 +359,9 @@ private void loadChart(String startDate, String endDate) {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jdcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(782, 782, 782))
+                .addContainerGap(925, Short.MAX_VALUE))
             .addComponent(panelChart, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -367,8 +378,7 @@ private void loadChart(String startDate, String endDate) {
                                 .addComponent(merah1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addComponent(jdcStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jdcEnd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                        .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel3)))
@@ -537,38 +547,18 @@ private void loadChart(String startDate, String endDate) {
         lblPemasukan7.setRequestFocusEnabled(false);
         pnlBarang.add(lblPemasukan7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 100, 90));
 
+        jButton2.setText("LIHAT DETAIL");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        pnlBarang.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, -1, -1));
+
         jPanel2.add(pnlBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 190, 180, 160));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1740, 960));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
- java.util.Date start = jdcStart.getDate();
-    java.util.Date end = jdcEnd.getDate();
-
-    if (start != null && end != null) {
-        // Cek jika tanggal awal lebih besar dari tanggal akhir
-        if (start.after(end)) {
-            JOptionPane.showMessageDialog(
-                null,
-                "Tanggal awal tidak boleh lebih besar dari tanggal akhir!",
-                "Error",
-                JOptionPane.ERROR_MESSAGE
-            );
-            return; // hentikan proses
-        }
-
-        String startDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(start);
-        String endDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(end);
-
-        loadChart(startDate, endDate);
-    } else {
-        JOptionPane.showMessageDialog(
-            null, 
-            "Pilih tanggal awal dan akhir dulu!"
-        );
-    }     // TODO add your handling code here:
-    }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
     // ambil tanggal awal bulan
@@ -604,11 +594,31 @@ private void loadChart(String startDate, String endDate) {
     dialog.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
+   if (jdcStart.getDate() != null && jdcEnd.getDate() != null) {
+        String start = new java.sql.Date(jdcStart.getDate().getTime()).toString();
+        String end = new java.sql.Date(jdcEnd.getDate().getTime()).toString();
+        loadChart(start, end);
+    }
+    }//GEN-LAST:event_jdcStartPropertyChange
+
+    private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
+  if (jdcStart.getDate() != null && jdcEnd.getDate() != null) {
+        String start = new java.sql.Date(jdcStart.getDate().getTime()).toString();
+        String end = new java.sql.Date(jdcEnd.getDate().getTime()).toString();
+        loadChart(start, end);
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcEndPropertyChange
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

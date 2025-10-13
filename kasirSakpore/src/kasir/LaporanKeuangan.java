@@ -4,6 +4,7 @@
  */
 package kasir;
 
+import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -23,8 +24,40 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JRootPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
+import java.awt.Font;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.Font;
 
 public class LaporanKeuangan extends javax.swing.JPanel {
 
@@ -33,11 +66,13 @@ public class LaporanKeuangan extends javax.swing.JPanel {
         initComponents();
         loadDataKeuangan();
         loadDataSemua();
-        hitungTotalBulanan();
+//        hitungTotalBulanan();
         loadDataBulanTahun();
         setFilterDefault();
         setListenerTable();
         element();
+            setupDateChooserBehavior(); // ⬅️ tambahkan ini
+
           btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
     "ctrlF"
@@ -61,8 +96,142 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         btnCetak.doClick(); // Menjalankan aksi tombol
     }
 });
-    }
+    SwingUtilities.invokeLater(() -> {
+        jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
+        setupGlobalShortcuts(); // ⬅️ tambahkan di sini
+    });  
     
+    }
+private void setupGlobalShortcuts() {
+    JRootPane root = SwingUtilities.getRootPane(this);
+    if (root == null) return;
+
+    InputMap im = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap am = root.getActionMap();
+
+    // --- CTRL + 1 → Fokus ke jdcStart ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_DOWN_MASK), "focusStart");
+    am.put("focusStart", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField tf = (JTextField) jdcStart.getDateEditor().getUiComponent();
+            tf.requestFocusInWindow();
+        }
+    });
+
+    // --- CTRL + 2 → Fokus ke jdcEnd ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_DOWN_MASK), "focusEnd");
+    am.put("focusEnd", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField tf = (JTextField) jdcEnd.getDateEditor().getUiComponent();
+            tf.requestFocusInWindow();
+        }        
+    });
+
+    // --- CTRL + 3 → Fokus ke JMonthChooser ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_DOWN_MASK), "focusMonth");
+    am.put("focusMonth", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            jmcBulan.getComboBox().requestFocusInWindow(); // jmcBulan = JMonthChooser
+        }
+    });
+
+
+
+    // --- CTRL + J → buka popup kalender dari JDateChooser yang aktif ---
+    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_DOWN_MASK), "openCalendar");
+    am.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (isFocused(jdcStart)) {
+                clickDateButton(jdcStart);
+            } else if (isFocused(jdcEnd)) {
+                clickDateButton(jdcEnd);
+            }
+        }
+    });
+    // Misalnya tabel kamu bernama table1
+JTableHeader header = tblKeuangan.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(0x2c, 0x3e, 0x50));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+}
+
+// 🔍 Helper untuk cek apakah date chooser atau textfield-nya sedang fokus
+private boolean isFocused(JDateChooser chooser) {
+    return chooser.isFocusOwner() ||
+           ((JTextField) chooser.getDateEditor().getUiComponent()).isFocusOwner();
+}
+
+// 🔘 Helper untuk klik tombol kalender JDateChooser
+private void clickDateButton(JDateChooser chooser) {
+    for (Component comp : chooser.getComponents()) {
+        if (comp instanceof JButton) {
+            ((JButton) comp).doClick();
+            break;
+        }
+    }
+}
+
+    private void setupDateChooserBehavior() {
+    JTextField tfStart = (JTextField) jdcStart.getDateEditor().getUiComponent();
+    JButton btnStart = findDateChooserButton(jdcStart);
+
+    JTextField tfEnd = (JTextField) jdcEnd.getDateEditor().getUiComponent();
+    JButton btnEnd = findDateChooserButton(jdcEnd);
+
+    tfStart.setFocusTraversalKeysEnabled(false);
+    tfEnd.setFocusTraversalKeysEnabled(false);
+
+    InputMap imStart = tfStart.getInputMap(JComponent.WHEN_FOCUSED);
+    ActionMap amStart = tfStart.getActionMap();
+    imStart.put(KeyStroke.getKeyStroke("control J"), "openCalendar");
+    amStart.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (btnStart != null) btnStart.doClick();
+        }
+    });
+
+    InputMap imEnd = tfEnd.getInputMap(JComponent.WHEN_FOCUSED);
+    ActionMap amEnd = tfEnd.getActionMap();
+    imEnd.put(KeyStroke.getKeyStroke("control J"), "openCalendar");
+    amEnd.put("openCalendar", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (btnEnd != null) btnEnd.doClick();
+        }
+    });
+}
+
+// Helper untuk cari tombol kalender di JDateChooser
+private JButton findDateChooserButton(JDateChooser chooser) {
+    for (Component comp : chooser.getComponents()) {
+        if (comp instanceof JButton) {
+            return (JButton) comp;
+        }
+    }
+    return null;
+}
+
     private void setListenerTable(){
         tblSemua.getSelectionModel().addListSelectionListener(e -> {
     if (!e.getValueIsAdjusting()) {
@@ -86,47 +255,47 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
     jdcEnd.setDate(cal.getTime());
 }
-    private void hitungTotalBulanan() {
-    try (Connection conn = koneksi.dbKonek()) {
-        LocalDate sekarang = LocalDate.now();
-        int bulan = sekarang.getMonthValue();
-        int tahun = sekarang.getYear();
+//    private void hitungTotalBulanan() {
+//    try (Connection conn = koneksi.dbKonek()) {
+//        LocalDate sekarang = LocalDate.now();
+//        int bulan = sekarang.getMonthValue();
+//        int tahun = sekarang.getYear();
+//
+//        String sql = """
+//            SELECT 
+//                COALESCE(SUM(masuk), 0) AS total_masuk,
+//                COALESCE(SUM(keluar), 0) AS total_keluar
+//            FROM keuangan
+//            WHERE EXTRACT(MONTH FROM tanggal) = ? 
+//              AND EXTRACT(YEAR FROM tanggal) = ?
+//        """;
+//
+//        PreparedStatement ps = conn.prepareStatement(sql);
+//        ps.setInt(1, bulan);
+//        ps.setInt(2, tahun);
+//        ResultSet rs = ps.executeQuery();
+//
+//        if (rs.next()) { 
+//            double totalMasuk = rs.getDouble("total_masuk");
+//            double totalKeluar = rs.getDouble("total_keluar");
+//            double totalAkhir = totalMasuk - totalKeluar;
+//
+//            // format angka jadi rupiah
+//            lblMasukBulan.setText(String.format("Rp %, .0f", totalAkhir));
+//        } else {
+//            lblMasukBulan.setText("Rp 0");
+//        }
+//
+//        rs.close();
+//        ps.close();
+//    } catch (SQLException e) {
+//        JOptionPane.showMessageDialog(this, "Gagal menghitung total bulanan: " + e.getMessage());
+//    }
+//}
 
-        String sql = """
-            SELECT 
-                COALESCE(SUM(masuk), 0) AS total_masuk,
-                COALESCE(SUM(keluar), 0) AS total_keluar
-            FROM keuangan
-            WHERE EXTRACT(MONTH FROM tanggal) = ? 
-              AND EXTRACT(YEAR FROM tanggal) = ?
-        """;
-
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, bulan);
-        ps.setInt(2, tahun);
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) { 
-            double totalMasuk = rs.getDouble("total_masuk");
-            double totalKeluar = rs.getDouble("total_keluar");
-            double totalAkhir = totalMasuk - totalKeluar;
-
-            // format angka jadi rupiah
-            lblTotalBulan.setText(String.format("Rp %, .0f", totalAkhir));
-        } else {
-            lblTotalBulan.setText("Rp 0");
-        }
-
-        rs.close();
-        ps.close();
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal menghitung total bulanan: " + e.getMessage());
-    }
-}
 
 
-
-    private void loadDataBulanTahun() {
+ private void loadDataBulanTahun() {
     int bulan = jmcBulan.getMonth() + 1; 
     int tahun = jycTahun.getYear();
 
@@ -139,9 +308,9 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
 
     model.addColumn("No");
     model.addColumn("Tanggal");
-    model.addColumn("Masuk");
-    model.addColumn("Keluar");
-    model.addColumn("Total Akhir");
+    model.addColumn("Total Masuk");
+    model.addColumn("Total Keluar");
+    model.addColumn("Saldo Harian");
 
     double totalMasukBulan = 0;
     double totalKeluarBulan = 0;
@@ -150,8 +319,8 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         String sql = """
             SELECT 
                 tanggal::date AS tgl,
-                SUM(masuk) AS total_masuk,
-                SUM(keluar) AS total_keluar
+                COALESCE(SUM(masuk), 0) AS total_masuk,
+                COALESCE(SUM(keluar), 0) AS total_keluar
             FROM keuangan
             WHERE EXTRACT(MONTH FROM tanggal) = ?
               AND EXTRACT(YEAR FROM tanggal) = ?
@@ -168,7 +337,7 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         while (rs.next()) {
             double masuk = rs.getDouble("total_masuk");
             double keluar = rs.getDouble("total_keluar");
-            double total = masuk - keluar;
+            double saldo = masuk - keluar;
 
             totalMasukBulan += masuk;
             totalKeluarBulan += keluar;
@@ -176,24 +345,27 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
             model.addRow(new Object[]{
                 no++,
                 rs.getDate("tgl"),
-                masuk,
-                keluar,
-                total
+                String.format("Rp %, .0f", masuk),
+                String.format("Rp %, .0f", keluar),
+                String.format("Rp %, .0f", saldo)
             });
         }
 
         tblSemua.setModel(model);
 
-        // set total bulan ke label
-          double totalAkhir = totalMasukBulan - totalKeluarBulan;
+        // Hitung total bulan
+        double totalKeuntungan = totalMasukBulan - totalKeluarBulan;
 
-        // Format bulan dan tahun biar enak dibaca
-        String namaBulan = java.time.Month.of(bulan).name().substring(0, 1)
-                + java.time.Month.of(bulan).name().substring(1).toLowerCase();
+        // Format nama bulan biar enak dibaca
+        java.time.Month namaBulan = java.time.Month.of(bulan);
+        String namaBulanProper = namaBulan.name().substring(0, 1) + namaBulan.name().substring(1).toLowerCase();
 
-        // Set label total dan keuntungan
-        lblTotalBulan.setText(String.format("Total Bulan %s %d: Rp %, .0f", namaBulan, tahun, totalAkhir));
+        // Set semua label
+        lblMasukBulan.setText(String.format("Total Pemasukkan: Rp %, .0f", totalMasukBulan));
+        lblKeluarBulan.setText(String.format("Total Pengeluaran: Rp %, .0f", totalKeluarBulan));
+        lblKeuntunganBulan.setText(String.format("Total Keuntungan: Rp %, .0f", totalKeuntungan));
 
+        lblTotalBulan.setText("Laporan Keuangan Bulan " + namaBulanProper + " " + tahun);
 
         rs.close();
         ps.close();
@@ -201,6 +373,7 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         JOptionPane.showMessageDialog(this, "Gagal load data: " + e.getMessage());
     }
 }
+
 
 int selectedId = -1; // untuk simpan idkeuangan yang dipilih
 
@@ -262,6 +435,7 @@ private void loadDataKeuangan(java.util.Date startDate, java.util.Date endDate) 
 
         tblKeuangan.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblKeuangan.getColumnModel().getColumn(0).setMaxWidth(40);
+Session.updateSaldo(tblKeuangan, lblMasuk, lblKeluar, lblSaldo);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -443,20 +617,22 @@ private void loadDetailKeuanganPerTanggal(java.sql.Date tanggal) {
         JOptionPane.showMessageDialog(this, "Gagal load detail: " + e.getMessage());
     }
 }
-private void element(){
+private void element() {
     List<Component> tabOrder = Arrays.asList(
-   jdcStart,
-   jdcEnd,
-   jycTahun,
-   jmcBulan
+        (JTextField) jdcStart.getDateEditor().getUiComponent(),
+        (JTextField) jdcEnd.getDateEditor().getUiComponent(),
+        jycTahun,
+        jmcBulan
+    );
 
-            
-);
+    setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+    setFocusCycleRoot(true);
 
-setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
-setFocusCycleRoot(true);
-
+    // pastikan TAB tidak ditangkap di dalam textfield date chooser
+    ((JTextField) jdcStart.getDateEditor().getUiComponent()).setFocusTraversalKeysEnabled(false);
+    ((JTextField) jdcEnd.getDateEditor().getUiComponent()).setFocusTraversalKeysEnabled(false);
 }
+
 public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private final List<Component> order;
 
@@ -505,23 +681,33 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private void initComponents() {
 
         panelUtama = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jdcEnd = new com.toedter.calendar.JDateChooser();
-        jdcStart = new com.toedter.calendar.JDateChooser();
+        jPanel1 = new javax.swing.JPanel();
+        btnCetak = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         btnFilter = new javax.swing.JButton();
+        jdcStart = new com.toedter.calendar.JDateChooser();
+        jdcEnd = new com.toedter.calendar.JDateChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKeuangan = new javax.swing.JTable();
-        btnCetak = new javax.swing.JButton();
+        lblSaldo = new javax.swing.JLabel();
+        lblKeluar = new javax.swing.JLabel();
+        lblMasuk = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblDetails = new javax.swing.JTable();
+        lblMasukBulan = new javax.swing.JLabel();
+        jycTahun = new com.toedter.calendar.JYearChooser();
+        jmcBulan = new com.toedter.calendar.JMonthChooser();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblSemua = new javax.swing.JTable();
-        jmcBulan = new com.toedter.calendar.JMonthChooser();
-        jycTahun = new com.toedter.calendar.JYearChooser();
-        jLabel3 = new javax.swing.JLabel();
-        lblSetKeuntungan = new javax.swing.JLabel();
+        lblKeluarBulan = new javax.swing.JLabel();
+        lblKeuntunganBulan = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
+        btnCetak1 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -529,29 +715,44 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         panelUtama.setPreferredSize(new java.awt.Dimension(1740, 960));
         panelUtama.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Laporan Harian");
-        panelUtama.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 500, -1, -1));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak.setText("Cetak");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 130, 40));
+
+        jLabel2.setText("Sampai");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, -1, -1));
+
+        btnFilter.setBackground(new java.awt.Color(0, 153, 153));
+        btnFilter.setText("REFRESH");
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, 130, 40));
+
+        jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcStartPropertyChange(evt);
+            }
+        });
+        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 150, 40));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcEndPropertyChange(evt);
             }
         });
-        panelUtama.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 70, 140, 40));
-        panelUtama.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, 150, 40));
-
-        jLabel2.setText("Sampai");
-        panelUtama.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, -1, -1));
-
-        btnFilter.setBackground(new java.awt.Color(102, 255, 255));
-        btnFilter.setText("Filter");
-        btnFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFilterActionPerformed(evt);
-            }
-        });
-        panelUtama.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 130, 40));
+        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 70, 140, 40));
 
         tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -591,16 +792,42 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblKeuangan.getColumnModel().getColumn(2).setHeaderValue("Jenis Keuangan");
         }
 
-        panelUtama.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 1630, 370));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1630, 270));
 
-        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
-        btnCetak.setText("Cetak");
-        btnCetak.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetakActionPerformed(evt);
-            }
-        });
-        panelUtama.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 70, 130, 40));
+        lblSaldo.setText("lblSaldo");
+        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 100, 400, -1));
+
+        lblKeluar.setText("lblKeluar");
+        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 80, 400, -1));
+
+        lblMasuk.setText("lblMasuk");
+        jPanel1.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 60, 390, -1));
+
+        jPanel2.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 27)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Laporan Keuangan");
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1660, 60));
+
+        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 1640, 410));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel4.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Laporan Bulanan dan harian");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+
+        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1650, 40));
 
         tblDetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -613,7 +840,25 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblDetails.setRowHeight(30);
         jScrollPane2.setViewportView(tblDetails);
 
-        panelUtama.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 570, 620, 280));
+        jPanel3.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 90, 620, 270));
+
+        lblMasukBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblMasukBulan.setText("lblTotalBulan");
+        jPanel3.add(lblMasukBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 360, -1));
+
+        jycTahun.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jycTahunPropertyChange(evt);
+            }
+        });
+        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 130, 30));
+
+        jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jmcBulanPropertyChange(evt);
+            }
+        });
+        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 50, 130, 30));
 
         tblSemua.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -650,33 +895,30 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         jScrollPane3.setViewportView(tblSemua);
 
-        panelUtama.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 570, 980, 280));
+        jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 980, 270));
 
-        jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jmcBulanPropertyChange(evt);
-            }
-        });
-        panelUtama.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 530, 130, 30));
+        lblKeluarBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblKeluarBulan.setText("lblTotalBulan");
+        jPanel3.add(lblKeluarBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 370, 360, -1));
 
-        jycTahun.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jycTahunPropertyChange(evt);
-            }
-        });
-        panelUtama.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 530, 130, 30));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel3.setText("Laporan Keuangan");
-        panelUtama.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
-
-        lblSetKeuntungan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblSetKeuntungan.setText("Total Keuntungan:");
-        panelUtama.add(lblSetKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 530, 360, -1));
+        lblKeuntunganBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblKeuntunganBulan.setText("lblTotalBulan");
+        jPanel3.add(lblKeuntunganBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 370, 360, -1));
 
         lblTotalBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTotalBulan.setText("lblTotalBulan");
-        panelUtama.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 540, 360, -1));
+        jPanel3.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 60, 360, -1));
+
+        btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak1.setText("Cetak");
+        btnCetak1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetak1ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 130, 40));
+
+        panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 440, 1640, 450));
 
         add(panelUtama, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -698,7 +940,108 @@ setFilterDefault();// TODO add your handling code here:
     }//GEN-LAST:event_btnFilterActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Simpan Laporan Keuangan");
+    chooser.setSelectedFile(new File("LaporanKeuangan.pdf"));
+
+    int userSelection = chooser.showSaveDialog(this);
+    if (userSelection != JFileChooser.APPROVE_OPTION) {
+        return;
+    }
+
+    File fileToSave = chooser.getSelectedFile();
+    String filePath = fileToSave.getAbsolutePath();
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+    Date startDate = jdcStart.getDate();
+    Date endDate = jdcEnd.getDate();
+    String startStr = (startDate != null) ? sdf.format(startDate) : "-";
+    String endStr = (endDate != null) ? sdf.format(endDate) : "-";
+
+    JTable table = tblKeuangan;
+    TableModel model = table.getModel();
+
+    Document document = new Document(PageSize.A4.rotate());
+    try {
+        PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        document.open();
+
+        // Judul
+        Paragraph title = new Paragraph("LAPORAN KEUANGAN\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18));
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        // Periode
+        Paragraph info = new Paragraph(
+                "Periode: " + startStr + " s/d " + endStr + "\n\n",
+                FontFactory.getFont(FontFactory.HELVETICA, 12));
+        info.setAlignment(Element.ALIGN_CENTER);
+        document.add(info);
+
+        // Tabel data
+        PdfPTable pdfTable = new PdfPTable(model.getColumnCount());
+        pdfTable.setWidthPercentage(100);
+        pdfTable.setSpacingBefore(10f);
+
+        // Header kolom
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            PdfPCell headerCell = new PdfPCell(new Phrase(model.getColumnName(i)));
+            headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTable.addCell(headerCell);
+        }
+
+        // Isi tabel
+        for (int r = 0; r < model.getRowCount(); r++) {
+            for (int c = 0; c < model.getColumnCount(); c++) {
+                Object val = model.getValueAt(r, c);
+                PdfPCell cell = new PdfPCell(new Phrase(val == null ? "" : val.toString()));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                pdfTable.addCell(cell);
+            }
+        }
+
+        document.add(pdfTable);
+
+        // Tambahkan ringkasan total di bawah tabel
+        document.add(new Paragraph("\n\n", FontFactory.getFont(FontFactory.HELVETICA, 10)));
+
+        Paragraph totalMasuk = new Paragraph("Total pemasukan: " + lblMasuk.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+        Paragraph totalKeluar = new Paragraph("Total pengeluaran: " + lblKeluar.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+        Paragraph totalSaldo = new Paragraph("Keuntungan: " + lblSaldo.getText(),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12));
+
+        totalMasuk.setAlignment(Element.ALIGN_LEFT);
+        totalKeluar.setAlignment(Element.ALIGN_LEFT);
+        totalSaldo.setAlignment(Element.ALIGN_LEFT);
+
+        document.add(totalMasuk);
+        document.add(totalKeluar);
+        document.add(totalSaldo);
+
+        // Footer tanggal cetak
+        Paragraph footer = new Paragraph(
+                "\nDicetak pada: " + sdf.format(new java.util.Date()),
+                FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10));
+        footer.setAlignment(Element.ALIGN_RIGHT);
+        document.add(footer);
+
+        document.close();
+
+        JOptionPane.showMessageDialog(this,
+                "PDF berhasil dibuat:\n" + filePath,
+                "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+                "Gagal membuat PDF:\n" + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }
+// TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void tblKeuanganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblKeuanganKeyPressed
@@ -732,13 +1075,143 @@ loadDataBulanTahun();// TODO add your handling code here:
 loadDataBulanTahun();// TODO add your handling code here:
     }//GEN-LAST:event_jycTahunPropertyChange
 
+    private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
+ if ("date".equals(evt.getPropertyName())) {
+        java.util.Date start = jdcStart.getDate();
+        java.util.Date end = jdcEnd.getDate();
+
+        if (start != null && end != null) {
+            loadDataKeuangan(start, end);
+        }
+    }         // TODO add your handling code here:
+    }//GEN-LAST:event_jdcStartPropertyChange
+
+    private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
+   int bulan = jmcBulan.getMonth() + 1;
+    int tahun = jycTahun.getYear();
+
+    String namaBulan = java.time.Month.of(bulan).name().substring(0, 1)
+            + java.time.Month.of(bulan).name().substring(1).toLowerCase();
+
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Simpan Laporan Keuangan");
+    chooser.setSelectedFile(new java.io.File("Laporan_Keuangan_" + namaBulan + "_" + tahun + ".pdf"));
+
+    int userSelection = chooser.showSaveDialog(this);
+    if (userSelection != JFileChooser.APPROVE_OPTION) {
+        return; 
+    }
+
+    java.io.File fileToSave = chooser.getSelectedFile();
+    if (!fileToSave.getName().toLowerCase().endsWith(".pdf")) {
+        fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".pdf");
+    }
+
+    try (Connection conn = koneksi.dbKonek()) {
+        com.itextpdf.text.Document doc = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4);
+        com.itextpdf.text.pdf.PdfWriter.getInstance(doc, new FileOutputStream(fileToSave));
+        doc.open();
+
+        // Judul
+        com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(
+                com.itextpdf.text.Font.FontFamily.HELVETICA, 16, com.itextpdf.text.Font.BOLD);
+        com.itextpdf.text.Paragraph judul = new com.itextpdf.text.Paragraph(
+                "LAPORAN KEUANGAN BULAN " + namaBulan.toUpperCase() + " TAHUN " + tahun, titleFont);
+        judul.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        doc.add(judul);
+        doc.add(new com.itextpdf.text.Paragraph(" "));
+
+        // Buat tabel
+        com.itextpdf.text.pdf.PdfPTable table = new com.itextpdf.text.pdf.PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+        table.setWidths(new float[]{2f, 3f, 3f, 3f});
+
+        com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(
+                com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+        com.itextpdf.text.Font cellFont = new com.itextpdf.text.Font(
+                com.itextpdf.text.Font.FontFamily.HELVETICA, 11);
+
+        // Header tabel
+        table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("Tanggal", headerFont)));
+        table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("Total Masuk", headerFont)));
+        table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("Total Keluar", headerFont)));
+        table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("Saldo Harian", headerFont)));
+
+        // Query data
+        String sql = """
+            SELECT 
+                tanggal::date AS tgl,
+                COALESCE(SUM(masuk), 0) AS total_masuk,
+                COALESCE(SUM(keluar), 0) AS total_keluar
+            FROM keuangan
+            WHERE EXTRACT(MONTH FROM tanggal) = ?
+              AND EXTRACT(YEAR FROM tanggal) = ?
+            GROUP BY tanggal::date
+            ORDER BY tanggal::date ASC
+        """;
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, bulan);
+        ps.setInt(2, tahun);
+        ResultSet rs = ps.executeQuery();
+
+        double totalMasuk = 0;
+        double totalKeluar = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+        while (rs.next()) {
+            double masuk = rs.getDouble("total_masuk");
+            double keluar = rs.getDouble("total_keluar");
+            double saldo = masuk - keluar;
+
+            totalMasuk += masuk;
+            totalKeluar += keluar;
+
+            table.addCell(new com.itextpdf.text.pdf.PdfPCell(
+                    new com.itextpdf.text.Phrase(sdf.format(rs.getDate("tgl")), cellFont)));
+            table.addCell(new com.itextpdf.text.pdf.PdfPCell(
+                    new com.itextpdf.text.Phrase(String.format("Rp %, .0f", masuk), cellFont)));
+            table.addCell(new com.itextpdf.text.pdf.PdfPCell(
+                    new com.itextpdf.text.Phrase(String.format("Rp %, .0f", keluar), cellFont)));
+            table.addCell(new com.itextpdf.text.pdf.PdfPCell(
+                    new com.itextpdf.text.Phrase(String.format("Rp %, .0f", saldo), cellFont)));
+        }
+
+        doc.add(table);
+
+        // Total
+        double totalKeuntungan = totalMasuk - totalKeluar;
+        doc.add(new com.itextpdf.text.Paragraph(" "));
+        doc.add(new com.itextpdf.text.Paragraph("Total Pemasukan Bulan Ini : " + String.format("Rp %, .0f", totalMasuk)));
+        doc.add(new com.itextpdf.text.Paragraph("Total Pengeluaran Bulan Ini : " + String.format("Rp %, .0f", totalKeluar)));
+        doc.add(new com.itextpdf.text.Paragraph("Keuntungan Bulan Ini : " + String.format("Rp %, .0f", totalKeuntungan)));
+
+        doc.close();
+        rs.close();
+        ps.close();
+
+        JOptionPane.showMessageDialog(this, "Laporan berhasil disimpan di:\n" + fileToSave.getAbsolutePath());
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal mencetak laporan: " + e.getMessage());
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_btnCetak1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCetak;
+    private javax.swing.JButton btnCetak1;
     private javax.swing.JButton btnFilter;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -746,7 +1219,12 @@ loadDataBulanTahun();// TODO add your handling code here:
     private com.toedter.calendar.JDateChooser jdcStart;
     private com.toedter.calendar.JMonthChooser jmcBulan;
     private com.toedter.calendar.JYearChooser jycTahun;
-    private javax.swing.JLabel lblSetKeuntungan;
+    private javax.swing.JLabel lblKeluar;
+    private javax.swing.JLabel lblKeluarBulan;
+    private javax.swing.JLabel lblKeuntunganBulan;
+    private javax.swing.JLabel lblMasuk;
+    private javax.swing.JLabel lblMasukBulan;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JLabel lblTotalBulan;
     private javax.swing.JPanel panelUtama;
     private javax.swing.JTable tblDetails;

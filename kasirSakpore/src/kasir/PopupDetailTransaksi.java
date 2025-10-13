@@ -72,6 +72,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Gagal load detail: " + e.getMessage());
         }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -93,7 +94,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDetail = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnCetak = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -152,13 +153,14 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
         jLabel2.setText("Sakpore");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 200, 100));
 
-        jButton1.setText("CETAK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnCetak.setBackground(new java.awt.Color(0, 102, 102));
+        btnCetak.setText("CETAK");
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnCetakActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(475, 723, 100, 40));
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(475, 723, 100, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -176,9 +178,78 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+           // TODO add your handling code here:
+             try {
+        // === Dialog pilih lokasi simpan ===
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Simpan Laporan Transaksi");
+        
+        // default nama file
+        String defaultFileName = "Transaksi_" + lblKode.getText().replace("Detail Transaksi Dari: ", "") + ".pdf";
+        fileChooser.setSelectedFile(new java.io.File(defaultFileName));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        
+        if (userSelection == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File fileToSave = fileChooser.getSelectedFile();
+            
+            // pastikan ekstensinya .pdf
+            String fileName = fileToSave.getAbsolutePath();
+            if (!fileName.toLowerCase().endsWith(".pdf")) {
+                fileName += ".pdf";
+            }
+
+            // === Buat dokumen PDF ===
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(fileName));
+            document.open();
+
+            // Judul
+            com.itextpdf.text.Font fontTitle = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 18, com.itextpdf.text.Font.BOLD);
+            document.add(new com.itextpdf.text.Paragraph("Sakpore - Detail Transaksi", fontTitle));
+            document.add(new com.itextpdf.text.Paragraph(" "));
+
+            // Info transaksi
+            document.add(new com.itextpdf.text.Paragraph(lblKode.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblKasir.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblTanggal.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblSubtotal.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblDiskon.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblGrandTotal.getText()));
+            document.add(new com.itextpdf.text.Paragraph(lblMetode.getText()));
+            document.add(new com.itextpdf.text.Paragraph(" "));
+
+            // Detail Barang (tabel)
+            com.itextpdf.text.pdf.PdfPTable table = new com.itextpdf.text.pdf.PdfPTable(4);
+            table.addCell("Nama Barang");
+            table.addCell("Jumlah");
+            table.addCell("Harga");
+            table.addCell("Subtotal");
+
+            for (int i = 0; i < tblDetail.getRowCount(); i++) {
+                table.addCell(tblDetail.getValueAt(i, 0).toString());
+                table.addCell(tblDetail.getValueAt(i, 1).toString());
+                table.addCell(tblDetail.getValueAt(i, 2).toString());
+                table.addCell(tblDetail.getValueAt(i, 3).toString());
+            }
+
+            document.add(table);
+            document.close();
+
+            JOptionPane.showMessageDialog(this, "PDF berhasil disimpan di: " + fileName);
+            
+            // === Opsional: langsung buka file setelah disimpan ===
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(new java.io.File(fileName));
+            }
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal mencetak: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnCetakActionPerformed
 
     /**
      * @param args the command line arguments
@@ -223,7 +294,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnCetak;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
