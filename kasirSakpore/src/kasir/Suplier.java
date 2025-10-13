@@ -61,6 +61,19 @@ btnSimpan.getActionMap().put("ctrlS", new AbstractAction() {
         btnSimpan.doClick(); // Menjalankan aksi tombol
     }
 });
+
+
+       btnSimpan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "SimpanAction"
+);
+
+btnSimpan.getActionMap().put("SimpanAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSimpan.doClick();
+    }
+});
     
 btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
@@ -232,6 +245,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         btnEdit = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         pnFormUser1 = new javax.swing.JPanel();
         lStatus2 = new javax.swing.JLabel();
         lUsername1 = new javax.swing.JLabel();
@@ -307,6 +323,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnFormUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 60));
 
+        jLabel1.setText("[ Ctrl+D ]");
+        pnFormUser.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, -1, -1));
+
+        jLabel2.setText("[ Ctrl+B ]");
+        pnFormUser.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 110, -1, -1));
+
+        jLabel5.setText("[ Ctrl+E ]");
+        pnFormUser.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 110, -1, -1));
+
         jPanel1.add(pnFormUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 1090, 740));
 
         pnFormUser1.setBackground(new java.awt.Color(255, 255, 255));
@@ -354,13 +379,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         pnFormUser1.add(lStatus3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 60, 30));
 
         btnSimpan.setBackground(new java.awt.Color(51, 255, 0));
+        btnSimpan.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btnSimpan.setText("Simpan");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSimpanActionPerformed(evt);
             }
         });
-        pnFormUser1.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 570, 360, 60));
+        pnFormUser1.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 610, 350, 50));
 
         jPanel3.setBackground(new java.awt.Color(5, 69, 162));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -511,8 +537,11 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JComboBox<String> cmbStatus;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

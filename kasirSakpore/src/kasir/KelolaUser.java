@@ -43,7 +43,78 @@ public class KelolaUser extends javax.swing.JPanel {
         element();
         setKeyBindings();
         setHeader();
+        
+        
+    // Tambahkan shortcut CTRL + ENTER untuk tombol Submit
+  btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
 
+btSubmit.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btSubmit.doClick();
+    }
+});
+
+
+//  btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+//    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+//    "ctrlS"
+//);
+//
+//btSubmit.getActionMap().put("ctrlS", new AbstractAction() {
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        btSubmit.doClick();
+//    }
+//});
+
+  this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
+
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btSubmit.doClick(); // klik tombol submit
+        }
+    });
+     Batal.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Batal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        Batal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+); 
+        
+             btEdit.getActionMap().put("ctrlE", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
+    "ctrlE"
+); 
+        
+           btDelete.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+); 
 
     }
        private void loadUsernameCombo() {
@@ -301,6 +372,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         Batal = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -310,6 +384,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblRiwayat = new javax.swing.JTable();
         jycTahun = new com.toedter.calendar.JYearChooser();
         txtCari = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
         setMinimumSize(new java.awt.Dimension(1720, 960));
@@ -361,10 +437,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btSubmit.setBackground(new java.awt.Color(102, 255, 102));
         btSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btSubmit.setText("SUBMIT");
+        btSubmit.setText("Submit");
         btSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSubmitActionPerformed(evt);
+            }
+        });
+        btSubmit.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                btSubmitKeyReleased(evt);
             }
         });
         pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 640, 310, 60));
@@ -403,7 +484,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblUser.getColumnModel().getColumn(1).setMaxWidth(45);
         }
 
-        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 1080, 210));
+        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 1080, 190));
 
         btDelete.setBackground(new java.awt.Color(255, 51, 51));
         btDelete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -413,7 +494,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btDeleteActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 80, 90, 40));
+        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 110, 90, 40));
 
         btEdit.setBackground(new java.awt.Color(255, 153, 51));
         btEdit.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -423,7 +504,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btEditActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 80, 90, 40));
+        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 110, 90, 40));
 
         Batal.setBackground(new java.awt.Color(204, 204, 204));
         Batal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -433,7 +514,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 BatalActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 80, 90, 40));
+        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 110, 90, 40));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -444,6 +525,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         pnDaftarUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 70));
+
+        jLabel5.setText("[ Ctrl=D ]");
+        pnDaftarUser.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 90, -1, -1));
+
+        jLabel6.setText("[ Ctrl=B ]");
+        pnDaftarUser.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 90, -1, -1));
+
+        jLabel7.setText("[ Ctrl=E ]");
+        pnDaftarUser.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 90, -1, -1));
 
         pnback.add(pnDaftarUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 20, 1110, 360));
 
@@ -467,14 +557,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 cmbUsernameActionPerformed(evt);
             }
         });
-        jPanel3.add(cmbUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 120, 40));
+        jPanel3.add(cmbUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 120, 40));
 
         jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jmcBulanPropertyChange(evt);
             }
         });
-        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 140, 40));
+        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 100, 140, 40));
 
         tblRiwayat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -494,14 +584,21 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         }
 
         jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 1090, 280));
-        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 90, 40));
+        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 90, 40));
 
         txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCariKeyReleased(evt);
             }
         });
-        jPanel3.add(txtCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 90, 410, 50));
+        jPanel3.add(txtCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, 440, 40));
+
+        jLabel8.setText("[ Ctrl=C ]");
+        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 80, -1, -1));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel9.setText("Cari");
+        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 110, -1, -1));
 
         pnback.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 390, 1110, 450));
 
@@ -646,6 +743,10 @@ loadRiwayatData();        // TODO add your handling code here:
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariKeyReleased
 
+    private void btSubmitKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btSubmitKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btSubmitKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Batal;
@@ -659,6 +760,11 @@ loadRiwayatData();        // TODO add your handling code here:
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

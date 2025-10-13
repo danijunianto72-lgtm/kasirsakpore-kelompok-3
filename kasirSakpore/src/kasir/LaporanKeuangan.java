@@ -96,6 +96,30 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         btnCetak.doClick(); // Menjalankan aksi tombol
     }
 });
+
+         btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+    "ctrlV"
+); 
+        
+              btnFilter.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnFilter.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
         setupGlobalShortcuts(); // ⬅️ tambahkan di sini
@@ -733,6 +757,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblMasuk = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -747,6 +773,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblKeuntunganBulan = new javax.swing.JLabel();
         lblTotalBulan = new javax.swing.JLabel();
         btnCetak1 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -765,10 +792,10 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnCetakActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 130, 40));
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 100, 130, 40));
 
         jLabel2.setText("Sampai");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, -1, -1));
 
         btnFilter.setBackground(new java.awt.Color(0, 153, 153));
         btnFilter.setText("REFRESH");
@@ -777,21 +804,21 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnFilterActionPerformed(evt);
             }
         });
-        jPanel1.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, 130, 40));
+        jPanel1.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 100, 130, 40));
 
         jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcStartPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 150, 40));
+        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 150, 40));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcEndPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 70, 140, 40));
+        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 100, 140, 40));
 
         tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -831,16 +858,16 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblKeuangan.getColumnModel().getColumn(2).setHeaderValue("Jenis Keuangan");
         }
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1630, 270));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 1610, 240));
 
         lblSaldo.setText("lblSaldo");
-        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 100, 400, -1));
+        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 110, 400, -1));
 
         lblKeluar.setText("lblKeluar");
-        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 80, 400, -1));
+        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 90, 400, -1));
 
         lblMasuk.setText("lblMasuk");
-        jPanel1.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 60, 390, -1));
+        jPanel1.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 70, 390, -1));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -851,6 +878,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1660, 60));
+
+        jLabel5.setText("[ Ctrl+R ]");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, -1, -1));
+
+        jLabel1.setText("[ Ctrl+C ]");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 80, -1, -1));
 
         panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 1640, 410));
 
@@ -879,25 +912,25 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblDetails.setRowHeight(30);
         jScrollPane2.setViewportView(tblDetails);
 
-        jPanel3.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 90, 620, 270));
+        jPanel3.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 70, 620, 320));
 
         lblMasukBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblMasukBulan.setText("lblTotalBulan");
-        jPanel3.add(lblMasukBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 360, -1));
+        jPanel3.add(lblMasukBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, 360, -1));
 
         jycTahun.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jycTahunPropertyChange(evt);
             }
         });
-        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 130, 30));
+        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 130, 30));
 
         jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jmcBulanPropertyChange(evt);
             }
         });
-        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 50, 130, 30));
+        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, 130, 30));
 
         tblSemua.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -934,19 +967,19 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         jScrollPane3.setViewportView(tblSemua);
 
-        jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 980, 270));
+        jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 950, 260));
 
         lblKeluarBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblKeluarBulan.setText("lblTotalBulan");
-        jPanel3.add(lblKeluarBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 370, 360, -1));
+        jPanel3.add(lblKeluarBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 390, 360, -1));
 
         lblKeuntunganBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblKeuntunganBulan.setText("lblTotalBulan");
-        jPanel3.add(lblKeuntunganBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 370, 360, -1));
+        jPanel3.add(lblKeuntunganBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 390, 360, -1));
 
         lblTotalBulan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTotalBulan.setText("lblTotalBulan");
-        jPanel3.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 60, 360, -1));
+        jPanel3.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 80, 360, -1));
 
         btnCetak1.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak1.setText("Cetak");
@@ -955,7 +988,10 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnCetak1ActionPerformed(evt);
             }
         });
-        jPanel3.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 130, 40));
+        jPanel3.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, 130, 40));
+
+        jLabel6.setText("[ Ctrl+C ]");
+        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, -1, -1));
 
         panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 440, 1640, 450));
 
@@ -1244,9 +1280,12 @@ loadDataBulanTahun();// TODO add your handling code here:
     private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnCetak1;
     private javax.swing.JButton btnFilter;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

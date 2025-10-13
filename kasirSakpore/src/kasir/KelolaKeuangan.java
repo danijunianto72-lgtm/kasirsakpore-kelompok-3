@@ -55,6 +55,18 @@ btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
     }
 });
 
+btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
+
+btnSubmit.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSubmit.doClick();
+    }
+});
+
 btnReset.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
     "ctrlR"
@@ -344,6 +356,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblKeuangan = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
@@ -385,13 +400,13 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btnSubmit.setBackground(new java.awt.Color(0, 255, 51));
         btnSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnSubmit.setText("[ENTER] SUBMIT ");
+        btnSubmit.setText("[ENTER] Sumbit");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSubmitActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 610, 330, 80));
+        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 640, 290, 60));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
 
@@ -464,7 +479,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnResetActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 120, 40));
+        pnDaftarUser.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 110, 120, 40));
 
         tblKeuangan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -514,6 +529,18 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         );
 
         pnDaftarUser.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1170, -1));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
+        jLabel3.setText("[ Ctrl=D ]");
+        pnDaftarUser.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 90, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
+        jLabel4.setText("[ Ctrl+R ]");
+        pnDaftarUser.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 90, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
+        jLabel5.setText("[ Ctrl+E ]");
+        pnDaftarUser.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 90, -1, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -692,6 +719,9 @@ setFilterDefault();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
