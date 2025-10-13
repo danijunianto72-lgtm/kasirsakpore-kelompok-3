@@ -100,6 +100,17 @@ btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
 });
 setKeyBindings();
 
+btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+    "pembayaranAction"
+);
+
+btnPembayaran.getActionMap().put("pembayaranAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPembayaran.doClick();
+    }
+});
 
 
     }

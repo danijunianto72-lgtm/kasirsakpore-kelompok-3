@@ -53,6 +53,19 @@ btnSimpan.getActionMap().put("ctrlS", new AbstractAction() {
         btnSimpan.doClick(); // Menjalankan aksi tombol
     }
 });
+
+
+       btnSimpan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "SimpanAction"
+);
+
+btnSimpan.getActionMap().put("SimpanAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSimpan.doClick();
+    }
+});
     
 btnBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),

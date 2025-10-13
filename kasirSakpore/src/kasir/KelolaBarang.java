@@ -176,6 +176,18 @@ btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
     KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
     "ctrlE"
 );
+        
+  btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
+
+btnSubmit.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSubmit.doClick();
+    }
+});
 
 btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
     @Override
@@ -208,6 +220,46 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
         btnBatal.doClick(); // Menjalankan aksi tombol
     }
 });
+
+        btnJEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
+    "ctrlT"
+);
+        
+
+btnJEdit.getActionMap().put("ctrlT", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnJEdit.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnJDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK),
+    "ctrlY"
+);
+        
+
+btnJDelete.getActionMap().put("ctrlY", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnJDelete.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+       btnJBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
+        
+
+btnJBatal.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnJBatal.doClick(); // Menjalankan aksi tombol
+    }
+});
+
 setKeyBindings();
 // Misalnya tabel kamu bernama table1
 JTableHeader header = tblBarang.getTableHeader();

@@ -96,6 +96,30 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
         btnCetak.doClick(); // Menjalankan aksi tombol
     }
 });
+
+         btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+    "ctrlV"
+); 
+        
+              btnFilter.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnFilter.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
     SwingUtilities.invokeLater(() -> {
         jdcStart.getDateEditor().getUiComponent().requestFocusInWindow();
         setupGlobalShortcuts(); // ⬅️ tambahkan di sini

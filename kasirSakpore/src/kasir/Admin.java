@@ -20,6 +20,9 @@ import javax.swing.JScrollPane;
 import java.sql.*;
 import java.text.NumberFormat;
 import java.util.Calendar;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 /**
  *
@@ -35,6 +38,15 @@ public class Admin extends javax.swing.JPanel {
     initComponents();
     setFilterDefault();
 getTotalStokKurang();
+
+btnReset.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl R"), "reset");
+        btnReset.getActionMap().put("reset", new AbstractAction() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+        btnReset.doClick();
+        }
+        });
+
     // atur layout panelChart
     panelChart.setLayout(new BorderLayout());
 

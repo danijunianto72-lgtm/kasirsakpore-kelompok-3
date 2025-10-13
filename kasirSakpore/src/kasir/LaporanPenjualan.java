@@ -87,6 +87,33 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
     }
 });
 
+           btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+    "ctrlV"
+); 
+        
+        
+            btnDetail1.getActionMap().put("ctrlX", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDetail1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnDetail1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
+    "ctrlX"
+);      
+    
+    
+
 btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
     "ctrlD"

@@ -80,6 +80,31 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         tampilData();
         setFilterDefault();
     });
+    
+    
+         btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnRefresh.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+); 
+        
+        btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnCetak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+    "ctrlC"
+); 
     }      
        
 

@@ -12,6 +12,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
@@ -40,6 +43,56 @@ public class Pembelian extends javax.swing.JPanel {
         loadSupplier1();
         setupSkuScanner();
         element();
+        
+     btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnRefresh.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);   
+        
+     btnPilih.getActionMap().put("ctrlP", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPilih.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnPilih.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
+    "ctrlP"
+);   
+        
+        
+     btnBeli1.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBeli1.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+); 
+        
+        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
+
+btnBeli1.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBeli1.doClick();
+    }
+});
+   
                 
       // filter otomatis saat tanggal berubah
     jdcStart.addPropertyChangeListener(evt -> {

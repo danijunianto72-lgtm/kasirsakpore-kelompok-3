@@ -54,6 +54,18 @@ btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
     }
 });
 
+btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+    "submitAction"
+);
+
+btnSubmit.getActionMap().put("submitAction", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSubmit.doClick();
+    }
+});
+
 btnReset.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
     "ctrlR"
