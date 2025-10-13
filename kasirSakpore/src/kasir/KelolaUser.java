@@ -448,7 +448,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btSubmitKeyReleased(evt);
             }
         });
-        pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 640, 310, 60));
+        pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 650, 310, 60));
 
         jPanel1.setBackground(new java.awt.Color(5, 69, 162));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());

@@ -122,13 +122,7 @@ loadChart(startDate, endDate);
         });
         
         
-        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "tambah");
-        btnSubmit.getActionMap().put("tambah", new AbstractAction() {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            btnSubmit.doClick(); // seakan tombol diklik
-        }
-        });
+  
         
         btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl E"), "edit");
         btnEdit.getActionMap().put("edit", new AbstractAction() {
@@ -159,35 +153,22 @@ loadChart(startDate, endDate);
         }
         });
         
-        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
-    "ctrlS"
-);
-        
-
-btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnSubmit.doClick(); // Menjalankan aksi tombol
-    }
-});
+      
 
         btnEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
     "ctrlE"
 );
         
-  btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
-    "submitAction"
-);
+this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
 
-btnSubmit.getActionMap().put("submitAction", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnSubmit.doClick();
-    }
-});
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btnSubmit.doClick(); // klik tombol submit
+        }
+    });
 
 btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
     @Override

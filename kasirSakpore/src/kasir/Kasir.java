@@ -91,30 +91,16 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
     }
 });
 
-btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
-    "ctrlP"
-);
+this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
 
-btnPembayaran.getActionMap().put("ctrlP", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnPembayaran.doClick(); // Menjalankan aksi tombol
-    }
-});
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btnPembayaran.doClick(); // klik tombol submit
+        }
+    });
 setKeyBindings();
-
-btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-    "pembayaranAction"
-);
-
-btnPembayaran.getActionMap().put("pembayaranAction", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnPembayaran.doClick();
-    }
-});
 
 
     }
@@ -476,6 +462,7 @@ scrollRingkasan.setBorder(BorderFactory.createTitledBorder("Barang yang dibeli")
     txtKredit.getDocument().addDocumentListener(new SimpleDocumentListener(() ->
         updateKembalian(txtGrandTotal, txtTunai, txtKredit, txtKembalian)
     ));
+  
 
     // === Event Tombol ===
     btnKembali.addActionListener(ev -> dialog.dispose());

@@ -40,25 +40,19 @@ public class KelolaKeuangan extends javax.swing.JPanel {
                     jdcTanggal.setDate(new java.util.Date());
                     setFilterDefault();
                     element();
-                    
-        btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
-    "ctrlS"
-);
+                   
 
         txtMasuk.setText("0");
         txtKeluar.setText("0");
-btnSubmit.getActionMap().put("ctrlS", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnSubmit.doClick(); // Menjalankan aksi tombol
-    }
-});
+this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
 
-btnSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
-    "submitAction"
-);
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btnSubmit.doClick(); // klik tombol submit
+        }
+    });
 
 btnSubmit.getActionMap().put("submitAction", new AbstractAction() {
     @Override

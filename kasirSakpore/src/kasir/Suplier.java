@@ -55,12 +55,15 @@ public class Suplier extends javax.swing.JPanel {
     "ctrlS"
 );
 
-btnSimpan.getActionMap().put("ctrlS", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnSimpan.doClick(); // Menjalankan aksi tombol
-    }
-});
+this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
+
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btnSimpan.doClick(); // klik tombol submit
+        }
+    });
 
 
        btnSimpan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(

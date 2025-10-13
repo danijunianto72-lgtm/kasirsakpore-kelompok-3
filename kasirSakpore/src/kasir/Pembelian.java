@@ -71,29 +71,15 @@ public class Pembelian extends javax.swing.JPanel {
 );   
         
         
-     btnBeli1.getActionMap().put("ctrlB", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnBeli1.doClick(); // Menjalankan aksi tombol
-    }
-});
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
 
-        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
-    "ctrlB"
-); 
-        
-        btnBeli1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
-    "submitAction"
-);
-
-btnBeli1.getActionMap().put("submitAction", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnBeli1.doClick();
-    }
-});
+    this.getActionMap().put("submitAction", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            btnBeli1.doClick(); // klik tombol submit
+        }
+    });
    
                 
       // filter otomatis saat tanggal berubah
