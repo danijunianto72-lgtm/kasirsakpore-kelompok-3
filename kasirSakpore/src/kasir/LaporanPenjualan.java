@@ -540,11 +540,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblTransaksi.getColumnModel().getColumn(1).setMaxWidth(30);
         }
 
-<<<<<<< HEAD
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 1620, 250));
-=======
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1620, 270));
->>>>>>> 7c583d710ff24ceb3834ac3539ff869c0a01e8cb
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setText("Daftar Transaksi");

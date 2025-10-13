@@ -160,11 +160,8 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="66" red="33" type="rgb"/>
                 </Property>
-<<<<<<< HEAD
                 <Property name="text" type="java.lang.String" value="REFRESH"/>
-=======
                 <Property name="text" type="java.lang.String" value="Reset"/>
->>>>>>> 7c583d710ff24ceb3834ac3539ff869c0a01e8cb
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>

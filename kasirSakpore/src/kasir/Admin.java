@@ -323,11 +323,9 @@ private void loadChart(String startDate, String endDate) {
         });
 
         btnReset.setBackground(new java.awt.Color(51, 102, 255));
-<<<<<<< HEAD
         btnReset.setText("REFRESH");
-=======
+
         btnReset.setText("Reset");
->>>>>>> 7c583d710ff24ceb3834ac3539ff869c0a01e8cb
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);
