@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.table.DefaultTableModel;
 import java.util.Date;
 import java.util.Timer;
+import javax.swing.table.JTableHeader;
 /**
  *
  * @author yaniyan
@@ -28,6 +29,9 @@ public class Kasir extends javax.swing.JPanel {
 
     public Kasir() {
         initComponents();
+         header();
+        
+       
         loadMenu(null);
         setupSkuScanner(); 
 String nama = Session.getNama();
@@ -115,7 +119,48 @@ btnPembayaran.getActionMap().put("pembayaranAction", new AbstractAction() {
 
     }
   
+ private void header(){
+ JTableHeader header = tblKasir.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
+
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+
+ JTableHeader Header = tblRiwayat.getTableHeader();
+Header.setOpaque(false); // Matikan transparansi bawaan
+Header.setPreferredSize(new Dimension(Header.getWidth(), 40)); // 30 = tinggi header (px)
+
+Header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+Header.setForeground(Color.WHITE); // Warna font putih
+Header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+Header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
  
+ }
 
    private void setKeyBindings() {
     SwingUtilities.invokeLater(() -> {

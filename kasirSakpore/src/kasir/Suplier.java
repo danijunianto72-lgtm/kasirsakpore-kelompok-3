@@ -4,9 +4,12 @@
  */
 package kasir;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -20,9 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import kasir.koneksi;
 
 /**
@@ -39,6 +46,7 @@ public class Suplier extends javax.swing.JPanel {
     
     public Suplier() {
         initComponents();
+        header();
         isiComboBox();
         tampilData();
         element();
@@ -106,7 +114,28 @@ btnEdit.getActionMap().put("ctrlE", new AbstractAction() {
 
 
     }
+    private void header(){
+     JTableHeader header = tblSuplier.getTableHeader();
+header.setOpaque(false); // Matikan transparansi bawaan
+header.setPreferredSize(new Dimension(header.getWidth(), 40)); // 30 = tinggi header (px)
 
+header.setBackground(new java.awt.Color(5,69,162)); // Warna #2c3e50
+header.setForeground(Color.WHITE); // Warna font putih
+header.setFont(new Font("Segoe UI",Font.BOLD, 14)); // Font tebal
+
+// Nonaktifkan UI bawaan Nimbus supaya warna tidak di-override
+header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
+    JLabel label = new JLabel(value.toString());
+    label.setOpaque(true);
+    label.setBackground(new java.awt.Color(5,69,162));
+    label.setForeground(Color.WHITE);
+    label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+    label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+});
+    }
+    
       // tampilkan data user di tabel
     private void tampilData() {
         DefaultTableModel model = new DefaultTableModel();
