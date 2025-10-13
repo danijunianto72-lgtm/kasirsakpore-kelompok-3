@@ -79,6 +79,7 @@
                         <Column editable="true" title="Alamat" type="java.lang.Object"/>
                       </Table>
                     </Property>
+                    <Property name="rowHeight" type="int" value="35"/>
                   </Properties>
                 </Component>
               </SubComponents>

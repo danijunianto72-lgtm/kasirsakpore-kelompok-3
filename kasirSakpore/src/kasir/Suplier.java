@@ -285,6 +285,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Nama", "No Telepon", "Status ", "Alamat"
             }
         ));
+        tblSuplier.setRowHeight(35);
         jScrollPane1.setViewportView(tblSuplier);
 
         pnFormUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 1030, 510));

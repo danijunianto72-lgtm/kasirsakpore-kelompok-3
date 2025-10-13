@@ -477,7 +477,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "ID User", "Username", "Password", "Status"
             }
         ));
-        tblUser.setRowHeight(30);
+        tblUser.setRowHeight(35);
         jScrollPane2.setViewportView(tblUser);
         if (tblUser.getColumnModel().getColumnCount() > 0) {
             tblUser.getColumnModel().getColumn(0).setMaxWidth(45);
@@ -577,7 +577,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "tanggal", "Nama Pengguna", "username"
             }
         ));
-        tblRiwayat.setRowHeight(30);
+        tblRiwayat.setRowHeight(35);
         jScrollPane1.setViewportView(tblRiwayat);
         if (tblRiwayat.getColumnModel().getColumnCount() > 0) {
             tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(45);

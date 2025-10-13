@@ -612,7 +612,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "Kode Barang", "Nama Barang", "Suplier", "Satuan", "Harga", "Jumlah", "Total Harga", "Stok"
             }
         ));
-        tblPembelian.setRowHeight(30);
+        tblPembelian.setRowHeight(35);
         jScrollPane1.setViewportView(tblPembelian);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 135, 1540, 260));

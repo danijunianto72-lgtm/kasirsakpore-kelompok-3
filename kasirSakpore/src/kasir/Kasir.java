@@ -825,7 +825,7 @@ private void setupSkuScanner() {
                 "KodeSKU", "Nama", "Harga", "Jumlah", "Total"
             }
         ));
-        tblKasir.setRowHeight(30);
+        tblKasir.setRowHeight(35);
         jScrollPane1.setViewportView(tblKasir);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 630, 350));
@@ -972,6 +972,7 @@ private void setupSkuScanner() {
                 "No", "Tanggal", "Total"
             }
         ));
+        tblRiwayat.setRowHeight(35);
         jScrollPane3.setViewportView(tblRiwayat);
         if (tblRiwayat.getColumnModel().getColumnCount() > 0) {
             tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(40);

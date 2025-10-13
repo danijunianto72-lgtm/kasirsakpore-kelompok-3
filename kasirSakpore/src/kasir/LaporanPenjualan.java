@@ -269,7 +269,8 @@ setHeader.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -
         ORDER BY tgl_transaksi
     """;
 
-    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+    try (Connection conn = koneksi.dbKonek();
+            PreparedStatement pst = conn.prepareStatement(sql)) {
         pst.setDate(1, java.sql.Date.valueOf(tanggal));
         ResultSet rs = pst.executeQuery();
 
@@ -528,7 +529,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "id", "nomer", "Kode Transaksi", "Tanggal", "Nama Kasir", "Total Akhir"
             }
         ));
-        tblTransaksi.setRowHeight(33);
+        tblTransaksi.setRowHeight(35);
         tblTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblTransaksiMouseClicked(evt);
@@ -541,7 +542,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         }
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 1620, 250));
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1620, 270));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setText("Daftar Transaksi");
@@ -598,6 +598,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDetail.setRowHeight(35);
         jScrollPane1.setViewportView(tblDetail);
 
         jPanel4.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 190, 610, 250));
@@ -613,6 +614,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblBulan.setRowHeight(35);
         tblBulan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBulanMouseClicked(evt);

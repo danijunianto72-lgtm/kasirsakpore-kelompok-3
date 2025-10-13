@@ -486,7 +486,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "JenisKeuangan", "Masuk", "Keluar", "Total"
             }
         ));
-        tblKeuangan.setRowHeight(30);
+        tblKeuangan.setRowHeight(35);
         tblKeuangan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblKeuanganMouseClicked(evt);

@@ -36,10 +36,11 @@ public class Dashboard extends javax.swing.JFrame {
     Login();
     fungsibutton () ;
     }
-private void Login(){
-        String role = Session.getRole();
+private void Login() {
+    String role = Session.getRole();
 
-      if ("kasir".equalsIgnoreCase(role)) {
+    // Set visibilitas tombol
+    if ("kasir".equalsIgnoreCase(role)) {
         btnKasir.setVisible(true);
         btnAdmin.setVisible(false);
         btnBarang.setVisible(false);
@@ -50,20 +51,40 @@ private void Login(){
         btnLaporanPenjualan.setVisible(false);
         btnLaporanPembelian.setVisible(false);
         btnLaporanKeuangan.setVisible(false);
+
+        // === GANTI PANEL ===
+        setPanelUtama(new Kasir());
+
     } else if ("manager".equalsIgnoreCase(role)) {
         btnAdmin.setVisible(false);
         btnBarang.setVisible(false);
         btnUser.setVisible(false);
         btnKeuangan.setVisible(false);
-        btnSupplier.setVisible(false);        btnLaporanPenjualan.setVisible(true);
+        btnSupplier.setVisible(false);
+        btnLaporanPenjualan.setVisible(true);
         btnLaporanPembelian.setVisible(true);
         btnLaporanKeuangan.setVisible(true);
+
+        // === GANTI PANEL ===
+        setPanelUtama(new LaporanPenjualan());
+
     } else if ("admin".equalsIgnoreCase(role)) {
         btnKasir.setVisible(true);
- 
+
+        // === GANTI PANEL ===
+        setPanelUtama(new Admin());
     }
 }
-    
+
+// Fungsi bantu untuk mengganti isi panel utama
+private void setPanelUtama(JPanel panelBaru) {
+    panelUtama.removeAll();
+    panelUtama.setLayout(new BorderLayout());
+    panelUtama.add(panelBaru, BorderLayout.CENTER);
+    panelUtama.revalidate();
+    panelUtama.repaint();
+}
+
     
     
     private void fungsibutton (){
@@ -227,7 +248,7 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
         lblTanggal.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         lblTanggal.setForeground(new java.awt.Color(255, 255, 255));
         lblTanggal.setText("WEDNESDAY 99, OKTOVER 2025");
-        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 30, 790, 90));
+        navbar.add(lblTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 30, 760, 90));
 
         btnLaporanPembelian.setText("[F10] LAPORAN PEMBELIAN");
         btnLaporanPembelian.addActionListener(new java.awt.event.ActionListener() {

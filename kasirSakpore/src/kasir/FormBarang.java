@@ -218,7 +218,7 @@ private void loadBarang(String keyword, String filter) {
                 "Kode", "Nama", "Satuan", "Harga", "sku", "Stok"
             }
         ));
-        tblBarang.setRowHeight(30);
+        tblBarang.setRowHeight(35);
         tblBarang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBarangMouseClicked(evt);

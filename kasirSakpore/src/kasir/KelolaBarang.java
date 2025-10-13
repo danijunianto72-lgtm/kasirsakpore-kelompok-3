@@ -882,7 +882,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 "No. ", "Kode ", "SKU Barang", "Nama Barang", "Kategori", "Satuan", "Harga Pokok", "PPN", "Harga Jual", "Stok"
             }
         ));
-        tblBarang.setRowHeight(30);
+        tblBarang.setRowHeight(35);
         jScrollPane1.setViewportView(tblBarang);
         if (tblBarang.getColumnModel().getColumnCount() > 0) {
             tblBarang.getColumnModel().getColumn(0).setMaxWidth(38);
@@ -1087,6 +1087,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 "No", "NamaKategori"
             }
         ));
+        tblKategori.setRowHeight(35);
         jScrollPane2.setViewportView(tblKategori);
         if (tblKategori.getColumnModel().getColumnCount() > 0) {
             tblKategori.getColumnModel().getColumn(0).setMaxWidth(40);

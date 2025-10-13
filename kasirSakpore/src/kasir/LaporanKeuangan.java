@@ -847,7 +847,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "Jenis Keuangan", "Masuk", "Keluar", "Total"
             }
         ));
-        tblKeuangan.setRowHeight(30);
+        tblKeuangan.setRowHeight(35);
         tblKeuangan.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tblKeuanganKeyPressed(evt);
@@ -909,7 +909,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "Jenis Keuangan", "Masuk", "Keluar"
             }
         ));
-        tblDetails.setRowHeight(30);
+        tblDetails.setRowHeight(35);
         jScrollPane2.setViewportView(tblDetails);
 
         jPanel3.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 70, 620, 320));
@@ -959,7 +959,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 "No", "Tanggal", "Masuk", "Keluar", "Total Akhir"
             }
         ));
-        tblSemua.setRowHeight(30);
+        tblSemua.setRowHeight(35);
         tblSemua.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tblSemuaKeyPressed(evt);

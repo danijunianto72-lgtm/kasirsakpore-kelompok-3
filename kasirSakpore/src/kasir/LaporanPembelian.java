@@ -346,6 +346,7 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
                 "No", "Tanggal", "Kode Barang", "Nama Barang", "Supplier", "Satuan", "Harga", "Jumlah", "Total Harga"
             }
         ));
+        tblPembelian.setRowHeight(35);
         jScrollPane1.setViewportView(tblPembelian);
 
         pp.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1620, 290));
@@ -424,6 +425,7 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDetail.setRowHeight(35);
         jScrollPane2.setViewportView(tblDetail);
 
         jPanel4.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 120, 620, 210));
@@ -439,6 +441,7 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblBulanan.setRowHeight(35);
         tblBulanan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBulananMouseClicked(evt);
