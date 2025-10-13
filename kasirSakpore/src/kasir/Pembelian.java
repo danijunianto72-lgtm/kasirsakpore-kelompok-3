@@ -434,8 +434,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         jPanel1.add(txtSku, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 130, 50));
         jPanel1.add(txtHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 220, 260, 50));
-        jPanel1.add(txtSatuan, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 100, 260, 50));
-        jPanel1.add(txtNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 260, 50));
+        jPanel1.add(txtSatuan, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 120, 260, 50));
+        jPanel1.add(txtNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 120, 260, 50));
 
         cmbSuplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Suplier Pilih", " " }));
         jPanel1.add(cmbSuplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 220, 260, 50));
@@ -448,15 +448,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             }
         });
         jPanel1.add(btnPilih, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 220, 80, 50));
-        jPanel1.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, 290, 50));
+        jPanel1.add(jdcTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 120, 290, 50));
 
         txtJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtJumlahKeyReleased(evt);
             }
         });
-        jPanel1.add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 100, 250, 50));
-        jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 220, 250, 50));
+        jPanel1.add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 120, 250, 50));
+        jPanel1.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 220, 250, 50));
 
         btnBeli1.setBackground(new java.awt.Color(51, 255, 0));
         btnBeli1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -466,15 +466,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnBeli1ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 310, 370, 60));
+        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 330, 320, 40));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Jumlah");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 70, -1, -1));
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 90, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Nama Barang");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 90, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Suplier");
@@ -482,7 +482,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Total Harga");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 190, -1, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 190, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("SkuBarang");
@@ -490,7 +490,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Satuan");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 70, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 90, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Harga");
@@ -498,7 +498,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Tanggal");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 70, -1, -1));
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, -1, -1));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Kode Barang");
@@ -550,7 +550,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblPembelian.setRowHeight(30);
         jScrollPane1.setViewportView(tblPembelian);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 1540, 265));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 135, 1540, 260));
         jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 151, 40));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N

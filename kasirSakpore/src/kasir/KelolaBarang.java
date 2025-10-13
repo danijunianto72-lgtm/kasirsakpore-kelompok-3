@@ -726,6 +726,9 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         btnBatal = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         panelGrafik = new javax.swing.JPanel();
         jdcStart = new com.toedter.calendar.JDateChooser();
@@ -744,6 +747,11 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         btnJDelete = new javax.swing.JButton();
         btnJBatal = new javax.swing.JButton();
         txtJCari = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -796,7 +804,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnSubmitActionPerformed(evt);
             }
         });
-        pnForm.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 297, 50));
+        pnForm.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 270, 40));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setPreferredSize(new java.awt.Dimension(806, 100));
@@ -852,14 +860,14 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
             tblBarang.getColumnModel().getColumn(9).setMaxWidth(40);
         }
 
-        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 808, 310));
-        pnDaftarBarang.add(tCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, 300, 40));
+        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 800, 280));
+        pnDaftarBarang.add(tCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 300, 40));
 
         jLabel12.setText("Cari");
-        pnDaftarBarang.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 45, 34));
+        pnDaftarBarang.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 45, 34));
 
         cbfJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua" }));
-        pnDaftarBarang.add(cbfJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, 90, 40));
+        pnDaftarBarang.add(cbfJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 100, 90, 40));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 51));
         btnEdit.setText("Edit");
@@ -868,7 +876,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnEditActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 70, 83, 36));
+        pnDaftarBarang.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 100, 83, 36));
 
         btnDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnDelete.setText("Delete");
@@ -877,7 +885,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnDeleteActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 70, 83, 36));
+        pnDaftarBarang.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, 83, 36));
 
         btnBatal.setBackground(new java.awt.Color(204, 204, 204));
         btnBatal.setText("Batal");
@@ -886,7 +894,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnBatalActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, 83, 36));
+        pnDaftarBarang.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 100, 83, 36));
 
         jPanel3.setBackground(new java.awt.Color(5, 69, 162));
         jPanel3.setPreferredSize(new java.awt.Dimension(806, 100));
@@ -914,6 +922,18 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
 
         pnDaftarBarang.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 60));
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
+        jLabel1.setText("[ Ctrl+B ]");
+        pnDaftarBarang.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 80, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
+        jLabel2.setText("[ Ctrl+E ]");
+        pnDaftarBarang.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 80, -1, -1));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
+        jLabel11.setText("[ Ctrl+D ]");
+        pnDaftarBarang.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, -1, -1));
+
         add(pnDaftarBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 14, -1, 450));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -928,24 +948,24 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         );
         panelGrafikLayout.setVerticalGroup(
             panelGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 370, Short.MAX_VALUE)
         );
 
-        jPanel1.add(panelGrafik, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 60, 780, 390));
+        jPanel1.add(panelGrafik, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 80, 780, 370));
 
         jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcStartPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 147, 31));
+        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 147, 31));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcEndPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 20, 147, 31));
+        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 30, 147, 31));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 346, 806, 458));
 
@@ -979,15 +999,16 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         );
 
         jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 50));
-        jPanel5.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 290, 70));
+        jPanel5.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 290, 100));
 
-        btnJenis.setText("jButton1");
+        btnJenis.setBackground(new java.awt.Color(102, 255, 102));
+        btnJenis.setText("[ Ctrl+S ]");
         btnJenis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnJenisActionPerformed(evt);
             }
         });
-        jPanel5.add(btnJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 290, 70));
+        jPanel5.add(btnJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 260, 260, 40));
 
         add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 474, 330, 330));
 
@@ -1038,33 +1059,51 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
             tblKategori.getColumnModel().getColumn(0).setMaxWidth(40);
         }
 
-        jPanel6.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 460, 200));
+        jPanel6.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 460, 180));
 
+        btnJEdit.setBackground(new java.awt.Color(255, 153, 0));
         btnJEdit.setText("Edit");
         btnJEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnJEditActionPerformed(evt);
             }
         });
-        jPanel6.add(btnJEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, -1, -1));
+        jPanel6.add(btnJEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, -1));
 
+        btnJDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnJDelete.setText("Delete");
         btnJDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnJDeleteActionPerformed(evt);
             }
         });
-        jPanel6.add(btnJDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, -1, -1));
+        jPanel6.add(btnJDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 90, -1, -1));
 
+        btnJBatal.setBackground(new java.awt.Color(204, 204, 204));
         btnJBatal.setText("Batal");
-        jPanel6.add(btnJBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 70, -1, -1));
+        jPanel6.add(btnJBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, -1, -1));
 
         txtJCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtJCariKeyReleased(evt);
             }
         });
-        jPanel6.add(txtJCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 72, 190, 40));
+        jPanel6.add(txtJCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 190, 30));
+
+        jLabel14.setText("[ Ctrl+R ]");
+        jPanel6.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, -1, -1));
+
+        jLabel18.setText("[ Ctrl+C ]");
+        jPanel6.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        jLabel19.setText("[ Ctrl+Y ]");
+        jPanel6.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, -1, -1));
+
+        jLabel20.setText("[ Ctrl+T ]");
+        jPanel6.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 70, -1, -1));
+
+        jLabel21.setText("Cari");
+        jPanel6.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 60, 45, 34));
 
         add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 474, 480, 330));
     }// </editor-fold>//GEN-END:initComponents
@@ -1242,12 +1281,20 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> cbJenis;
     private javax.swing.JComboBox<String> cbfJenis;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
