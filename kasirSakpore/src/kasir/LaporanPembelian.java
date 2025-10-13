@@ -223,9 +223,6 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        lblKeluar = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPembelian = new javax.swing.JTable();
@@ -234,24 +231,19 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         cmbSupplier = new javax.swing.JComboBox<>();
         jdcEnd = new com.toedter.calendar.JDateChooser();
         jdcStart = new com.toedter.calendar.JDateChooser();
+        lblKeluar = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1740, 960));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblKeluar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblKeluar.setText("Selesai");
-        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 90, -1, 40));
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("Daftar Pembelian");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, -1, -1));
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setText("Sampai");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, -1, 40));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -270,11 +262,11 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         ));
         jScrollPane1.setViewportView(tblPembelian);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 1630, 490));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1620, 290));
 
         btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
         btnRefresh.setText("Refresh");
-        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(1330, 110, 130, 40));
+        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 130, 40));
 
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
@@ -284,20 +276,54 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
                 btnCetakActionPerformed(evt);
             }
         });
-        jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 110, 140, 40));
+        jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1490, 70, 140, 40));
 
         cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 110, 140, 40));
+        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 70, 140, 40));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcEndPropertyChange(evt);
             }
         });
-        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 160, 40));
-        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 110, 160, 40));
+        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 70, 160, 40));
+        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 160, 40));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 1660, 680));
+        lblKeluar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblKeluar.setText("Selesai");
+        jPanel2.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 410, -1, 40));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setText("Sampai");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 70, -1, 40));
+
+        jPanel3.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Laporan Pembelian");
+        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 340, 30));
+
+        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1680, 60));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 1660, 450));
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel5.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Laporan Pembelian Bulanan dan harian");
+        jPanel5.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 500, 30));
+
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1680, 60));
+
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 480, 1660, 370));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -398,10 +424,14 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
     private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JComboBox<String> cmbSupplier;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;

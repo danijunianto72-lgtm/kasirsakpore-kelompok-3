@@ -72,6 +72,7 @@ public class PopupDetailTransaksi extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Gagal load detail: " + e.getMessage());
         }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

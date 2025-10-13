@@ -127,9 +127,10 @@ setKeyBindings();
 }
 private void loadRiwayatHariIni() {
     DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("No");
-    model.addColumn("Tanggal & Jam");
-    model.addColumn("Total Transaksi");
+model.addColumn("No");
+model.addColumn("Tanggal & Jam");
+model.addColumn("Total Transaksi");
+model.addColumn("ID Transaksi"); // kolom tambahan untuk disembunyikan
 
     String namaKasir = Session.getNama();
     if (namaKasir == null || namaKasir.isEmpty()) {
@@ -152,22 +153,25 @@ private void loadRiwayatHariIni() {
         pst.setString(1, namaKasir);
         ResultSet rs = pst.executeQuery();
 
-        int no = 1;
-        while (rs.next()) {
-            int idTransaksi = rs.getInt("idtransaksi");
-            Timestamp ts = rs.getTimestamp("tgl_transaksi");
-            double total = rs.getDouble("grand_total");
-            totalHariIni += total;
+    int no = 1;
+while (rs.next()) {
+    int idTransaksi = rs.getInt("idtransaksi");
+    Timestamp ts = rs.getTimestamp("tgl_transaksi");
+    double total = rs.getDouble("grand_total");
+    totalHariIni += total;
 
-            String tglFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ts);
+    String tglFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ts);
 
-            model.addRow(new Object[]{idTransaksi, tglFormat, String.format("Rp %, .2f", total)});
-            no++;
-        }
+    model.addRow(new Object[]{no, tglFormat, String.format("Rp %,.2f", total), idTransaksi});
+    no++;
+}
+
 
         tblRiwayat.setModel(model);
-        tblRiwayat.removeColumn(tblRiwayat.getColumnModel().getColumn(0)); // sembunyikan idTransaksi
-
+tblRiwayat.removeColumn(tblRiwayat.getColumnModel().getColumn(3)); // sembunyikan kolom ID
+tblRiwayat.getColumnModel().getColumn(0).setPreferredWidth(40);
+tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(50);
+tblRiwayat.getColumnModel().getColumn(0).setMinWidth(30);
         // tampilkan total harian
         lblTotal.setText(String.format("Total Hari Ini: Rp %, .2f", totalHariIni));
 

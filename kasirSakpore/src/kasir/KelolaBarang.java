@@ -62,6 +62,7 @@ public class KelolaBarang extends javax.swing.JPanel {
     public KelolaBarang() {
         initComponents();
         tampilData();
+        tampilDataJenis();
         element();
         loadKategori();
         filterKategori();
@@ -339,6 +340,7 @@ private void setPeriodeHariIni() {
     }
 }
     
+    
 private void tampilkanDiagram() {
   java.util.Date start = jdcStart.getDate();
 java.util.Date end = jdcEnd.getDate();
@@ -526,6 +528,164 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         return order.get(0);
     }
 }
+
+
+    private boolean modeEdit = false; // penanda apakah sedang edit
+    private int idEdit = -1; // menyimpan id kategori yang sedang diedit
+ // === FUNGSI MENAMPILKAN DATA ===
+    private void tampilDataJenis() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Nama Kategori");
+        tblKategori.setModel(model);
+
+        String cari = txtJCari.getText();
+        String sql = "SELECT * FROM kategori WHERE namakategori ILIKE ? ORDER BY idkategori ASC";
+
+        try (Connection conn = koneksi.dbKonek();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            
+            pst.setString(1, "%" + cari + "%");
+            ResultSet rs = pst.executeQuery();
+            
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("idkategori"),
+                    rs.getString("namakategori")
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menampilkan data: " + e.getMessage());
+        }
+    }
+
+    // === FUNGSI SIMPAN / UPDATE ===
+    private void simpanAtauEdit() {
+        String nama = txtJenis.getText().trim();
+        if (nama.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama kategori harus diisi!");
+            return;
+        }
+
+        if (modeEdit) {
+            // MODE EDIT
+     String sqlUpdateKategori = "UPDATE kategori SET namakategori=? WHERE idkategori=?";
+String sqlUpdateBarang   = "UPDATE barang SET kategori=? WHERE kategori=?";
+
+try (Connection conn = koneksi.dbKonek()) {
+    conn.setAutoCommit(false); // supaya bisa rollback kalau ada error
+
+    // 1️⃣ Ambil nama lama dulu sebelum update
+    String namaLama = null;
+    try (PreparedStatement pstOld = conn.prepareStatement("SELECT namakategori FROM kategori WHERE idkategori=?")) {
+        pstOld.setInt(1, idEdit);
+        ResultSet rsOld = pstOld.executeQuery();
+        if (rsOld.next()) {
+            namaLama = rsOld.getString("namakategori");
+        }
+    }
+
+    // 2️⃣ Update kategori
+    try (PreparedStatement pst = conn.prepareStatement(sqlUpdateKategori)) {
+        pst.setString(1, nama);
+        pst.setInt(2, idEdit);
+        pst.executeUpdate();
+    }
+
+    // 3️⃣ Update semua barang yang punya kategori lama
+    if (namaLama != null) {
+        try (PreparedStatement pst2 = conn.prepareStatement(sqlUpdateBarang)) {
+            pst2.setString(1, nama);
+            pst2.setString(2, namaLama);
+            pst2.executeUpdate();
+        }
+    }
+
+    conn.commit();
+    JOptionPane.showMessageDialog(this, "Kategori dan data barang terkait berhasil diperbarui!");
+    batal();
+    tampilData();
+    tampilDataJenis();
+        loadKategori(); // ⬅️ Tambahkan ini
+
+} catch (SQLException e) {
+    JOptionPane.showMessageDialog(this, "Gagal mengedit: " + e.getMessage());
+}
+
+        } else {
+            // MODE SIMPAN BARU
+            String sql = "INSERT INTO kategori (namakategori) VALUES (?)";
+            try (Connection conn = koneksi.dbKonek();
+                 PreparedStatement pst = conn.prepareStatement(sql)) {
+                pst.setString(1, nama);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Data kategori berhasil disimpan!");
+                batal();
+    tampilData();
+    tampilDataJenis();
+        loadKategori(); // ⬅️ Tambahkan ini
+
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+            }
+        }
+    }
+
+    // === FUNGSI HAPUS ===
+    private void hapusData() {
+        int row = tblKategori.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
+            return;
+        }
+
+int id = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
+        int konfirmasi = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            String sql = "DELETE FROM kategori WHERE idkategori=?";
+            try (Connection conn = koneksi.dbKonek();
+                 PreparedStatement pst = conn.prepareStatement(sql)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+                 batal();
+    tampilData();
+    tampilDataJenis();
+        loadKategori(); // ⬅️ Tambahkan ini
+
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+            }
+        }
+    }
+
+    // === FUNGSI BATAL / RESET ===
+    private void batal() {
+        txtJenis.setText("");
+        txtJCari.setText("");
+        tblKategori.clearSelection();
+        modeEdit = false;
+        idEdit = -1;
+        btnJenis.setText("Simpan");
+        tampilDataJenis();
+    }
+
+    // === FUNGSI EDIT (MENGISI FORM SAJA) ===
+    private void isiUntukEdit() {
+        int row = tblKategori.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diedit di tabel!");
+            return;
+        }
+
+idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
+        String nama = tblKategori.getValueAt(row, 1).toString();
+
+        txtJenis.setText(nama);
+        modeEdit = true;
+        btnJenis.setText("Simpan Perubahan");
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -570,8 +730,23 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         panelGrafik = new javax.swing.JPanel();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jdcEnd = new com.toedter.calendar.JDateChooser();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        txtJenis = new javax.swing.JTextField();
+        btnJenis = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblKategori = new javax.swing.JTable();
+        btnJEdit = new javax.swing.JButton();
+        btnJDelete = new javax.swing.JButton();
+        btnJBatal = new javax.swing.JButton();
+        txtJCari = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnForm.setBackground(new java.awt.Color(255, 255, 255));
         pnForm.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -649,6 +824,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnForm.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 60));
 
+        add(pnForm, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 14, -1, 318));
+
         pnDaftarBarang.setBackground(new java.awt.Color(255, 255, 255));
         pnDaftarBarang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnDaftarBarang.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -675,7 +852,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblBarang.getColumnModel().getColumn(9).setMaxWidth(40);
         }
 
-        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 808, 650));
+        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 808, 310));
         pnDaftarBarang.add(tCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, 300, 40));
 
         jLabel12.setText("Cari");
@@ -737,6 +914,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnDaftarBarang.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 60));
 
+        add(pnDaftarBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 14, -1, 450));
+
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -768,31 +947,126 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 20, 147, 31));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 806, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(pnDaftarBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(79, Short.MAX_VALUE))
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 346, 806, 458));
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel5.setPreferredSize(new java.awt.Dimension(408, 458));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel4.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel4.setPreferredSize(new java.awt.Dimension(806, 100));
+
+        jLabel16.setFont(new java.awt.Font("Calibri", 1, 27)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel16.setText("Tambah Kategori Barang");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(48, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnDaftarBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnForm, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(183, Short.MAX_VALUE))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addComponent(jLabel16)
+                .addContainerGap())
         );
+
+        jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 50));
+        jPanel5.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 290, 70));
+
+        btnJenis.setText("jButton1");
+        btnJenis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJenisActionPerformed(evt);
+            }
+        });
+        jPanel5.add(btnJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 290, 70));
+
+        add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 474, 330, 330));
+
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel6.setPreferredSize(new java.awt.Dimension(408, 458));
+        jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel7.setBackground(new java.awt.Color(5, 69, 162));
+        jPanel7.setPreferredSize(new java.awt.Dimension(806, 100));
+
+        jLabel17.setFont(new java.awt.Font("Calibri", 1, 27)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setText("Daftar Kategori Barang");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(128, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addComponent(jLabel17)
+                .addContainerGap())
+        );
+
+        jPanel6.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 490, 50));
+
+        tblKategori.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "No", "NamaKategori"
+            }
+        ));
+        jScrollPane2.setViewportView(tblKategori);
+        if (tblKategori.getColumnModel().getColumnCount() > 0) {
+            tblKategori.getColumnModel().getColumn(0).setMaxWidth(40);
+        }
+
+        jPanel6.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 460, 200));
+
+        btnJEdit.setText("Edit");
+        btnJEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJEditActionPerformed(evt);
+            }
+        });
+        jPanel6.add(btnJEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, -1, -1));
+
+        btnJDelete.setText("Delete");
+        btnJDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJDeleteActionPerformed(evt);
+            }
+        });
+        jPanel6.add(btnJDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, -1, -1));
+
+        btnJBatal.setText("Batal");
+        jPanel6.add(btnJBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 70, -1, -1));
+
+        txtJCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtJCariKeyReleased(evt);
+            }
+        });
+        jPanel6.add(txtJCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 72, 190, 40));
+
+        add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 474, 480, 330));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -936,11 +1210,35 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         // TODO add your handling code here:
     }//GEN-LAST:event_jdcEndPropertyChange
 
+    private void btnJEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJEditActionPerformed
+        isiUntukEdit();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnJEditActionPerformed
+
+    private void btnJDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJDeleteActionPerformed
+        hapusData();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnJDeleteActionPerformed
+
+    private void btnJenisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJenisActionPerformed
+        simpanAtauEdit();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnJenisActionPerformed
+
+    private void txtJCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJCariKeyReleased
+        tampilDataJenis();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtJCariKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnJBatal;
+    private javax.swing.JButton btnJDelete;
+    private javax.swing.JButton btnJEdit;
+    private javax.swing.JButton btnJenis;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> cbJenis;
     private javax.swing.JComboBox<String> cbfJenis;
@@ -948,6 +1246,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -958,7 +1258,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private com.toedter.calendar.JDateChooser jdcEnd;
     private com.toedter.calendar.JDateChooser jdcStart;
     private javax.swing.JPanel panelGrafik;
@@ -973,5 +1278,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JTextField tSKU;
     private javax.swing.JTextField tSatuan;
     private javax.swing.JTable tblBarang;
+    private javax.swing.JTable tblKategori;
+    private javax.swing.JTextField txtJCari;
+    private javax.swing.JTextField txtJenis;
     // End of variables declaration//GEN-END:variables
 }
