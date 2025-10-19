@@ -69,7 +69,7 @@ header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     lblKasir.setText("Nama Kasir: " + rs.getString("namapengguna"));
     lblTanggal.setText("Tanggal: " + rs.getTimestamp("tgl_transaksi").toString());
     lblSubtotal.setText("Subtotal: Rp " + rs.getBigDecimal("subtotal").toString());
-    lblDiskon.setText("Diskon: " + rs.getBigDecimal("diskon").toString());
+    lblDiskon.setText("Diskon dalam persen: " + rs.getBigDecimal("diskon").toString());
     lblGrandTotal.setText("Total Akhir: Rp " + rs.getBigDecimal("grand_total").toString());
     lblMetode.setText("Metode: " + rs.getString("metodepembayaran"));
 }

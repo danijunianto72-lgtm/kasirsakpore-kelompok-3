@@ -17,6 +17,7 @@ import javax.swing.*;
 import static javax.swing.GroupLayout.Alignment.CENTER;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author user
@@ -64,9 +65,10 @@ private void Login() {
         btnLaporanPenjualan.setVisible(true);
         btnLaporanPembelian.setVisible(true);
         btnLaporanKeuangan.setVisible(true);
+        btnPembelian.setVisible(false);
 
         // === GANTI PANEL ===
-        setPanelUtama(new LaporanPenjualan());
+        setPanelUtama(new LaporanKeuangan());
 
     } else if ("admin".equalsIgnoreCase(role)) {
         btnKasir.setVisible(true);
@@ -205,6 +207,29 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
 
     }
 
+private boolean cekDanBatalkanKasirJikaAda() {
+    if (panelUtama.getComponentCount() > 0 && panelUtama.getComponent(0) instanceof Kasir) {
+        Kasir panelKasir = (Kasir) panelUtama.getComponent(0);
+DefaultTableModel model = (DefaultTableModel) panelKasir.getTblKasir().getModel();
+
+        if (model.getRowCount() > 0) {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Masih ada transaksi di kasir.\nApakah ingin membatalkan dan lanjut berpindah halaman?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                panelKasir.batalkanTransaksi();
+                return true; // boleh lanjut
+            } else {
+                return false; // batal pindah halaman
+            }
+        }
+    }
+    return true; // tidak ada kasir aktif / tabel kosong
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -417,7 +442,10 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
-  panelUtama.removeAll();                
+    if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     Admin adminPanel = new Admin();        
 
         panelUtama.add(adminPanel, BorderLayout.CENTER); 
@@ -426,7 +454,10 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
     }//GEN-LAST:event_btnAdminActionPerformed
 
     private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
- panelUtama.removeAll();                
+    if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     KelolaUser kuser = new KelolaUser();        
     panelUtama.add(kuser, BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -435,7 +466,10 @@ btnLaporanPembelian.getActionMap().put("f10Action", new AbstractAction() {
     }//GEN-LAST:event_btnUserActionPerformed
 
     private void btnKasirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKasirActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     Kasir kasirP = new Kasir(); 
     panelUtama.add(kasirP,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -445,7 +479,10 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnKasirActionPerformed
 
     private void btnBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBarangActionPerformed
-panelUtama.removeAll();                
+    if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     KelolaBarang kbarang = new KelolaBarang();        
     panelUtama.add(kbarang,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -453,15 +490,22 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnBarangActionPerformed
 
     private void btnKeuanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeuanganActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     KelolaKeuangan kuang = new KelolaKeuangan();        
     panelUtama.add(kuang,BorderLayout.CENTER); 
-    panelUtama.revalidate();               
+    panelUtama.revalidate(); 
+    
     panelUtama.repaint();          // TODO add your handling code here:
     }//GEN-LAST:event_btnKeuanganActionPerformed
 
     private void btnPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPembelianActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     Pembelian kbeli = new Pembelian();        
     panelUtama.add(kbeli,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -470,7 +514,10 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnPembelianActionPerformed
 
     private void btnSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     Suplier ksup = new Suplier();        
     panelUtama.add(ksup,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -479,7 +526,10 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnSupplierActionPerformed
 
     private void btnLaporanPembelianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanPembelianActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     LaporanPembelian klapem = new LaporanPembelian();        
     panelUtama.add(klapem,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -487,7 +537,10 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnLaporanPembelianActionPerformed
 
     private void btnLaporanPenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanPenjualanActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     LaporanPenjualan klapkeu = new LaporanPenjualan();        
     panelUtama.add(klapkeu,BorderLayout.CENTER); 
     panelUtama.revalidate();               
@@ -495,7 +548,10 @@ panelUtama.removeAll();
     }//GEN-LAST:event_btnLaporanPenjualanActionPerformed
 
     private void btnLaporanKeuanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanKeuanganActionPerformed
-panelUtama.removeAll();                
+   if (!cekDanBatalkanKasirJikaAda()) {
+        return; // batal pindah halaman kalau user pilih "No"
+    }
+        panelUtama.removeAll();                
     LaporanKeuangan klapkeu = new LaporanKeuangan();        
     panelUtama.add(klapkeu,BorderLayout.CENTER); 
     panelUtama.revalidate();               

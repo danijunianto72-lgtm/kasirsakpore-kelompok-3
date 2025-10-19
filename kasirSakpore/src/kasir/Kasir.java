@@ -30,7 +30,7 @@ public class Kasir extends javax.swing.JPanel {
     public Kasir() {
         initComponents();
          header();
-        
+         
        
         loadMenu(null);
         setupSkuScanner(); 
@@ -218,15 +218,14 @@ tblRiwayat.getColumnModel().getColumn(0).setMinWidth(30);
         lblTotal.setText(String.format("Total Hari Ini: Rp %, .2f", totalHariIni));
 
         if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Belum ada transaksi hari ini untuk kasir: " + namaKasir);
+JOptionPane.showMessageDialog(this,"Belum ada transaksi");
         }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
     }
 }
-
-    private void loadMenu(String keyword) {
+private void loadMenu(String keyword) {
     pnlMenu.removeAll();
     pnlMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
@@ -235,106 +234,117 @@ tblRiwayat.getColumnModel().getColumn(0).setMinWidth(30);
         sql += " WHERE LOWER(nama) LIKE ?";
     }
 
-    try (Connection conn = koneksi.dbKonek();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
 
+    try {
+        conn = koneksi.dbKonek();
+        if (conn == null || conn.isClosed()) {
+            conn = koneksi.dbKonek(); // buka ulang jika tertutup
+        }
+
+        ps = conn.prepareStatement(sql);
         if (keyword != null && !keyword.isEmpty()) {
             ps.setString(1, "%" + keyword.toLowerCase() + "%");
         }
-int count = 0;
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int kodeBarang = rs.getInt("kodeBarang");
-                String sku = rs.getString("SKUBarang");
-                String nama = rs.getString("nama");
-                double harga = rs.getDouble("hargaBarang");
-                int stok = rs.getInt("stok");
-                String gambarPath = rs.getString("gambar");
-count++;
-                JPanel itemPanel = new JPanel();
-                itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
-                itemPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-                itemPanel.setBackground(Color.WHITE);
-                itemPanel.setPreferredSize(new Dimension(200, 250));
 
-                JLabel lblGambar = new JLabel();
-                lblGambar.setAlignmentX(Component.CENTER_ALIGNMENT);
-                lblGambar.setPreferredSize(new Dimension(120, 120));
-                lblGambar.setHorizontalAlignment(JLabel.CENTER);
-                lblGambar.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        rs = ps.executeQuery();
 
-                if (gambarPath != null && !gambarPath.isEmpty()) {
-                    ImageIcon icon = new ImageIcon(gambarPath);
-                    Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-                    lblGambar.setIcon(new ImageIcon(img));
-                } else {
-                    lblGambar.setText("No Image");
-                }
+        int count = 0;
+        while (rs.next()) {
+            int kodeBarang = rs.getInt("kodeBarang");
+            String sku = rs.getString("SKUBarang");
+            String nama = rs.getString("nama");
+            double harga = rs.getDouble("hargaBarang");
+            int stok = rs.getInt("stok");
+            String gambarPath = rs.getString("gambar");
+            count++;
 
-                JLabel lblNama = new JLabel(nama);
-                lblNama.setFont(new Font("Segoe UI", Font.BOLD, 14));
-                lblNama.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JPanel itemPanel = new JPanel();
+            itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
+            itemPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+            itemPanel.setBackground(Color.WHITE);
+            itemPanel.setPreferredSize(new Dimension(200, 200));
 
-                JLabel lblSKU = new JLabel("SKU: " + sku);
-                JLabel lblHarga = new JLabel("Rp " + harga);
-                JLabel lblStok = new JLabel("Stok: " + stok);
-                lblSKU.setAlignmentX(Component.CENTER_ALIGNMENT);
-                lblHarga.setAlignmentX(Component.CENTER_ALIGNMENT);
-                lblStok.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JLabel lblGambar = new JLabel();
+            lblGambar.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblGambar.setPreferredSize(new Dimension(120, 120));
+            lblGambar.setHorizontalAlignment(JLabel.CENTER);
+            lblGambar.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-                JButton btnBeli = new JButton("Beli");
-                btnBeli.setAlignmentX(Component.CENTER_ALIGNMENT);
-                btnBeli.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-                btnBeli.addActionListener(ev -> {
-                    String jumlahStr = JOptionPane.showInputDialog(
-                            this,
-                            "Masukkan jumlah beli untuk " + nama,
-                            "Input Jumlah",
-                            JOptionPane.QUESTION_MESSAGE
-                    );
-
-                    if (jumlahStr != null && !jumlahStr.isEmpty()) {
-                        try {
-                            int jumlah = Integer.parseInt(jumlahStr);
-                            if (jumlah > 0 && jumlah <= stok) {
-                                double total = jumlah * harga;
-
-                                DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
-                                model.addRow(new Object[]{sku, nama, harga, jumlah, total});
-                                // Hitung ulang semua total
-                                double grandTotal = 0;
-                                for (int i = 0; i < model.getRowCount(); i++) {
-                                    grandTotal += (double) model.getValueAt(i, 4);
-                                }
-
-                                txtTotal.setText(String.valueOf((int) grandTotal));
-
-                                kurangiStok(kodeBarang, jumlah);
-                                loadMenu(keyword);
-                            } else {
-                                JOptionPane.showMessageDialog(this,
-                                        "Jumlah tidak valid atau stok tidak cukup!");
-                            }
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(this, "Input harus angka!");
-                        }
-                    }
-                });
-
-                itemPanel.add(lblGambar);
-                itemPanel.add(Box.createVerticalStrut(5));
-                itemPanel.add(lblNama);
-                itemPanel.add(lblSKU);
-                itemPanel.add(lblHarga);
-                itemPanel.add(lblStok);
-                itemPanel.add(Box.createVerticalStrut(5));
-                itemPanel.add(btnBeli);
-
-                pnlMenu.add(itemPanel);
+            if (gambarPath != null && !gambarPath.isEmpty()) {
+                ImageIcon icon = new ImageIcon(gambarPath);
+                Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+                lblGambar.setIcon(new ImageIcon(img));
+            } else {
+                lblGambar.setText("No Image");
             }
+
+            JLabel lblNama = new JLabel(nama);
+            lblNama.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            lblNama.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JLabel lblSKU = new JLabel("SKU: " + sku);
+            JLabel lblHarga = new JLabel("Rp " + harga);
+            JLabel lblStok = new JLabel("Stok: " + stok);
+            lblSKU.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblHarga.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblStok.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JButton btnBeli = new JButton("Beli");
+            btnBeli.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btnBeli.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+            btnBeli.addActionListener(ev -> {
+                String jumlahStr = JOptionPane.showInputDialog(
+                        this,
+                        "Masukkan jumlah beli untuk " + nama,
+                        "Input Jumlah",
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (jumlahStr != null && !jumlahStr.isEmpty()) {
+                    try {
+                        int jumlah = Integer.parseInt(jumlahStr);
+                        if (jumlah > 0 && jumlah <= stok) {
+                            double total = jumlah * harga;
+
+                            DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+                            model.addRow(new Object[]{sku, nama, harga, jumlah, total});
+
+                            // Hitung ulang total keseluruhan
+                            double grandTotal = 0;
+                            for (int i = 0; i < model.getRowCount(); i++) {
+                                grandTotal += (double) model.getValueAt(i, 4);
+                            }
+                            txtTotal.setText(String.valueOf((int) grandTotal));
+
+                            kurangiStok(kodeBarang, jumlah);
+                            loadMenu(keyword); // refresh stok di tampilan
+                        } else {
+                            JOptionPane.showMessageDialog(this,
+                                    "Jumlah tidak valid atau stok tidak cukup!");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(this, "Input harus angka!");
+                    }
+                }
+            });
+
+            itemPanel.add(Box.createVerticalStrut(5));
+            itemPanel.add(lblNama);
+            itemPanel.add(lblSKU);
+            itemPanel.add(lblHarga);
+            itemPanel.add(lblStok);
+            itemPanel.add(Box.createVerticalStrut(5));
+            itemPanel.add(btnBeli);
+
+            pnlMenu.add(itemPanel);
         }
-    int rows = (int) Math.ceil(count / 3.0); // 3 kolom
+
+        // Hitung tinggi panel berdasarkan jumlah item
+        int rows = (int) Math.ceil(count / 3.0); // 3 kolom per baris
         int height = rows * 270; // tinggi per item (250 + margin)
         pnlMenu.setPreferredSize(new Dimension(662, height));
 
@@ -344,6 +354,10 @@ count++;
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal load menu: " + e.getMessage());
+    } finally {
+        try { if (rs != null) rs.close(); } catch (Exception ex) {}
+        try { if (ps != null) ps.close(); } catch (Exception ex) {}
+        // ⚠️ Jangan tutup conn, biarkan tetap terbuka (global)
     }
 }
 
@@ -409,39 +423,72 @@ JScrollPane scrollRingkasan = new JScrollPane(tblRingkasan);
 scrollRingkasan.setPreferredSize(new Dimension(580, 150));
 scrollRingkasan.setBorder(BorderFactory.createTitledBorder("Barang yang dibeli"));
 
-    // === Panel Tengah: Form Input ===
-    JPanel formPanel = new JPanel(new GridBagLayout());
-    formPanel.setBorder(BorderFactory.createTitledBorder("Detail Pembayaran"));
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.insets = new Insets(5, 5, 5, 5);
-    gbc.fill = GridBagConstraints.HORIZONTAL;
+// === Panel Tengah: Form Input ===
+JPanel formPanel = new JPanel(new GridBagLayout());
+formPanel.setBackground(Color.WHITE); // background putih
+formPanel.setBorder(BorderFactory.createTitledBorder("Detail Pembayaran"));
 
-    // Buat semua textfield
-    JTextField txtSubtotal   = new JTextField(txtTotal.getText(), 15);
-    JTextField txtDiskon     = new JTextField("0", 15);
-    JTextField txtGrandTotal = new JTextField(txtTotal.getText(), 15);
-    JTextField txtTunai      = new JTextField(txtTotal.getText(), 15);
-    JTextField txtKredit     = new JTextField("0", 15);
-    JTextField txtKembalian  = new JTextField("0", 15);
-    JTextArea  txtKeterangan = new JTextArea(3, 20);
+GridBagConstraints gbc = new GridBagConstraints();
+gbc.insets = new Insets(3, 10, 3, 10); // jarak antar komponen lebih rapat dan seimbang
+gbc.fill = GridBagConstraints.HORIZONTAL;
+gbc.anchor = GridBagConstraints.WEST;
 
-    txtSubtotal.setEditable(false);
-    txtGrandTotal.setEditable(false);
-    txtKembalian.setEditable(false);
+// Styling font
+Font labelFont = new Font("Segoe UI", Font.PLAIN, 13);
+Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
 
-    // Tambahkan ke panel dengan GridBagLayout
-    int row = 0;
-    formPanelAdd(formPanel, gbc, row++, "Subtotal:", txtSubtotal);
-    formPanelAdd(formPanel, gbc, row++, "Diskon:", txtDiskon);
-    formPanelAdd(formPanel, gbc, row++, "Grand Total:", txtGrandTotal);
-    formPanelAdd(formPanel, gbc, row++, "Tunai:", txtTunai);
-    formPanelAdd(formPanel, gbc, row++, "Kredit:", txtKredit);
-    formPanelAdd(formPanel, gbc, row++, "Kembalian:", txtKembalian);
+// Buat textfield
+JTextField txtSubtotal   = new JTextField(txtTotal.getText(), 20);
+JTextField txtDiskon     = new JTextField("0", 20);
+JTextField txtGrandTotal = new JTextField(txtTotal.getText(), 20);
+JTextField txtTunai      = new JTextField(txtTotal.getText(), 20);
+JTextField txtKredit     = new JTextField("0", 20);
+JTextField txtKembalian  = new JTextField("0", 20);
+JTextArea  txtKeterangan = new JTextArea(3, 20);
 
-    gbc.gridx = 0; gbc.gridy = row; gbc.anchor = GridBagConstraints.NORTHWEST;
-    formPanel.add(new JLabel("Keterangan:"), gbc);
-    gbc.gridx = 1; gbc.gridy = row; gbc.fill = GridBagConstraints.BOTH;
-    formPanel.add(new JScrollPane(txtKeterangan), gbc);
+// Background dan font
+JTextField[] fields = {txtSubtotal, txtDiskon, txtGrandTotal, txtTunai, txtKredit, txtKembalian};
+for (JTextField f : fields) {
+    f.setBackground(Color.WHITE);
+    f.setFont(fieldFont);
+    f.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(180, 180, 180)),
+        BorderFactory.createEmptyBorder(5, 5, 5, 5)
+    ));
+}
+
+txtKeterangan.setFont(fieldFont);
+txtKeterangan.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+txtKeterangan.setBackground(Color.WHITE);
+
+txtSubtotal.setEditable(false);
+txtGrandTotal.setEditable(false);
+txtKembalian.setEditable(false);
+
+// Tambahkan ke GridBag
+int row = 0;
+String[] labels = {"Subtotal:", "Diskon:", "Grand Total:", "Tunai:", "Kredit:", "Kembalian:"};
+JTextField[] txts = {txtSubtotal, txtDiskon, txtGrandTotal, txtTunai, txtKredit, txtKembalian};
+
+for (int i = 0; i < labels.length; i++) {
+    gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+    JLabel lbl = new JLabel(labels[i]);
+    lbl.setFont(labelFont);
+    formPanel.add(lbl, gbc);
+
+    gbc.gridx = 1; gbc.gridy = row; gbc.weightx = 1;
+    formPanel.add(txts[i], gbc);
+    row++;
+}
+
+// Baris terakhir: Keterangan
+gbc.gridx = 0; gbc.gridy = row; gbc.anchor = GridBagConstraints.NORTHWEST;
+JLabel lblKet = new JLabel("Keterangan:");
+lblKet.setFont(labelFont);
+formPanel.add(lblKet, gbc);
+
+gbc.gridx = 1; gbc.gridy = row; gbc.fill = GridBagConstraints.BOTH;
+formPanel.add(new JScrollPane(txtKeterangan), gbc);
 
     // === Panel Bawah: Tombol ===
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -467,6 +514,20 @@ scrollRingkasan.setBorder(BorderFactory.createTitledBorder("Barang yang dibeli")
     // === Event Tombol ===
     btnKembali.addActionListener(ev -> dialog.dispose());
 btnSelesai.addActionListener(ev -> {
+      // === VALIDASI INPUT ===
+    if (txtSubtotal.getText().trim().isEmpty() || 
+        txtGrandTotal.getText().trim().isEmpty() || 
+        txtTunai.getText().trim().isEmpty()) {
+
+        JOptionPane.showMessageDialog(
+            dialog,
+            "Pastikan Subtotal, Grand Total, dan Tunai sudah diisi!",
+            "Input Tidak Lengkap",
+            JOptionPane.WARNING_MESSAGE
+        );
+        return; // hentikan proses simpan
+    }
+
     try (Connection conn = koneksi.dbKonek()) {
         conn.setAutoCommit(false); // biar atomic semua insert
 
@@ -492,7 +553,6 @@ btnSelesai.addActionListener(ev -> {
         rs.close();
         pstTrans.close();
 
-        // === 2. Insert DetailTransaksi ===
         DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
         String sqlDetail = "INSERT INTO DetailTransaksi (kodeBarang, idTransaksi, namaBarang, jumlah, harga, keterangan, subtotal) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -505,7 +565,6 @@ btnSelesai.addActionListener(ev -> {
             int jumlah = Integer.parseInt(model.getValueAt(i, 3).toString());
             double total = Double.parseDouble(model.getValueAt(i, 4).toString());
 
-            // Ambil kodeBarang dari tabel Barang berdasarkan SKU
             int kodeBarang = 0;
             PreparedStatement pstCek = conn.prepareStatement("SELECT kodeBarang FROM Barang WHERE SKUBarang = ?");
             pstCek.setString(1, sku);
@@ -528,7 +587,6 @@ btnSelesai.addActionListener(ev -> {
         pstDetail.executeBatch();
         pstDetail.close();
 
-        // === 3. Insert Keuangan ===
         String sqlKeu = "INSERT INTO Keuangan (idAsal, jenisKeuangan, masuk, keluar, tanggal) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pstKeu = conn.prepareStatement(sqlKeu);
         pstKeu.setInt(1, idTransaksi);
@@ -539,8 +597,7 @@ btnSelesai.addActionListener(ev -> {
         pstKeu.executeUpdate();
         pstKeu.close();
 
-               conn.commit(); // simpan transaksi
-
+               conn.commit(); 
         JOptionPane.showMessageDialog(dialog, "Transaksi berhasil disimpan!");
         dialog.dispose();
 
@@ -571,6 +628,55 @@ dialog.addWindowListener(new WindowAdapter() {
         txtTunai.requestFocusInWindow();
     }
 });
+// === Key Bindings untuk Enter dan Ctrl+K di dalam Dialog ===
+InputMap im = dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+ActionMap am = dialog.getRootPane().getActionMap();
+
+// Tekan ENTER → klik tombol Selesai
+im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitDialog");
+am.put("submitDialog", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnSelesai.doClick();
+    }
+});
+
+// Tekan CTRL + K → klik tombol Kembali
+im.put(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK), "cancelDialog");
+am.put("cancelDialog", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnKembali.doClick();
+    }
+});
+// === Warna dasar putih untuk seluruh popup ===
+Color putih = Color.WHITE;
+dialog.getContentPane().setBackground(putih);
+
+// scrollRingkasan (tabel barang)
+scrollRingkasan.setBackground(putih);
+scrollRingkasan.getViewport().setBackground(putih);
+tblRingkasan.setBackground(putih);
+tblRingkasan.setGridColor(new Color(220, 220, 220)); // garis tabel lembut
+tblRingkasan.setSelectionBackground(new Color(230, 240, 255));
+tblRingkasan.setSelectionForeground(Color.BLACK);
+
+// formPanel (sudah putih di versi sebelumnya)
+formPanel.setBackground(putih);
+
+// button panel
+buttonPanel.setBackground(putih);
+
+// seluruh tombol juga bisa diberi warna lebih kontras
+btnSelesai.setBackground(new Color(0, 123, 255));
+btnSelesai.setForeground(Color.WHITE);
+btnSelesai.setFocusPainted(false);
+btnSelesai.setBorder(BorderFactory.createEmptyBorder(6, 16, 6, 16));
+
+btnKembali.setBackground(new Color(0, 123, 255));
+btnKembali.setForeground(Color.WHITE);
+btnKembali.setFocusPainted(false);
+btnKembali.setBorder(BorderFactory.createEmptyBorder(6, 16, 6, 16));
 
 dialog.setVisible(true);
 
@@ -619,9 +725,19 @@ private double parseDoubleSafe(String text) {
 // Perhitungan
 private void updateGrandTotal(JTextField txtSubtotal, JTextField txtDiskon, JTextField txtGrandTotal) {
     double subtotal = parseDoubleSafe(txtSubtotal.getText());
-    double diskon   = parseDoubleSafe(txtDiskon.getText());
-    txtGrandTotal.setText(String.valueOf(subtotal - diskon));
+    double diskonPersen = parseDoubleSafe(txtDiskon.getText());
+
+    // Validasi batas diskon biar gak aneh
+    if (diskonPersen < 0) diskonPersen = 0;
+    if (diskonPersen > 100) diskonPersen = 100;
+
+    // Hitung potongan dan grand total
+    double potongan = subtotal * (diskonPersen / 100.0);
+    double grandTotal = subtotal - potongan;
+
+    txtGrandTotal.setText(String.format("%.2f", grandTotal));
 }
+
 
 private void updateKembalian(JTextField txtGrandTotal, JTextField txtTunai, JTextField txtKredit, JTextField txtKembalian) {
     double grand   = parseDoubleSafe(txtGrandTotal.getText());
@@ -664,6 +780,8 @@ private void setupSkuScanner() {
         String sku = txtSku.getText().trim();
         if (!sku.isEmpty()) {
             jalankanCariBarang(sku);  // fungsi untuk ambil data barang
+            loadMenu(null); // refresh stok di panel menu
+
             txtSku.setText("");       // kosongkan setelah scan selesai
         }
     });
@@ -697,43 +815,81 @@ private void setupSkuScanner() {
 }
 
 
-    private void jalankanCariBarang(String sku) {
-        try {
-            Connection conn = koneksi.dbKonek();
-            String sql = "SELECT nama, hargabarang, stok FROM barang WHERE skubarang=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, sku);
-            ResultSet rs = ps.executeQuery();
+   private void jalankanCariBarang(String sku) {
+    try {
+        Connection conn = koneksi.dbKonek();
+        String sql = "SELECT nama, hargabarang, stok FROM barang WHERE skubarang=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, sku);
+        ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                String nama = rs.getString("nama");
-                double harga = rs.getDouble("hargabarang");
-                int stok = rs.getInt("stok");
+        if (rs.next()) {
+            String nama = rs.getString("nama");
+            double harga = rs.getDouble("hargabarang");
+            int stok = rs.getInt("stok");
 
-                if (stok > 0) {
-                    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
-                    model.addRow(new Object[]{ sku, nama, harga, 1, harga });
+            if (stok > 0) {
+                DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+                boolean barangSudahAda = false;
 
-                    // update stok
-                    String update = "UPDATE barang SET stok=stok-1 WHERE skubarang=?";
-                    PreparedStatement psUpdate = conn.prepareStatement(update);
-                    psUpdate.setString(1, sku);
-                    psUpdate.executeUpdate();
-
-                    hitungTotal();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Stok habis!");
+                // cek apakah barang sudah ada di tabel
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    String skuTabel = model.getValueAt(i, 0).toString();
+                    if (skuTabel.equals(sku)) {
+                        // barang sudah ada → update jumlah & subtotal
+                        int jumlah = (int) model.getValueAt(i, 3);
+                        jumlah++;
+                        model.setValueAt(jumlah, i, 3);
+                        model.setValueAt(harga * jumlah, i, 4);
+                        barangSudahAda = true;
+                        break;
+                    }
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Barang tidak ditemukan!");
-            }
 
-            rs.close();
-            ps.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+                if (!barangSudahAda) {
+                    // barang belum ada → tambahkan baris baru
+                    model.addRow(new Object[]{ sku, nama, harga, 1, harga });
+                    loadMenu(null); // refresh stok di panel menu
+
+                }
+
+                // update stok di database (kurangi 1)
+                String update = "UPDATE barang SET stok = stok - 1 WHERE skubarang=?";
+                PreparedStatement psUpdate = conn.prepareStatement(update);
+                psUpdate.setString(1, sku);
+                psUpdate.executeUpdate();
+
+                hitungTotal();
+            } else {
+                JOptionPane.showMessageDialog(this, "Stok habis!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Barang tidak ditemukan!");
         }
+
+        rs.close();
+        ps.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
     }
+}public void batalkanTransaksi() {
+    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
+
+    for (int i = 0; i < model.getRowCount(); i++) {
+        String sku = model.getValueAt(i, 0).toString();
+        int jumlah = Integer.parseInt(model.getValueAt(i, 3).toString());
+        updateStokBySKU(sku, jumlah); // fungsi kamu yang sudah ada
+    }
+
+    model.setRowCount(0); // kosongkan tabel
+    txtTotal.setText("Rp 0");
+ 
+}
+public javax.swing.JTable getTblKasir() {
+    return tblKasir;
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -806,7 +962,7 @@ private void setupSkuScanner() {
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
 
         btnPembayaran.setBackground(new java.awt.Color(51, 255, 0));
-        btnPembayaran.setText("PEMBAYARAN");
+        btnPembayaran.setText("[ENTER] PEMBAYARAN");
         btnPembayaran.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPembayaranActionPerformed(evt);
@@ -840,7 +996,7 @@ private void setupSkuScanner() {
                 btnDeleteActionPerformed(evt);
             }
         });
-        jPanel2.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 340, 90, 50));
+        jPanel2.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 350, 120, 50));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("No transaksi");
@@ -857,7 +1013,7 @@ private void setupSkuScanner() {
                 btnEditActionPerformed(evt);
             }
         });
-        jPanel2.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 340, 90, 50));
+        jPanel2.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 350, 140, 50));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel6.setText("TOTAL");
@@ -873,7 +1029,12 @@ private void setupSkuScanner() {
         jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 80, -1, -1));
 
         btnBatal.setBackground(new java.awt.Color(204, 204, 204));
-        btnBatal.setText("BATAL");
+        btnBatal.setText("[CTRL+B] BATAL");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 770, 130, 50));
 
         txtNo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -921,11 +1082,11 @@ private void setupSkuScanner() {
 
         jLabel12.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         jLabel12.setText("[ Ctrl+D ]");
-        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 320, -1, -1));
+        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 330, -1, -1));
 
         jLabel13.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         jLabel13.setText("[ Ctrl+E ]");
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 320, -1, -1));
+        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 330, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 1380, 840));
 
@@ -935,7 +1096,7 @@ private void setupSkuScanner() {
 
         jPanel5.setBackground(new java.awt.Color(5, 69, 162));
 
-        btnDetail.setText("jButton1");
+        btnDetail.setText("detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailActionPerformed(evt);
@@ -947,16 +1108,16 @@ private void setupSkuScanner() {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(209, Short.MAX_VALUE)
-                .addComponent(btnDetail)
+                .addContainerGap(194, Short.MAX_VALUE)
+                .addComponent(btnDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(btnDetail)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(btnDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 290, 60));
@@ -1034,8 +1195,8 @@ hitungTotal();
 
     String sku = model.getValueAt(row, 0).toString();
     String nama = model.getValueAt(row, 1).toString();
-    double harga = (double) model.getValueAt(row, 2);
-    int jumlahLama = (int) model.getValueAt(row, 3);
+    double harga = Double.parseDouble(model.getValueAt(row, 2).toString());
+    int jumlahLama = Integer.parseInt(model.getValueAt(row, 3).toString());
 
     // Pop-up input jumlah baru
     String jumlahStr = JOptionPane.showInputDialog(
@@ -1048,31 +1209,41 @@ hitungTotal();
         try {
             int jumlahBaru = Integer.parseInt(jumlahStr);
 
-            // Cari stok di DB
+            if (jumlahBaru <= 0) {
+                JOptionPane.showMessageDialog(this, "Jumlah tidak boleh 0 atau negatif!");
+                return;
+            }
+
+            // Ambil stok dari database
             int stokDb = getStokBySKU(sku);
 
-            // Hitung perubahan stok
+            // Hitung selisih antara jumlah baru dan lama
             int selisih = jumlahBaru - jumlahLama;
 
-            if (jumlahBaru > 0 && selisih <= stokDb) {
-                double totalBaru = jumlahBaru * harga;
-
-                // Update JTable
-                model.setValueAt(jumlahBaru, row, 3);
-                model.setValueAt(totalBaru, row, 4);
-
-                // Update stok di DB
-                updateStokBySKU(sku, -selisih);
-
-                // Refresh menu
-                loadMenu(null);
-            } else {
-                JOptionPane.showMessageDialog(this, "Jumlah tidak valid atau stok tidak cukup!");
+            // Kalau nambah barang → pastikan stok di DB cukup
+            if (selisih > 0 && selisih > stokDb) {
+                JOptionPane.showMessageDialog(this, "Stok tidak cukup! Sisa stok: " + stokDb);
+                return;
             }
+
+            // Update stok di DB
+            updateStokBySKU(sku, -selisih); // negatif kalau nambah, positif kalau ngurang
+
+            // Update JTable
+            double totalBaru = jumlahBaru * harga;
+            model.setValueAt(jumlahBaru, row, 3);
+            model.setValueAt(totalBaru, row, 4);
+
+            // Refresh total kasir
+            hitungTotal();
+loadMenu(null); // refresh stok di panel menu
+
+            
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Input harus angka!");
+            JOptionPane.showMessageDialog(this, "Input harus berupa angka!");
         }
-    }        // TODO add your handling code here:
+    }
+    // TODO add your handling code here:
     }//GEN-LAST:event_btnEditActionPerformed
 private javax.swing.Timer searchTimer;
 
@@ -1107,52 +1278,57 @@ showPopupPembayaran();        // TODO add your handling code here:
     }//GEN-LAST:event_txtSkuKeyReleased
 
     private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
-  int selectedRow = tblRiwayat.getSelectedRow();
+        int selectedRow = tblRiwayat.getSelectedRow();
     if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Pilih transaksi terlebih dahulu!");
         return;
     }
 
-    // Karena kolom idtransaksi disembunyikan, ambil nilainya dari model sebenarnya
-    int idTransaksi = (int) tblRiwayat.getModel().getValueAt(selectedRow, 0);
+    DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
+    int idTransaksi = (int) model.getValueAt(selectedRow, 3);
 
-    try (Connection conn = koneksi.dbKonek()) {
-        String sql = """
-            SELECT namabarang, jumlah, harga, subtotal, keterangan
-            FROM detailtransaksi
-            WHERE idtransaksi = ?
-        """;
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setInt(1, idTransaksi);
-        ResultSet rs = pst.executeQuery();
+    PopupDetailTransaksi popup = new PopupDetailTransaksi(
+        (java.awt.Frame) SwingUtilities.getWindowAncestor(this),
+        true,
+        idTransaksi
+    );
+    popup.setLocationRelativeTo(null);
+    popup.setVisible(true);
+    }//GEN-LAST:event_btnDetailActionPerformed
 
-        StringBuilder detail = new StringBuilder();
-        double total = 0;
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+    DefaultTableModel model = (DefaultTableModel) tblKasir.getModel();
 
-        detail.append("Detail Transaksi ID: ").append(idTransaksi).append("\n");
-        detail.append("---------------------------------------------------\n");
-        while (rs.next()) {
-            String namaBarang = rs.getString("namabarang");
-            int jumlah = rs.getInt("jumlah");
-            double harga = rs.getDouble("harga");
-            double subtotal = rs.getDouble("subtotal");
-            String ket = rs.getString("keterangan");
+    if (model.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "Tidak ada transaksi yang dibatalkan.");
+        return;
+    }
 
-            detail.append(String.format("%s (%s)\n  %d x Rp %, .2f = Rp %, .2f\n\n",
-                    namaBarang, ket, jumlah, harga, subtotal));
-            total += subtotal;
+    try {
+        // Kembalikan stok semua barang yang ada di tabel kasir
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String sku = model.getValueAt(i, 0).toString();       // kolom SKUBarang
+            int jumlah = Integer.parseInt(model.getValueAt(i, 3).toString()); // kolom Jumlah
+
+            // panggil fungsi update stok yang sudah kamu buat
+            updateStokBySKU(sku, jumlah);
         }
 
-        detail.append("---------------------------------------------------\n");
-        detail.append(String.format("Total: Rp %, .2f", total));
+        // Kosongkan tabel kasir
+        model.setRowCount(0);
 
-        JOptionPane.showMessageDialog(this, detail.toString(), 
-                "Detail Transaksi", JOptionPane.INFORMATION_MESSAGE);
+        // Reset label total, diskon, grand total (ubah sesuai nama label kamu)
+        txtTotal.setText("0");
+     
+        JOptionPane.showMessageDialog(this, "Transaksi dibatalkan dan stok telah dikembalikan.");
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Gagal memuat detail: " + e.getMessage());
-    }        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDetailActionPerformed
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal membatalkan transaksi: " + e.getMessage());
+    }
+
+
+    }//GEN-LAST:event_btnBatalActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

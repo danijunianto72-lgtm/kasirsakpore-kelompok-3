@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -43,7 +44,12 @@ public class KelolaUser extends javax.swing.JPanel {
         element();
         setKeyBindings();
         setHeader();
-        
+            java.util.Date today = new java.util.Date();
+
+    // set tanggal awal dan akhir ke hari ini
+    jdcStart.setDate(today);
+    jdcEnd.setDate(today);
+
         
     // Tambahkan shortcut CTRL + ENTER untuk tombol Submit
   btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -57,6 +63,9 @@ btSubmit.getActionMap().put("submitAction", new AbstractAction() {
         btSubmit.doClick();
     }
 });
+    SwingUtilities.invokeLater(() -> {
+tfUsername.requestFocusInWindow();
+    });
 
 
 //  btSubmit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -245,7 +254,9 @@ private void element(){
     tfUsername,
     tfPassword,
     cbRole,
-    cbStatus            
+    cbStatus,
+    cmbUsername,
+    txtCari
 );
 
 setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
@@ -287,61 +298,84 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         return order.get(0);
     }
 }
-   private void loadRiwayatData() {
-        DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
-        model.setRowCount(0);
+private void loadRiwayatData() {
+    DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
+    model.setRowCount(0);
 
-        int bulan = jmcBulan.getMonth() + 1; // karena index dimulai dari 0
-        int tahun = jycTahun.getYear();
-        String selectedUser = (String) cmbUsername.getSelectedItem();
-        String keyword = txtCari.getText().trim();
+    java.util.Date start = jdcStart.getDate();
+    java.util.Date end = jdcEnd.getDate();
+    String selectedUser = (String) cmbUsername.getSelectedItem();
+    String keyword = txtCari.getText().trim();
 
-        StringBuilder sql = new StringBuilder(
-            "SELECT waktu_login, nama_pemakai, username FROM riwayat_login WHERE EXTRACT(MONTH FROM waktu_login)=? AND EXTRACT(YEAR FROM waktu_login)=? "
-        );
+    if (start == null || end == null) return;
+
+    // --- atur jam awal & akhir hari ---
+    Calendar calStart = Calendar.getInstance();
+    calStart.setTime(start);
+    calStart.set(Calendar.HOUR_OF_DAY, 0);
+    calStart.set(Calendar.MINUTE, 0);
+    calStart.set(Calendar.SECOND, 0);
+    calStart.set(Calendar.MILLISECOND, 0);
+
+    Calendar calEnd = Calendar.getInstance();
+    calEnd.setTime(end);
+    calEnd.set(Calendar.HOUR_OF_DAY, 23);
+    calEnd.set(Calendar.MINUTE, 59);
+    calEnd.set(Calendar.SECOND, 59);
+    calEnd.set(Calendar.MILLISECOND, 999);
+
+    java.util.Date startFixed = calStart.getTime();
+    java.util.Date endFixed = calEnd.getTime();
+
+    // --- query SQL ---
+    StringBuilder sql = new StringBuilder(
+        "SELECT waktu_login, nama_pemakai, username FROM riwayat_login " +
+        "WHERE waktu_login BETWEEN ? AND ? "
+    );
+
+    if (selectedUser != null && !"Semua".equals(selectedUser)) {
+        sql.append(" AND username = ? ");
+    }
+
+    if (!keyword.isEmpty()) {
+        sql.append(" AND (LOWER(nama_pemakai) LIKE ? OR LOWER(username) LIKE ?) ");
+    }
+
+    sql.append(" ORDER BY waktu_login DESC");
+
+    try (Connection conn = koneksi.dbKonek()) {
+        PreparedStatement pst = conn.prepareStatement(sql.toString());
+        int paramIndex = 1;
+
+        pst.setTimestamp(paramIndex++, new java.sql.Timestamp(startFixed.getTime()));
+        pst.setTimestamp(paramIndex++, new java.sql.Timestamp(endFixed.getTime()));
 
         if (selectedUser != null && !"Semua".equals(selectedUser)) {
-            sql.append(" AND username = ? ");
+            pst.setString(paramIndex++, selectedUser);
         }
 
         if (!keyword.isEmpty()) {
-            sql.append(" AND (LOWER(nama_pemakai) LIKE ? OR LOWER(username) LIKE ?) ");
+            String like = "%" + keyword.toLowerCase() + "%";
+            pst.setString(paramIndex++, like);
+            pst.setString(paramIndex++, like);
         }
 
-        sql.append(" ORDER BY waktu_login DESC");
-
-        try (Connection conn = koneksi.dbKonek()) {
-            PreparedStatement pst = conn.prepareStatement(sql.toString());
-            int paramIndex = 1;
-
-            pst.setInt(paramIndex++, bulan);
-            pst.setInt(paramIndex++, tahun);
-
-            if (selectedUser != null && !"Semua".equals(selectedUser)) {
-                pst.setString(paramIndex++, selectedUser);
-            }
-
-            if (!keyword.isEmpty()) {
-                String like = "%" + keyword.toLowerCase() + "%";
-                pst.setString(paramIndex++, like);
-                pst.setString(paramIndex++, like);
-            }
-
-            ResultSet rs = pst.executeQuery();
-            int no = 1;
-            while (rs.next()) {
-                Object[] row = {
-                    no++,
-                    rs.getTimestamp("waktu_login"),
-                    rs.getString("nama_pemakai"),
-                    rs.getString("username")
-                };
-                model.addRow(row);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal load riwayat: " + e.getMessage());
+        ResultSet rs = pst.executeQuery();
+        int no = 1;
+        while (rs.next()) {
+            Object[] row = {
+                no++,
+                rs.getTimestamp("waktu_login"),
+                rs.getString("nama_pemakai"),
+                rs.getString("username")
+            };
+            model.addRow(row);
         }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal load riwayat: " + e.getMessage());
     }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -372,20 +406,17 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         Batal = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         cmbUsername = new javax.swing.JComboBox<>();
-        jmcBulan = new com.toedter.calendar.JMonthChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRiwayat = new javax.swing.JTable();
-        jycTahun = new com.toedter.calendar.JYearChooser();
         txtCari = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jdcEnd = new com.toedter.calendar.JDateChooser();
+        jdcStart = new com.toedter.calendar.JDateChooser();
+        jLabel5 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
         setMinimumSize(new java.awt.Dimension(1720, 960));
@@ -437,7 +468,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btSubmit.setBackground(new java.awt.Color(102, 255, 102));
         btSubmit.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btSubmit.setText("Submit");
+        btSubmit.setText("[ENTER] Submit");
         btSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSubmitActionPerformed(evt);
@@ -448,7 +479,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btSubmitKeyReleased(evt);
             }
         });
-        pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 650, 310, 60));
+        pnFormUser.add(btSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 620, 350, 90));
 
         jPanel1.setBackground(new java.awt.Color(5, 69, 162));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -484,37 +515,38 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblUser.getColumnModel().getColumn(1).setMaxWidth(45);
         }
 
-        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 1080, 190));
+        pnDaftarUser.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 1060, 210));
 
         btDelete.setBackground(new java.awt.Color(255, 51, 51));
         btDelete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btDelete.setText("Delete");
+        btDelete.setForeground(new java.awt.Color(255, 255, 255));
+        btDelete.setText("[CTRL+D] DELETE");
         btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeleteActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 110, 90, 40));
+        pnDaftarUser.add(btDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 80, 140, 50));
 
         btEdit.setBackground(new java.awt.Color(255, 153, 51));
         btEdit.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btEdit.setText("Edit");
+        btEdit.setText("[CTRL+E] EDIT");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btEditActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 110, 90, 40));
+        pnDaftarUser.add(btEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 80, 130, 50));
 
         Batal.setBackground(new java.awt.Color(204, 204, 204));
         Batal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        Batal.setText("Batal");
+        Batal.setText("[CTRL+B] BATAL");
         Batal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BatalActionPerformed(evt);
             }
         });
-        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 110, 90, 40));
+        pnDaftarUser.add(Batal, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 80, 140, 50));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -526,15 +558,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnDaftarUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 70));
 
-        jLabel5.setText("[ Ctrl=D ]");
-        pnDaftarUser.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 90, -1, -1));
-
-        jLabel6.setText("[ Ctrl=B ]");
-        pnDaftarUser.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 90, -1, -1));
-
-        jLabel7.setText("[ Ctrl=E ]");
-        pnDaftarUser.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 90, -1, -1));
-
         pnback.add(pnDaftarUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 20, 1110, 360));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -544,12 +567,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel4.setBackground(new java.awt.Color(5, 69, 162));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel4.setFont(new java.awt.Font("Dialog", 1, 27)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Riwayat Pengguna");
-        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 70));
+        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 40));
 
         cmbUsername.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbUsername.addActionListener(new java.awt.event.ActionListener() {
@@ -557,14 +580,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 cmbUsernameActionPerformed(evt);
             }
         });
-        jPanel3.add(cmbUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 120, 40));
-
-        jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jmcBulanPropertyChange(evt);
-            }
-        });
-        jPanel3.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 100, 140, 40));
+        jPanel3.add(cmbUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 150, 50));
 
         tblRiwayat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -583,22 +599,35 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(45);
         }
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 1090, 280));
-        jPanel3.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 90, 40));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 1060, 310));
 
         txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCariKeyReleased(evt);
             }
         });
-        jPanel3.add(txtCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, 440, 40));
-
-        jLabel8.setText("[ Ctrl=C ]");
-        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 80, -1, -1));
+        jPanel3.add(txtCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 50, 490, 50));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel9.setText("Cari");
-        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 110, -1, -1));
+        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 60, -1, -1));
+
+        jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcEndPropertyChange(evt);
+            }
+        });
+        jPanel3.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 50, 130, 50));
+
+        jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdcStartPropertyChange(evt);
+            }
+        });
+        jPanel3.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 130, 50));
+
+        jLabel5.setText("Sampai");
+        jPanel3.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, -1, -1));
 
         pnback.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 390, 1110, 450));
 
@@ -734,10 +763,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 loadRiwayatData();        // TODO add your handling code here:
     }//GEN-LAST:event_cmbUsernameActionPerformed
 
-    private void jmcBulanPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jmcBulanPropertyChange
-loadRiwayatData();        // TODO add your handling code here:
-    }//GEN-LAST:event_jmcBulanPropertyChange
-
     private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
                 loadRiwayatData();
         // TODO add your handling code here:
@@ -746,6 +771,18 @@ loadRiwayatData();        // TODO add your handling code here:
     private void btSubmitKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btSubmitKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_btSubmitKeyReleased
+
+    private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
+if ("date".equals(evt.getPropertyName())) {
+        loadRiwayatData();
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcStartPropertyChange
+
+    private void jdcEndPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcEndPropertyChange
+if ("date".equals(evt.getPropertyName())) {
+        loadRiwayatData();
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jdcEndPropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -761,9 +798,6 @@ loadRiwayatData();        // TODO add your handling code here:
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -771,8 +805,8 @@ loadRiwayatData();        // TODO add your handling code here:
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private com.toedter.calendar.JMonthChooser jmcBulan;
-    private com.toedter.calendar.JYearChooser jycTahun;
+    private com.toedter.calendar.JDateChooser jdcEnd;
+    private com.toedter.calendar.JDateChooser jdcStart;
     private javax.swing.JLabel lPass;
     private javax.swing.JLabel lRole;
     private javax.swing.JLabel lStatus;

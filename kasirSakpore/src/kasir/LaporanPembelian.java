@@ -4,6 +4,15 @@
  */
 package kasir;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Color;
 import java.awt.Component;
@@ -12,11 +21,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -83,7 +95,20 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         filterData();
     });
 
-    // tombol refresh
+tblBulanan.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+    @Override
+    public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+        // Hindari eksekusi ganda saat seleksi berubah dua kali
+        if (!e.getValueIsAdjusting()) {
+            int row = tblBulanan.getSelectedRow();
+            if (row >= 0) {
+                String tanggal = tblBulanan.getValueAt(row, 1).toString(); // kolom ke-1 = tanggal
+                tampilkanDetail(tanggal);
+            }
+        }
+    }
+});
+
     btnRefresh.addActionListener(evt -> {
         cmbSupplier.setSelectedIndex(0);
         tampilData();
@@ -285,6 +310,44 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
 }
 
 
+private void tampilkanDetail(String tanggal) {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("Nama Barang");
+    model.addColumn("Satuan");
+    model.addColumn("Jumlah Masuk");
+    model.addColumn("Harga Barang");
+    model.addColumn("Total Harga");
+    model.addColumn("Supplier");
+
+    String sql = "SELECT nama, satuan, jumlahmasuk, hargabarang, totalharga, supplier "
+               + "FROM barangmasuk WHERE tanggal = ? ORDER BY idbarangmasuk ASC";
+
+    try (Connection conn = koneksi.dbKonek();
+         PreparedStatement pst = conn.prepareStatement(sql)) {
+
+        pst.setDate(1, java.sql.Date.valueOf(tanggal));
+        ResultSet rs = pst.executeQuery();
+
+        int no = 1;
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("nama"),
+                rs.getString("satuan"),
+                rs.getInt("jumlahmasuk"),
+                rs.getDouble("hargabarang"),
+                rs.getDouble("totalharga"),
+                rs.getString("supplier")
+            });
+        }
+
+        tblDetail.setModel(model);
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
 
 
 
@@ -320,10 +383,10 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         tblDetail = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblBulanan = new javax.swing.JTable();
-        btCetak = new javax.swing.JButton();
-        btDetail = new javax.swing.JButton();
+        btCetakBulan = new javax.swing.JButton();
         lblTotalBulanan = new javax.swing.JLabel();
         jycTahun = new com.toedter.calendar.JYearChooser();
+        btCetakTahun = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -412,7 +475,13 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         jPanel5.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 500, 30));
 
         jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1680, 60));
-        jPanel4.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 82, -1, 30));
+
+        jmcBulan.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jmcBulanPropertyChange(evt);
+            }
+        });
+        jPanel4.add(jmcBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, 140, 40));
 
         tblDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -428,7 +497,7 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         tblDetail.setRowHeight(35);
         jScrollPane2.setViewportView(tblDetail);
 
-        jPanel4.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 120, 620, 210));
+        jPanel4.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 130, 620, 230));
 
         tblBulanan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -449,29 +518,36 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
         });
         jScrollPane3.setViewportView(tblBulanan);
 
-        jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 980, 210));
+        jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 980, 230));
 
-        btCetak.setBackground(new java.awt.Color(0, 153, 153));
-        btCetak.setText("Cetak");
-        btCetak.addActionListener(new java.awt.event.ActionListener() {
+        btCetakBulan.setBackground(new java.awt.Color(255, 0, 0));
+        btCetakBulan.setForeground(new java.awt.Color(255, 255, 255));
+        btCetakBulan.setText("[CTRL+B] Bulanan");
+        btCetakBulan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCetakActionPerformed(evt);
+                btCetakBulanActionPerformed(evt);
             }
         });
-        jPanel4.add(btCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 73, -1, 40));
-
-        btDetail.setBackground(new java.awt.Color(255, 255, 0));
-        btDetail.setText("Detail");
-        btDetail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btDetailActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 73, -1, 40));
+        jPanel4.add(btCetakBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 150, 50));
 
         lblTotalBulanan.setText("lblTotalBulanan");
-        jPanel4.add(lblTotalBulanan, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, -1, -1));
-        jPanel4.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(124, 82, 90, 30));
+        jPanel4.add(lblTotalBulanan, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 370, -1, -1));
+
+        jycTahun.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jycTahunPropertyChange(evt);
+            }
+        });
+        jPanel4.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 120, 40));
+
+        btCetakTahun.setBackground(new java.awt.Color(255, 204, 0));
+        btCetakTahun.setText("[CTRL+T]  Tahunan");
+        btCetakTahun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCetakTahunActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btCetakTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, 150, 50));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 480, 1660, 400));
 
@@ -569,162 +645,228 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
     }
     }//GEN-LAST:event_btnCetakActionPerformed
 
-    private void btCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCetakActionPerformed
-     // TODO add your handling code here:
-JFileChooser fileChooser = new JFileChooser();
-fileChooser.setDialogTitle("Simpan Laporan Pembelian");
+    private void btCetakBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCetakBulanActionPerformed
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Pilih lokasi penyimpanan laporan bulanan");
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setSelectedFile(new File("Laporan_Pembelian_Bulanan.pdf"));
 
-// Default nama file
-fileChooser.setSelectedFile(new java.io.File("LaporanPembelian.pdf"));
+    int result = chooser.showSaveDialog(this);
+    if (result != JFileChooser.APPROVE_OPTION) return;
 
-int userSelection = fileChooser.showSaveDialog(this);
-
-if (userSelection == JFileChooser.APPROVE_OPTION) {
-    java.io.File fileToSave = fileChooser.getSelectedFile();
-
-    // Pastikan file berekstensi .pdf
-    if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".pdf")) {
-        fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".pdf");
+    File file = chooser.getSelectedFile();
+    if (!file.getName().toLowerCase().endsWith(".pdf")) {
+        file = new File(file.getAbsolutePath() + ".pdf");
     }
 
-    try {
-        // === Buat PDF pakai iText ===
-        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-        
-        // Menambahkan margin jika diperlukan
-        document.setMargins(36, 36, 36, 36); // margin kiri, kanan, atas, bawah
+    int bulan = jmcBulan.getMonth() + 1;
+    int tahun = jycTahun.getYear();
 
-        com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(fileToSave));
-        document.open();
+    try (Connection conn = koneksi.dbKonek()) {
+        Document doc = new Document(PageSize.A4);
+        PdfWriter.getInstance(doc, new FileOutputStream(file));
+        doc.open();
 
-        // Judul laporan
-        com.itextpdf.text.Font fontJudul = new com.itextpdf.text.Font(
-            com.itextpdf.text.Font.FontFamily.HELVETICA, 14, com.itextpdf.text.Font.BOLD);
-        com.itextpdf.text.Paragraph judul = new com.itextpdf.text.Paragraph("Laporan Pembelian", fontJudul);
-        judul.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-        document.add(judul);
+        com.itextpdf.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        com.itextpdf.text.Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+        com.itextpdf.text.Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
 
-        // Tanggal Cetak
-        document.add(new com.itextpdf.text.Paragraph(
-            "Tanggal Cetak: " + new java.util.Date().toString(), 
-            new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 10)));
-        
-        // Tambahkan jarak sebelum tabel
-        document.add(new com.itextpdf.text.Chunk("\n"));
-        
-        // Buat tabel PDF sesuai JTable
-        int colCount = tblPembelian.getColumnCount();
-        com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(colCount);
-        pdfTable.setWidthPercentage(100); // tabel full lebar halaman
+        Paragraph title = new Paragraph("LAPORAN PEMBELIAN BARANG BULAN " +
+                new DateFormatSymbols().getMonths()[bulan - 1] + " TAHUN " + tahun, titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        doc.add(title);
+        doc.add(new Paragraph("\n"));
 
-        // Header kolom
-        for (int i = 0; i < colCount; i++) {
-            com.itextpdf.text.pdf.PdfPCell headerCell = new com.itextpdf.text.pdf.PdfPCell(
-                new com.itextpdf.text.Phrase(tblPembelian.getColumnName(i)));
-            headerCell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            headerCell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
-            pdfTable.addCell(headerCell);
-        }
+        String sqlBulan = """
+            SELECT tanggal, SUM(totalharga) AS total_harian
+            FROM barangmasuk
+            WHERE EXTRACT(MONTH FROM tanggal)=? AND EXTRACT(YEAR FROM tanggal)=?
+            GROUP BY tanggal ORDER BY tanggal
+        """;
 
-        // Isi data baris
-        int rowCount = tblPembelian.getRowCount();
-        for (int row = 0; row < rowCount; row++) {
-            for (int col = 0; col < colCount; col++) {
-                Object value = tblPembelian.getValueAt(row, col);
-                com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(
-                    new com.itextpdf.text.Phrase(value != null ? value.toString() : ""));
-                cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-                pdfTable.addCell(cell);
-            }
-        }
+        double totalBulan = 0;
+        try (PreparedStatement pst = conn.prepareStatement(sqlBulan)) {
+            pst.setInt(1, bulan);
+            pst.setInt(2, tahun);
+            ResultSet rs = pst.executeQuery();
 
-        // Menambahkan tabel ke dokumen
-        document.add(pdfTable);
-
-        // === Tambahkan jarak antar tabel dan keterangan total ===
-        document.add(new com.itextpdf.text.Chunk("\n"));
-
-        // Menambahkan keterangan (misalnya total pembelian)
-        com.itextpdf.text.Font fontKeterangan = new com.itextpdf.text.Font(
-            com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
-
-        com.itextpdf.text.Paragraph paragrafKeterangan =
-            new com.itextpdf.text.Paragraph(lblKeterangan.getText(), fontKeterangan);
-        paragrafKeterangan.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-        document.add(paragrafKeterangan);
-
-        // Tutup dokumen
-        document.close();
-
-        // Menampilkan pesan berhasil
-        JOptionPane.showMessageDialog(this, "Laporan berhasil disimpan di:\n" + fileToSave.getAbsolutePath());
-
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Gagal mencetak PDF: " + ex.getMessage());
-    }
-}
-
-    }//GEN-LAST:event_btCetakActionPerformed
-
-    private void btDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDetailActionPerformed
-        // TODO add your handling code here:
-    // Mengambil baris yang dipilih dari tblBulanan
-    int selectedRow = tblBulanan.getSelectedRow();
-    if (selectedRow != -1) { // Pastikan ada baris yang dipilih
-        // Mengambil data dari baris yang dipilih
-        String selectedSupplier = tblBulanan.getValueAt(selectedRow, 2).toString();
-        Date selectedDate = (Date) tblBulanan.getValueAt(selectedRow, 1);
-
-        // Query untuk mengambil detail berdasarkan supplier dan tanggal
-        String detailQuery = "SELECT * FROM barangmasuk WHERE nama = ? AND tanggal = ?";
-
-        // Membuka koneksi database
-        try (Connection conn = koneksi.dbKonek(); 
-             PreparedStatement ps = conn.prepareStatement(detailQuery)) {
-
-            // Menyiapkan parameter query
-            ps.setString(1, selectedSupplier);
-            ps.setDate(2, new java.sql.Date(selectedDate.getTime()));
-
-            ResultSet rs = ps.executeQuery();
-
-            // Mengisi tblDetail dengan data detail
-            DefaultTableModel modelDetail = (DefaultTableModel) tblDetail.getModel();
-            modelDetail.setRowCount(0); // Kosongkan tabel detail sebelum diisi
             while (rs.next()) {
-                // Menambahkan baris data ke tabel detail
-                Object[] row = new Object[]{
-                    rs.getInt("kodebarang"),
-                    rs.getString("nama"),
-                    rs.getString("satuan"),
-                    rs.getInt("jumlahmasuk"),
-                    rs.getDouble("hargabarang"),
-                    rs.getDouble("totalharga")
-                };
-                modelDetail.addRow(row);
+                java.sql.Date tanggalSql = rs.getDate("tanggal");
+                String tanggal = new SimpleDateFormat("yyyy-MM-dd").format(tanggalSql);
+                double totalHarian = rs.getDouble("total_harian");
+                totalBulan += totalHarian;
+
+                doc.add(new Paragraph("Tanggal " + tanggal + " - Pengeluaran: Rp" + String.format("%,.0f", totalHarian), normalFont));
+                doc.add(new Paragraph(" ")); 
+
+                String sqlDetail = """
+                    SELECT nama, satuan, jumlahmasuk, hargabarang, totalharga, supplier
+                    FROM barangmasuk WHERE tanggal=?
+                """;
+
+                try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail)) {
+                    pstDetail.setDate(1, tanggalSql);
+                    ResultSet rsDetail = pstDetail.executeQuery();
+
+                  PdfPTable table = new PdfPTable(7);
+            table.setWidthPercentage(100);
+
+            String[] headers = {"No", "Barang", "Satuan", "Jumlah", "Harga", "Total", "Supplier"};
+            for (String h : headers) {
+                PdfPCell cell = new PdfPCell(new Phrase(h, headerFont));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+            int no = 1;
+            while (rsDetail.next()) {
+                        table.addCell(new Phrase(String.valueOf(no++), normalFont));
+                        table.addCell(new Phrase(rsDetail.getString("nama"), normalFont));
+                        table.addCell(new Phrase(rsDetail.getString("satuan"), normalFont));
+                        table.addCell(new Phrase(String.valueOf(rsDetail.getInt("jumlahmasuk")), normalFont));
+                        table.addCell(new Phrase("Rp" + String.format("%,.0f", rsDetail.getDouble("hargabarang")), normalFont));
+                        table.addCell(new Phrase("Rp" + String.format("%,.0f", rsDetail.getDouble("totalharga")), normalFont));
+                        table.addCell(new Phrase(rsDetail.getString("supplier"), normalFont));
+                    }
+                    doc.add(table);
+                    doc.add(new Paragraph("\n"));
+                }
+            }
+
+            doc.add(new Paragraph("Total Pengeluaran Bulan Ini: Rp" + String.format("%,.0f", totalBulan), titleFont));
         }
-    } else {
-        // Jika tidak ada baris yang dipilih, tampilkan pesan
-        JOptionPane.showMessageDialog(null, "Silakan pilih baris terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+
+        doc.close();
+        JOptionPane.showMessageDialog(this, "Laporan bulanan berhasil disimpan di: " + file.getAbsolutePath());
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal mencetak laporan bulanan: " + e.getMessage());
     }
 
-
-
-      
-    }//GEN-LAST:event_btDetailActionPerformed
+    }//GEN-LAST:event_btCetakBulanActionPerformed
 
     private void tblBulananMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBulananMouseClicked
 
     }//GEN-LAST:event_tblBulananMouseClicked
 
+    private void btCetakTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCetakTahunActionPerformed
+    JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Pilih lokasi penyimpanan laporan tahunan");
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setSelectedFile(new File("Laporan_Pembelian_Tahunan.pdf"));
+
+    int result = chooser.showSaveDialog(this);
+    if (result != JFileChooser.APPROVE_OPTION) return;
+
+    File file = chooser.getSelectedFile();
+    if (!file.getName().toLowerCase().endsWith(".pdf")) {
+        file = new File(file.getAbsolutePath() + ".pdf");
+    }
+
+    int tahun = jycTahun.getYear();
+
+    try (Connection conn = koneksi.dbKonek()) {
+        Document doc = new Document(PageSize.A4);
+        PdfWriter.getInstance(doc, new FileOutputStream(file));
+        doc.open();
+
+        com.itextpdf.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        com.itextpdf.text.Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+        com.itextpdf.text.Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        Paragraph title = new Paragraph("LAPORAN PEMBELIAN BARANG TAHUN " + tahun, titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        doc.add(title);
+        doc.add(new Paragraph("\n"));
+
+        double totalTahun = 0;
+
+        for (int b = 1; b <= 12; b++) {
+            String namaBulan = new DateFormatSymbols().getMonths()[b - 1];
+            Paragraph pBulan = new Paragraph("Bulan " + namaBulan, headerFont);
+            pBulan.setSpacingBefore(10);
+            doc.add(pBulan);
+
+            String sqlBulan = """
+                SELECT tanggal, SUM(totalharga) AS total_harian
+                FROM barangmasuk
+                WHERE EXTRACT(MONTH FROM tanggal)=? AND EXTRACT(YEAR FROM tanggal)=?
+                GROUP BY tanggal ORDER BY tanggal
+            """;
+
+            try (PreparedStatement pstBulan = conn.prepareStatement(sqlBulan)) {
+                pstBulan.setInt(1, b);
+                pstBulan.setInt(2, tahun);
+                ResultSet rsBulan = pstBulan.executeQuery();
+
+                double totalBulan = 0;
+                while (rsBulan.next()) {
+                    java.sql.Date tanggalSql = rsBulan.getDate("tanggal");
+                    String tanggal = new SimpleDateFormat("yyyy-MM-dd").format(tanggalSql);
+                    double totalHarian = rsBulan.getDouble("total_harian");
+                    totalBulan += totalHarian;
+
+                    doc.add(new Paragraph("Tanggal " + tanggal + " - Pengeluaran: Rp" + String.format("%,.0f", totalHarian), normalFont));
+                    doc.add(new Paragraph(" ")); 
+
+                    String sqlDetail = """
+                        SELECT nama, satuan, jumlahmasuk, hargabarang, totalharga, supplier
+                        FROM barangmasuk WHERE tanggal=?
+                    """;
+
+                    try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail)) {
+                        pstDetail.setDate(1, tanggalSql);
+                        ResultSet rsDetail = pstDetail.executeQuery();
+
+                        PdfPTable table = new PdfPTable(7);
+                        table.setWidthPercentage(100);
+                        String[] headers = {"No","Barang", "Satuan", "Jumlah", "Harga", "Total", "Supplier"};
+                        for (String h : headers)
+                            table.addCell(new PdfPCell(new Phrase(h, headerFont)));
+                            int no = 1;
+                        while (rsDetail.next()) {
+                            table.addCell(new Phrase(String.valueOf(no++), normalFont));
+                            table.addCell(new Phrase(rsDetail.getString("nama"), normalFont));
+                            table.addCell(new Phrase(rsDetail.getString("satuan"), normalFont));
+                            table.addCell(new Phrase(String.valueOf(rsDetail.getInt("jumlahmasuk")), normalFont));
+                            table.addCell(new Phrase("Rp" + String.format("%,.0f", rsDetail.getDouble("hargabarang")), normalFont));
+                            table.addCell(new Phrase("Rp" + String.format("%,.0f", rsDetail.getDouble("totalharga")), normalFont));
+                            table.addCell(new Phrase(rsDetail.getString("supplier"), normalFont));
+                        }
+                        doc.add(table);
+                        doc.add(new Paragraph("\n"));
+                    }
+                }
+
+                doc.add(new Paragraph("Total Pengeluaran Bulan " + namaBulan + ": Rp" + String.format("%,.0f", totalBulan), headerFont));
+                doc.add(new Paragraph("\n"));
+                totalTahun += totalBulan;
+            }
+        }
+
+        doc.add(new Paragraph("Total Pengeluaran Setahun: Rp" + String.format("%,.0f", totalTahun), titleFont));
+        doc.close();
+
+        JOptionPane.showMessageDialog(this, "Laporan tahunan berhasil disimpan di: " + file.getAbsolutePath());
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal mencetak laporan tahunan: " + e.getMessage());
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btCetakTahunActionPerformed
+
+    private void jycTahunPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jycTahunPropertyChange
+loadDataBulan();        // TODO add your handling code here:
+    }//GEN-LAST:event_jycTahunPropertyChange
+
+    private void jmcBulanPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jmcBulanPropertyChange
+loadDataBulan();        // TODO add your handling code here:
+    }//GEN-LAST:event_jmcBulanPropertyChange
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btCetak;
-    private javax.swing.JButton btDetail;
+    private javax.swing.JButton btCetakBulan;
+    private javax.swing.JButton btCetakTahun;
     private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JComboBox<String> cmbSupplier;

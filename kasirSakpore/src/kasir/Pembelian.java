@@ -213,6 +213,7 @@ private void clearFields() {
     txtHarga.setText("");
     txtSatuan.setText("");
     txtSku.setText("");
+    
 }
   
   private void filterData() {
@@ -531,7 +532,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnBeli1ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 330, 320, 40));
+        jPanel1.add(btnBeli1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 290, 300, 80));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Jumlah");
@@ -673,7 +674,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     }//GEN-LAST:event_txtJumlahKeyReleased
 
     private void btnBeli1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBeli1ActionPerformed
- String kode = txtKodeBarang.getText();
+                String kode = txtKodeBarang.getText();
     String nama = txtNamaBarang.getText();
     String satuan = txtSatuan.getText();
     String jumlah = txtJumlah.getText();

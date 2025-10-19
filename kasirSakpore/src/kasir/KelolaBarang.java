@@ -64,9 +64,14 @@ public class KelolaBarang extends javax.swing.JPanel {
         tampilData();
         tampilDataJenis();
         element();
+        tSKU.requestFocus();
+
         loadKategori();
         filterKategori();
         generateKodeBarang();
+           SwingUtilities.invokeLater(() -> {
+tSKU.requestFocusInWindow();    });
+        tPajak.setText("10");
         tampilkanDiagram();
 panelGrafik.setLayout(new BorderLayout());
 setPeriodeHariIni();
@@ -139,6 +144,7 @@ loadChart(startDate, endDate);
         btnDelete.doClick();
         }
         });
+ 
         
         DefaultTableModel model = (DefaultTableModel) tblBarang.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
@@ -203,12 +209,12 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
 });
 
         btnJEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
-    "ctrlT"
+    KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK),
+    "ctrlW"
 );
         
 
-btnJEdit.getActionMap().put("ctrlT", new AbstractAction() {
+btnJEdit.getActionMap().put("ctrlW", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
         btnJEdit.doClick(); // Menjalankan aksi tombol
@@ -225,19 +231,6 @@ btnJDelete.getActionMap().put("ctrlY", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
         btnJDelete.doClick(); // Menjalankan aksi tombol
-    }
-});
-
-       btnJBatal.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
-    "ctrlR"
-);
-        
-
-btnJBatal.getActionMap().put("ctrlR", new AbstractAction() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        btnJBatal.doClick(); // Menjalankan aksi tombol
     }
 });
 
@@ -310,16 +303,25 @@ private void setPeriodeHariIni() {
     }
 }
     
-    private void resetForm() {
-        tSKU.setText("");
-        tNamaBarang.setText("");
-        cbJenis.setSelectedIndex(0);
-        tSatuan.setText("");
-        tHargaPokok.setText("");
-        tPajak.setText("");
-        tHargaJual.setText("");
-    }
-    
+   private void resetForm() {
+    tKdBarang.setText(""); // tambahkan juga kalau mau reset kode barang
+    tSKU.setText("");
+    tNamaBarang.setText("");
+    cbJenis.setSelectedIndex(0);
+    tSatuan.setText("");
+    tHargaPokok.setText("");
+    tPajak.setText("10");
+    tHargaJual.setText("");
+
+    // Tambahan penting:
+    editMode = false;
+    editId = -1;
+        tSKU.requestFocus();
+
+    // Generate ulang kode barang baru
+    generateKodeBarang();
+}
+
     private void cariBarang() {
     String key = tCari.getText().trim();
     
@@ -510,16 +512,17 @@ DiagramBatang diagram = new DiagramBatang(startDate, endDate);
     }
 private void element(){
     List<Component> tabOrder = Arrays.asList(
-    tKdBarang,
+    tSKU,
     cbJenis,
     tHargaPokok,
     tPajak,
-    tSKU,
     tSatuan,
     tNamaBarang,
     tHargaJual,
     tCari,
-    cbfJenis
+    cbfJenis,
+    txtJenis,
+    txtJCari
 );
 
 setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
@@ -696,6 +699,8 @@ int id = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     // === FUNGSI BATAL / RESET ===
     private void batal() {
         txtJenis.setText("");
+                tSKU.requestFocus();
+
         txtJCari.setText("");
         tblKategori.clearSelection();
         modeEdit = false;
@@ -766,11 +771,13 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         panelGrafik = new javax.swing.JPanel();
         jdcStart = new com.toedter.calendar.JDateChooser();
         jdcEnd = new com.toedter.calendar.JDateChooser();
+        jLabel14 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         txtJenis = new javax.swing.JTextField();
         btnJenis = new javax.swing.JButton();
+        jLabel22 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
@@ -778,13 +785,10 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         tblKategori = new javax.swing.JTable();
         btnJEdit = new javax.swing.JButton();
         btnJDelete = new javax.swing.JButton();
-        btnJBatal = new javax.swing.JButton();
         txtJCari = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -830,14 +834,14 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         pnForm.add(tHargaJual, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 187, 180, 38));
 
         btnSubmit.setBackground(new java.awt.Color(0, 255, 0));
-        btnSubmit.setText("SUBMIT");
+        btnSubmit.setText("[ENTER] SIMPAN");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSubmitActionPerformed(evt);
             }
         });
-        pnForm.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 270, 40));
+        pnForm.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 270, 60));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setPreferredSize(new java.awt.Dimension(806, 100));
@@ -893,14 +897,14 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
             tblBarang.getColumnModel().getColumn(9).setMaxWidth(40);
         }
 
-        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 800, 280));
-        pnDaftarBarang.add(tCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 300, 40));
+        pnDaftarBarang.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 800, 280));
+        pnDaftarBarang.add(tCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 300, 40));
 
         jLabel12.setText("Cari");
-        pnDaftarBarang.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 45, 34));
+        pnDaftarBarang.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 90, 45, 34));
 
         cbfJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua" }));
-        pnDaftarBarang.add(cbfJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 100, 90, 40));
+        pnDaftarBarang.add(cbfJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, 90, 40));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 51));
         btnEdit.setText("Edit");
@@ -909,7 +913,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnEditActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 100, 83, 36));
+        pnDaftarBarang.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 90, 83, 40));
 
         btnDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnDelete.setText("Delete");
@@ -918,16 +922,16 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnDeleteActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, 83, 36));
+        pnDaftarBarang.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 90, 83, 40));
 
         btnBatal.setBackground(new java.awt.Color(204, 204, 204));
-        btnBatal.setText("Batal");
+        btnBatal.setText("BATAL ( SEMUA )");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBatalActionPerformed(evt);
             }
         });
-        pnDaftarBarang.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 100, 83, 36));
+        pnDaftarBarang.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 90, 130, 40));
 
         jPanel3.setBackground(new java.awt.Color(5, 69, 162));
         jPanel3.setPreferredSize(new java.awt.Dimension(806, 100));
@@ -957,21 +961,23 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         jLabel1.setText("[ Ctrl+B ]");
-        pnDaftarBarang.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 80, -1, -1));
+        pnDaftarBarang.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 70, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         jLabel2.setText("[ Ctrl+E ]");
-        pnDaftarBarang.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 80, -1, -1));
+        pnDaftarBarang.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 70, -1, -1));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         jLabel11.setText("[ Ctrl+D ]");
-        pnDaftarBarang.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, -1, -1));
+        pnDaftarBarang.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 70, -1, -1));
 
-        add(pnDaftarBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 14, -1, 450));
+        add(pnDaftarBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 14, -1, 440));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        panelGrafik.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout panelGrafikLayout = new javax.swing.GroupLayout(panelGrafik);
         panelGrafik.setLayout(panelGrafikLayout);
@@ -981,24 +987,27 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         );
         panelGrafikLayout.setVerticalGroup(
             panelGrafikLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 370, Short.MAX_VALUE)
+            .addGap(0, 380, Short.MAX_VALUE)
         );
 
-        jPanel1.add(panelGrafik, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 80, 780, 370));
+        jPanel1.add(panelGrafik, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 70, 780, 380));
 
         jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcStartPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 147, 31));
+        jPanel1.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 147, 50));
 
         jdcEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdcEndPropertyChange(evt);
             }
         });
-        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 30, 147, 31));
+        jPanel1.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, 160, 50));
+
+        jLabel14.setText("Sampai");
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 30, -1, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 346, 806, 458));
 
@@ -1032,16 +1041,19 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         );
 
         jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 50));
-        jPanel5.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 290, 100));
+        jPanel5.add(txtJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 290, 70));
 
         btnJenis.setBackground(new java.awt.Color(102, 255, 102));
-        btnJenis.setText("[ Ctrl+S ]");
+        btnJenis.setText("[ Ctrl+S ] SIMPAN");
         btnJenis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnJenisActionPerformed(evt);
             }
         });
-        jPanel5.add(btnJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 260, 260, 40));
+        jPanel5.add(btnJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 290, 60));
+
+        jLabel22.setText("Nama Jenis Barang");
+        jPanel5.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
 
         add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(841, 474, 330, 330));
 
@@ -1102,7 +1114,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnJEditActionPerformed(evt);
             }
         });
-        jPanel6.add(btnJEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, -1));
+        jPanel6.add(btnJEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, 120, 40));
 
         btnJDelete.setBackground(new java.awt.Color(255, 51, 51));
         btnJDelete.setText("Delete");
@@ -1111,33 +1123,23 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
                 btnJDeleteActionPerformed(evt);
             }
         });
-        jPanel6.add(btnJDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 90, -1, -1));
-
-        btnJBatal.setBackground(new java.awt.Color(204, 204, 204));
-        btnJBatal.setText("Batal");
-        jPanel6.add(btnJBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, -1, -1));
+        jPanel6.add(btnJDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 120, 40));
 
         txtJCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtJCariKeyReleased(evt);
             }
         });
-        jPanel6.add(txtJCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 190, 30));
-
-        jLabel14.setText("[ Ctrl+R ]");
-        jPanel6.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, -1, -1));
-
-        jLabel18.setText("[ Ctrl+C ]");
-        jPanel6.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+        jPanel6.add(txtJCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 190, 40));
 
         jLabel19.setText("[ Ctrl+Y ]");
-        jPanel6.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, -1, -1));
+        jPanel6.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 60, -1, -1));
 
         jLabel20.setText("[ Ctrl+T ]");
-        jPanel6.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 70, -1, -1));
+        jPanel6.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 60, -1, -1));
 
-        jLabel21.setText("Cari");
-        jPanel6.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 60, 45, 34));
+        jLabel18.setText("Cari");
+        jPanel6.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 50, -1));
 
         add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 474, 480, 330));
     }// </editor-fold>//GEN-END:initComponents
@@ -1176,65 +1178,104 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        // TODO add your handling code here:
-            int kode = Integer.parseInt(tKdBarang.getText().trim());
-            String skubarang = tSKU.getText().trim();
-            String nama     = tNamaBarang.getText().trim();
-            String kategori   = cbJenis.getSelectedItem().toString();
-            String satuan = tSatuan.getText().trim();
-            int hargapokok = Integer.parseInt(tHargaPokok.getText().trim());
-            int ppn        = Integer.parseInt(tPajak.getText().trim());
-            int hargajual  = Integer.parseInt(tHargaJual.getText().trim());
+   // TODO add your handling code here:
+try {
+    // 🔹 Validasi input kosong
+    if (tKdBarang.getText().trim().isEmpty() ||
+        tSKU.getText().trim().isEmpty() ||
+        tNamaBarang.getText().trim().isEmpty() ||
+        cbJenis.getSelectedIndex() == 0 ||
+        tSatuan.getText().trim().isEmpty() ||
+        tHargaPokok.getText().trim().isEmpty() ||
+        tPajak.getText().trim().isEmpty() ||
+        tHargaJual.getText().trim().isEmpty()) {
 
+        JOptionPane.showMessageDialog(this,
+            "Semua field harus diisi!",
+            "Validasi Input",
+            JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
-            // ambil path lengkap dari textfield
-          
-            try (Connection conn = koneksi.dbKonek()) {
-               
-                if (!editMode) { 
-                    // mode tambah user baru
-                    String sql = "INSERT INTO barang (kodebarang, skubarang, nama, hargabarang, kategori, hargapokok, ppn, satuan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setInt(1, kode);
-                    ps.setString(2, skubarang);
-                    ps.setString(3, nama);
-                    ps.setInt(4, hargajual);
-                    ps.setString(5, kategori);
-                    ps.setInt(6, hargapokok);
-                    ps.setInt(7, ppn);
-                    ps.setString(8, satuan);
-                    ps.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "Barang berhasil ditambahkan!");
-                    
-                    
-                    
-                    
-                } else {
-                    // mode edit user
-                    String sql = "UPDATE barang SET nama=?, kategori=?, satuan=?, hargapokok=?, hargabarang=?, skubarang=? WHERE kodebarang=?";
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setString(1, nama);
-                    ps.setString(2, kategori);
-                    ps.setString(3, satuan);
-                    ps.setInt(4, hargapokok);
-                    ps.setInt(5, hargajual);
-                    ps.setString(6, skubarang);
-                    ps.setInt(7, kode);
-                    ps.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "Barang berhasil diupdate!");
-                    
-                    editMode = false; 
-                    editId = -1;
-                }
-                
-                // reset form
-                resetForm();
-                tampilData(); // refresh tabel
-                
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-                ex.printStackTrace();
-            }
+    // 🔹 Parsing data (pastikan angka valid)
+    int kode = Integer.parseInt(tKdBarang.getText().trim());
+    String skubarang = tSKU.getText().trim();
+    String nama = tNamaBarang.getText().trim();
+    String kategori = cbJenis.getSelectedItem().toString();
+    String satuan = tSatuan.getText().trim();
+    int hargapokok = Integer.parseInt(tHargaPokok.getText().trim());
+    int ppn = Integer.parseInt(tPajak.getText().trim());
+    int hargajual = Integer.parseInt(tHargaJual.getText().trim());
+
+    // 🔹 Validasi nilai numerik
+    if (hargapokok <= 0 || hargajual <= 0) {
+        JOptionPane.showMessageDialog(this,
+            "Harga pokok dan harga jual harus lebih dari 0!",
+            "Validasi Harga",
+            JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    if (ppn < 0 || ppn > 100) {
+        JOptionPane.showMessageDialog(this,
+            "PPN harus antara 0 - 100!",
+            "Validasi PPN",
+            JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try (Connection conn = koneksi.dbKonek()) {
+        if (!editMode) {
+            // 🔹 Mode tambah
+            String sql = "INSERT INTO barang (kodebarang, skubarang, nama, hargabarang, kategori, hargapokok, ppn, satuan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, kode);
+            ps.setString(2, skubarang);
+            ps.setString(3, nama);
+            ps.setInt(4, hargajual);
+            ps.setString(5, kategori);
+            ps.setInt(6, hargapokok);
+            ps.setInt(7, ppn);
+            ps.setString(8, satuan);
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Barang berhasil ditambahkan!");
+
+        } else {
+            // 🔹 Mode edit
+            String sql = "UPDATE barang SET nama=?, kategori=?, satuan=?, hargapokok=?, hargabarang=?, skubarang=?, ppn=? WHERE kodebarang=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, nama);
+            ps.setString(2, kategori);
+            ps.setString(3, satuan);
+            ps.setInt(4, hargapokok);
+            ps.setInt(5, hargajual);
+            ps.setString(6, skubarang);
+            ps.setInt(7, ppn);
+            ps.setInt(8, kode);
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Barang berhasil diupdate!");
+            editMode = false;
+            editId = -1;
+        }
+
+        // 🔹 Reset form dan refresh tabel
+        resetForm();
+        tampilData();
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error database: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
+    }
+
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this,
+        "Harga pokok, PPN, dan harga jual harus berupa angka!",
+        "Error Input",
+        JOptionPane.ERROR_MESSAGE);
+}
+
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -1268,8 +1309,8 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        // TODO add your handling code here:
-        resetForm();
+batal();
+resetForm();
         tblBarang.clearSelection();
     }//GEN-LAST:event_btnBatalActionPerformed
 
@@ -1308,7 +1349,6 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnJBatal;
     private javax.swing.JButton btnJDelete;
     private javax.swing.JButton btnJEdit;
     private javax.swing.JButton btnJenis;
@@ -1328,7 +1368,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
