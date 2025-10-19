@@ -248,9 +248,6 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         btnEdit = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         pnFormUser1 = new javax.swing.JPanel();
         lStatus2 = new javax.swing.JLabel();
         lUsername1 = new javax.swing.JLabel();
@@ -288,34 +285,34 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblSuplier.setRowHeight(35);
         jScrollPane1.setViewportView(tblSuplier);
 
-        pnFormUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 1030, 510));
+        pnFormUser.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 1030, 630));
 
         btnDelete.setBackground(new java.awt.Color(255, 51, 51));
-        btnDelete.setText("Delete");
+        btnDelete.setText("[CTRL+D] Delete");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 130, 170, 40));
+        pnFormUser.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 70, 170, 50));
 
         btnBatal.setBackground(new java.awt.Color(204, 204, 204));
-        btnBatal.setText("Batal");
+        btnBatal.setText("[CTRL+B] Batal");
         btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBatalActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 130, 170, 40));
+        pnFormUser.add(btnBatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 70, 170, 50));
 
         btnEdit.setBackground(new java.awt.Color(255, 153, 51));
-        btnEdit.setText("Edit");
+        btnEdit.setText("[CTRL+E] Edit");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 130, 170, 40));
+        pnFormUser.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 170, 50));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -327,16 +324,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnFormUser.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 60));
 
-        jLabel1.setText("[ Ctrl+D ]");
-        pnFormUser.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, -1, -1));
-
-        jLabel2.setText("[ Ctrl+B ]");
-        pnFormUser.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 110, -1, -1));
-
-        jLabel5.setText("[ Ctrl+E ]");
-        pnFormUser.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 110, -1, -1));
-
-        jPanel1.add(pnFormUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 1090, 740));
+        jPanel1.add(pnFormUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 20, 1090, 800));
 
         pnFormUser1.setBackground(new java.awt.Color(255, 255, 255));
         pnFormUser1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -344,53 +332,53 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         lStatus2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lStatus2.setText("Alamat :");
-        pnFormUser1.add(lStatus2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 390, 70, 30));
+        pnFormUser1.add(lStatus2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 440, 70, 30));
 
         lUsername1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lUsername1.setText("Username :");
-        pnFormUser1.add(lUsername1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, -1, -1));
+        pnFormUser1.add(lUsername1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, -1, -1));
 
         lPass1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lPass1.setText("No. Telp");
-        pnFormUser1.add(lPass1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
+        pnFormUser1.add(lPass1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, -1));
 
         cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Tidak aktif" }));
-        pnFormUser1.add(cmbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 310, 260, 40));
+        pnFormUser1.add(cmbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 350, 370, 80));
 
         txtAlamat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAlamatActionPerformed(evt);
             }
         });
-        pnFormUser1.add(txtAlamat, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 390, 260, 140));
+        pnFormUser1.add(txtAlamat, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 470, 370, 140));
 
         txtUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsernameActionPerformed(evt);
             }
         });
-        pnFormUser1.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 110, 260, 60));
+        pnFormUser1.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 370, 70));
 
         txtTlp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTlpActionPerformed(evt);
             }
         });
-        pnFormUser1.add(txtTlp, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 210, 260, 60));
+        pnFormUser1.add(txtTlp, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, 370, 80));
 
         lStatus3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lStatus3.setText("Status :");
-        pnFormUser1.add(lStatus3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 60, 30));
+        pnFormUser1.add(lStatus3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 60, 30));
 
         btnSimpan.setBackground(new java.awt.Color(51, 255, 0));
         btnSimpan.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btnSimpan.setText("Simpan");
+        btnSimpan.setText("[ENTER] Simpan");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSimpanActionPerformed(evt);
             }
         });
-        pnFormUser1.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 610, 350, 50));
+        pnFormUser1.add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 670, 350, 80));
 
         jPanel3.setBackground(new java.awt.Color(5, 69, 162));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -402,7 +390,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         pnFormUser1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 60));
 
-        jPanel1.add(pnFormUser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 460, 740));
+        jPanel1.add(pnFormUser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 460, 800));
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -429,7 +417,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
             
             int id = Integer.parseInt(tblSuplier.getValueAt(row, 1).toString());
             int confirm = JOptionPane.showConfirmDialog(this, 
-                    "Yakin ingin menghapus user ini?", 
+                    "Yakin ingin menghapus supplier ini?", 
                     "Konfirmasi Hapus", 
                     JOptionPane.YES_NO_OPTION);
             
@@ -439,7 +427,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setInt(1, id);
                     ps.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "User berhasil dihapus!");
+                    JOptionPane.showMessageDialog(this, "supplier berhasil dihapus!");
                     tampilData();
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(this, "Error hapus: " + ex.getMessage());
@@ -448,13 +436,30 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        // TODO add your handling code here:
+
+
         String username = txtUsername.getText().trim();
             String telpon = txtTlp.getText().trim();
             String alamat = txtAlamat.getText().trim();
             String status   = cmbStatus.getSelectedItem().toString();
             
-           
+           if (username.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan Username Supplier!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtUsername.requestFocus();
+        return;
+    }
+
+    if (telpon.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan No telefon Supplier!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtTlp.requestFocus();
+        return;
+    }
+
+    if (alamat.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan Alamat Supplier!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtAlamat.requestFocus();
+        return;
+    }
             
             try (Connection conn = koneksi.dbKonek()) {
                 if (!editMode) { 
@@ -466,7 +471,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                     ps.setString(3, status);
                     ps.setString(4, alamat);
                     ps.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "User berhasil ditambahkan!");
+                    JOptionPane.showMessageDialog(this, "Supplier berhasil ditambahkan!");
                     
                 } else {
                     // mode edit user
@@ -478,7 +483,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                     ps.setString(4, alamat);
                     ps.setInt(5, editId);
                     ps.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "User berhasil diupdate!");
+                    JOptionPane.showMessageDialog(this, "Supplier berhasil diupdate!");
                     
                     editMode = false; 
                     editId = -1;
@@ -541,11 +546,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JComboBox<String> cmbStatus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

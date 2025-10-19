@@ -90,6 +90,17 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
         btnBatal.doClick(); // Menjalankan aksi tombol
     }
 });
+btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDetail.doClick(); // Menjalankan aksi tombol
+    }
+});
 
 this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
@@ -985,8 +996,6 @@ public javax.swing.JTable getTblKasir() {
         jScrollPane1.setViewportView(tblKasir);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 630, 350));
-
-        txtPengguna.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jPanel2.add(txtPengguna, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 281, 51));
 
         btnDelete.setBackground(new java.awt.Color(255, 51, 51));
@@ -1096,7 +1105,8 @@ public javax.swing.JTable getTblKasir() {
 
         jPanel5.setBackground(new java.awt.Color(5, 69, 162));
 
-        btnDetail.setText("detail");
+        btnDetail.setBackground(new java.awt.Color(255, 255, 0));
+        btnDetail.setText("[CTRL+D] Detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailActionPerformed(evt);
@@ -1108,15 +1118,15 @@ public javax.swing.JTable getTblKasir() {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(194, Short.MAX_VALUE)
-                .addComponent(btnDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(156, Short.MAX_VALUE)
+                .addComponent(btnDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(btnDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

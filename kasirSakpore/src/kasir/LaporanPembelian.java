@@ -89,7 +89,52 @@ lblKeluar.setText("Pengeluaran dari " + dari + " sampai " + sampai + " adalah: "
             filterData();
         }
     });
+    btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
+    
+btnCetak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+    "ctrlC"
+);
 
+btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+    
+btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnRefresh.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnBulan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBulan.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBulan.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnTahun.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
+    "ctrlT"
+);
+
+btnTahun.getActionMap().put("ctrlT", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnTahun.doClick(); // Menjalankan aksi tombol
+    }
+});
     // event filter supplier
     cmbSupplier.addActionListener(evt -> {
         filterData();
@@ -374,7 +419,6 @@ private void tampilkanDetail(String tanggal) {
         jLabel5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        lblKeterangan = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -383,10 +427,10 @@ private void tampilkanDetail(String tanggal) {
         tblDetail = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblBulanan = new javax.swing.JTable();
-        btCetakBulan = new javax.swing.JButton();
+        btnBulan = new javax.swing.JButton();
         lblTotalBulanan = new javax.swing.JLabel();
         jycTahun = new com.toedter.calendar.JYearChooser();
-        btCetakTahun = new javax.swing.JButton();
+        btnTahun = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -415,18 +459,18 @@ private void tampilkanDetail(String tanggal) {
         pp.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1620, 290));
 
         btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
-        btnRefresh.setText("Refresh");
+        btnRefresh.setText("[CTRL+R] Refresh");
         pp.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 130, 40));
 
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
-        btnCetak.setText("Cetak");
+        btnCetak.setText("[CTRL+C] Cetak");
         btnCetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCetakActionPerformed(evt);
             }
         });
-        pp.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(1490, 70, 140, 40));
+        pp.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 70, 140, 40));
 
         cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         pp.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 70, 140, 40));
@@ -456,9 +500,6 @@ private void tampilkanDetail(String tanggal) {
         jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 340, 30));
 
         pp.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1680, 60));
-
-        lblKeterangan.setText("jLabel2");
-        pp.add(lblKeterangan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1080, 80, -1, -1));
 
         jPanel1.add(pp, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 1660, 450));
 
@@ -520,15 +561,15 @@ private void tampilkanDetail(String tanggal) {
 
         jPanel4.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 980, 230));
 
-        btCetakBulan.setBackground(new java.awt.Color(255, 0, 0));
-        btCetakBulan.setForeground(new java.awt.Color(255, 255, 255));
-        btCetakBulan.setText("[CTRL+B] Bulanan");
-        btCetakBulan.addActionListener(new java.awt.event.ActionListener() {
+        btnBulan.setBackground(new java.awt.Color(255, 0, 0));
+        btnBulan.setForeground(new java.awt.Color(255, 255, 255));
+        btnBulan.setText("[CTRL+B] Bulanan");
+        btnBulan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCetakBulanActionPerformed(evt);
+                btnBulanActionPerformed(evt);
             }
         });
-        jPanel4.add(btCetakBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 150, 50));
+        jPanel4.add(btnBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 150, 50));
 
         lblTotalBulanan.setText("lblTotalBulanan");
         jPanel4.add(lblTotalBulanan, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 370, -1, -1));
@@ -540,14 +581,14 @@ private void tampilkanDetail(String tanggal) {
         });
         jPanel4.add(jycTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 120, 40));
 
-        btCetakTahun.setBackground(new java.awt.Color(255, 204, 0));
-        btCetakTahun.setText("[CTRL+T]  Tahunan");
-        btCetakTahun.addActionListener(new java.awt.event.ActionListener() {
+        btnTahun.setBackground(new java.awt.Color(255, 204, 0));
+        btnTahun.setText("[CTRL+T]  Tahunan");
+        btnTahun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCetakTahunActionPerformed(evt);
+                btnTahunActionPerformed(evt);
             }
         });
-        jPanel4.add(btCetakTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, 150, 50));
+        jPanel4.add(btnTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, 150, 50));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 480, 1660, 400));
 
@@ -645,7 +686,7 @@ private void tampilkanDetail(String tanggal) {
     }
     }//GEN-LAST:event_btnCetakActionPerformed
 
-    private void btCetakBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCetakBulanActionPerformed
+    private void btnBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBulanActionPerformed
     JFileChooser chooser = new JFileChooser();
     chooser.setDialogTitle("Pilih lokasi penyimpanan laporan bulanan");
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -743,13 +784,13 @@ private void tampilkanDetail(String tanggal) {
         JOptionPane.showMessageDialog(this, "Gagal mencetak laporan bulanan: " + e.getMessage());
     }
 
-    }//GEN-LAST:event_btCetakBulanActionPerformed
+    }//GEN-LAST:event_btnBulanActionPerformed
 
     private void tblBulananMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBulananMouseClicked
 
     }//GEN-LAST:event_tblBulananMouseClicked
 
-    private void btCetakTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCetakTahunActionPerformed
+    private void btnTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTahunActionPerformed
     JFileChooser chooser = new JFileChooser();
     chooser.setDialogTitle("Pilih lokasi penyimpanan laporan tahunan");
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -853,7 +894,7 @@ private void tampilkanDetail(String tanggal) {
         JOptionPane.showMessageDialog(this, "Gagal mencetak laporan tahunan: " + e.getMessage());
     }
         // TODO add your handling code here:
-    }//GEN-LAST:event_btCetakTahunActionPerformed
+    }//GEN-LAST:event_btnTahunActionPerformed
 
     private void jycTahunPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jycTahunPropertyChange
 loadDataBulan();        // TODO add your handling code here:
@@ -865,10 +906,10 @@ loadDataBulan();        // TODO add your handling code here:
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btCetakBulan;
-    private javax.swing.JButton btCetakTahun;
+    private javax.swing.JButton btnBulan;
     private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnRefresh;
+    private javax.swing.JButton btnTahun;
     private javax.swing.JComboBox<String> cmbSupplier;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
@@ -885,7 +926,6 @@ loadDataBulan();        // TODO add your handling code here:
     private com.toedter.calendar.JMonthChooser jmcBulan;
     private com.toedter.calendar.JYearChooser jycTahun;
     private javax.swing.JLabel lblKeluar;
-    private javax.swing.JLabel lblKeterangan;
     private javax.swing.JLabel lblTotalBulanan;
     private javax.swing.JPanel pp;
     private javax.swing.JTable tblBulanan;

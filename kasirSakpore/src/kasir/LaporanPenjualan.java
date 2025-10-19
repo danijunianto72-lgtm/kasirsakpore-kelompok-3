@@ -55,10 +55,7 @@ public class LaporanPenjualan extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Gagal koneksi ke database: " + e.getMessage());
         }
         element();
-        btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
-    "ctrlR"
-);
+    
         tblBulan.getSelectionModel().addListSelectionListener(event -> {
     if (!event.getValueIsAdjusting()) {
         int row = tblBulan.getSelectedRow();
@@ -69,7 +66,32 @@ public class LaporanPenjualan extends javax.swing.JPanel {
     }
 });
 
+btnBulan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
 
+btnBulan.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBulan.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnTahun.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
+    "ctrlT"
+);
+
+btnTahun.getActionMap().put("ctrlT", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnTahun.doClick(); // Menjalankan aksi tombol
+    }
+});
+    btnRefresh.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK),
+    "ctrlR"
+);
 btnRefresh.getActionMap().put("ctrlR", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -89,14 +111,14 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
     }
 });
 
-           btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+           btnBulan.getActionMap().put("ctrlV", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
-        btnCetak1.doClick(); // Menjalankan aksi tombol
+        btnBulan.doClick(); // Menjalankan aksi tombol
     }
 });
 
-        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        btnBulan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
     "ctrlV"
 ); 
@@ -441,7 +463,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jycTahun = new com.toedter.calendar.JYearChooser();
         lblTotalBulan = new javax.swing.JLabel();
         btnDetail1 = new javax.swing.JButton();
-        btnCetak1 = new javax.swing.JButton();
+        btnBulan = new javax.swing.JButton();
         btnTahun = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -496,7 +518,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btnRefresh.setBackground(new java.awt.Color(0, 153, 153));
         btnRefresh.setText("[CTRL+R] REFRESH");
-        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 90, 140, 40));
+        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 80, 150, 50));
 
         btnCetak.setBackground(new java.awt.Color(0, 102, 102));
         btnCetak.setForeground(new java.awt.Color(255, 255, 255));
@@ -506,7 +528,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnCetakActionPerformed(evt);
             }
         });
-        jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 90, 160, 40));
+        jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 80, 160, 50));
 
         btnDetail.setBackground(new java.awt.Color(255, 255, 0));
         btnDetail.setText("[CTR;+D] DETAIL");
@@ -515,7 +537,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnDetailActionPerformed(evt);
             }
         });
-        jPanel2.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 90, 160, 40));
+        jPanel2.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 80, 160, 50));
 
         tblTransaksi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -640,15 +662,15 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         });
         jPanel4.add(btnDetail1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 160, 50));
 
-        btnCetak1.setBackground(new java.awt.Color(255, 0, 0));
-        btnCetak1.setForeground(new java.awt.Color(255, 255, 255));
-        btnCetak1.setText("[CTRL+B] BULANAN");
-        btnCetak1.addActionListener(new java.awt.event.ActionListener() {
+        btnBulan.setBackground(new java.awt.Color(255, 0, 0));
+        btnBulan.setForeground(new java.awt.Color(255, 255, 255));
+        btnBulan.setText("[CTRL+B] BULANAN");
+        btnBulan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetak1ActionPerformed(evt);
+                btnBulanActionPerformed(evt);
             }
         });
-        jPanel4.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 160, 50));
+        jPanel4.add(btnBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 160, 50));
 
         btnTahun.setBackground(new java.awt.Color(255, 153, 0));
         btnTahun.setForeground(new java.awt.Color(0, 0, 51));
@@ -819,7 +841,7 @@ int row = tblBulan.getSelectedRow();
     loadDetailHarian(tanggal);        // TODO add your handling code here:
     }//GEN-LAST:event_tblBulanMouseClicked
 
-    private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
+    private void btnBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBulanActionPerformed
       int bulan = jmcBulan.getMonth() + 1;
     int tahun = jycTahun.getYear();
 
@@ -929,7 +951,7 @@ int row = tblBulan.getSelectedRow();
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal mencetak laporan: " + e.getMessage());
     }      // TODO add your handling code here:
-    }//GEN-LAST:event_btnCetak1ActionPerformed
+    }//GEN-LAST:event_btnBulanActionPerformed
 
     private void btnTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTahunActionPerformed
 int tahun = jycTahun.getYear();
@@ -1082,8 +1104,8 @@ try {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBulan;
     private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnCetak1;
     private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnDetail1;
     private javax.swing.JButton btnRefresh;

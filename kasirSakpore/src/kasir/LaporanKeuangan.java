@@ -97,14 +97,14 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
     }
 });
 
-         btnCetak1.getActionMap().put("ctrlV", new AbstractAction() {
+         btnBulan.getActionMap().put("ctrlV", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
-        btnCetak1.doClick(); // Menjalankan aksi tombol
+        btnBulan.doClick(); // Menjalankan aksi tombol
     }
 });
 
-        btnCetak1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        btnBulan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
     KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
     "ctrlV"
 ); 
@@ -215,6 +215,41 @@ Header.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -> {
     label.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
     label.setHorizontalAlignment(SwingConstants.LEFT);
     return label;
+});
+
+btnCetak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+    "ctrlC"
+);
+
+btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnCetak.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+btnBulan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);
+
+btnBulan.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBulan.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnTahun.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
+    "ctrlT"
+);
+
+btnTahun.getActionMap().put("ctrlT", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnTahun.doClick(); // Menjalankan aksi tombol
+    }
 });
 
 JTableHeader setHeader = tblSemua.getTableHeader();
@@ -770,8 +805,8 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblSemua = new javax.swing.JTable();
         lblKeluarBulan = new javax.swing.JLabel();
         lblKeuntunganBulan = new javax.swing.JLabel();
-        btnCetak1 = new javax.swing.JButton();
-        btnCetak2 = new javax.swing.JButton();
+        btnBulan = new javax.swing.JButton();
+        btnTahun = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -790,7 +825,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnCetakActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 160, 50));
+        jPanel1.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 60, 160, 50));
 
         jLabel2.setText("Sampai");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
@@ -802,7 +837,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnFilterActionPerformed(evt);
             }
         });
-        jPanel1.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 60, 140, 50));
+        jPanel1.add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 60, 160, 50));
 
         jdcStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -859,13 +894,13 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 1610, 240));
 
         lblSaldo.setText("lblSaldo");
-        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 100, 400, -1));
+        jPanel1.add(lblSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 100, 400, -1));
 
         lblKeluar.setText("lblKeluar");
-        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 80, 400, -1));
+        jPanel1.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 80, 400, -1));
 
         lblMasuk.setText("lblMasuk");
-        jPanel1.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 60, 390, -1));
+        jPanel1.add(lblMasuk, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 60, 390, -1));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -971,24 +1006,24 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblKeuntunganBulan.setText("lblTotalBulan");
         jPanel3.add(lblKeuntunganBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 370, 360, -1));
 
-        btnCetak1.setBackground(new java.awt.Color(204, 0, 0));
-        btnCetak1.setForeground(new java.awt.Color(255, 255, 255));
-        btnCetak1.setText("[CTRL+B] BULANAN");
-        btnCetak1.addActionListener(new java.awt.event.ActionListener() {
+        btnBulan.setBackground(new java.awt.Color(204, 0, 0));
+        btnBulan.setForeground(new java.awt.Color(255, 255, 255));
+        btnBulan.setText("[CTRL+B] BULANAN");
+        btnBulan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetak1ActionPerformed(evt);
+                btnBulanActionPerformed(evt);
             }
         });
-        jPanel3.add(btnCetak1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 150, 50));
+        jPanel3.add(btnBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 150, 50));
 
-        btnCetak2.setBackground(new java.awt.Color(255, 204, 0));
-        btnCetak2.setText("[CTRL+T] TAHUNAN");
-        btnCetak2.addActionListener(new java.awt.event.ActionListener() {
+        btnTahun.setBackground(new java.awt.Color(255, 204, 0));
+        btnTahun.setText("[CTRL+T] TAHUNAN");
+        btnTahun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetak2ActionPerformed(evt);
+                btnTahunActionPerformed(evt);
             }
         });
-        jPanel3.add(btnCetak2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 50, 150, 50));
+        jPanel3.add(btnTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 50, 150, 50));
 
         panelUtama.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 1640, 400));
 
@@ -1158,7 +1193,7 @@ loadDataBulanTahun();// TODO add your handling code here:
     }         // TODO add your handling code here:
     }//GEN-LAST:event_jdcStartPropertyChange
 
-    private void btnCetak1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak1ActionPerformed
+    private void btnBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBulanActionPerformed
      int bulan = jmcBulan.getMonth() + 1;
     int tahun = jycTahun.getYear();
 
@@ -1296,9 +1331,9 @@ loadDataBulanTahun();// TODO add your handling code here:
         e.printStackTrace();
     }
 
-    }//GEN-LAST:event_btnCetak1ActionPerformed
+    }//GEN-LAST:event_btnBulanActionPerformed
 
-    private void btnCetak2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetak2ActionPerformed
+    private void btnTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTahunActionPerformed
 int tahun = jycTahun.getYear();
 
 JFileChooser chooser = new JFileChooser();
@@ -1465,14 +1500,14 @@ try (Connection conn = koneksi.dbKonek()) {
     JOptionPane.showMessageDialog(this, "Gagal mencetak laporan tahunan: " + e.getMessage());
     e.printStackTrace();
 }
-    }//GEN-LAST:event_btnCetak2ActionPerformed
+    }//GEN-LAST:event_btnTahunActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBulan;
     private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnCetak1;
-    private javax.swing.JButton btnCetak2;
     private javax.swing.JButton btnFilter;
+    private javax.swing.JButton btnTahun;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

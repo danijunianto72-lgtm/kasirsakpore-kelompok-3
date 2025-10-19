@@ -1135,7 +1135,7 @@ idEdit = Integer.parseInt(tblKategori.getValueAt(row, 0).toString().trim());
         jLabel19.setText("[ Ctrl+Y ]");
         jPanel6.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 60, -1, -1));
 
-        jLabel20.setText("[ Ctrl+T ]");
+        jLabel20.setText("[ Ctrl+W ]");
         jPanel6.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 60, -1, -1));
 
         jLabel18.setText("Cari");

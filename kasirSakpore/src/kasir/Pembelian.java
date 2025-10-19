@@ -70,6 +70,17 @@ public class Pembelian extends javax.swing.JPanel {
     "ctrlP"
 );   
         
+             btnBatak.getActionMap().put("ctrlB", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnBatak.doClick(); // Menjalankan aksi tombol
+    }
+});
+
+        btnBatak.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+    "ctrlB"
+);   
         
     this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
@@ -80,7 +91,7 @@ public class Pembelian extends javax.swing.JPanel {
             btnBeli1.doClick(); // klik tombol submit
         }
     });
-   
+   setTanggalAwalAkhirBulan();
                 
       // filter otomatis saat tanggal berubah
     jdcStart.addPropertyChangeListener(evt -> {
@@ -388,14 +399,24 @@ private void simpanTransaksi() {
         try { if (conn != null) conn.close(); } catch (Exception e) {}
     }
 } 
+private void setTanggalAwalAkhirBulan() {
+    Calendar cal = Calendar.getInstance();
+
+    // ====== TANGGAL AWAL BULAN ======
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    jdcStart.setDate(cal.getTime());
+
+    // ====== TANGGAL AKHIR BULAN ======
+    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+    jdcEnd.setDate(cal.getTime());
+}
 
 private void element(){
     List<Component> tabOrder = Arrays.asList(
     txtSku,
     cmbSuplier,
     txtJumlah,
-    jdcStart,
-    jdcEnd
+    txtTotal
 );
 
 setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
@@ -473,6 +494,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel10 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
+        btnBatak = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPembelian = new javax.swing.JTable();
@@ -526,7 +548,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         btnBeli1.setBackground(new java.awt.Color(51, 255, 0));
         btnBeli1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        btnBeli1.setText("Beli");
+        btnBeli1.setText("[ENTER] BELI");
         btnBeli1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBeli1ActionPerformed(evt);
@@ -578,9 +600,18 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel12.setText("Pembelian Barang");
         jPanel3.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, -1, -1));
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1590, 60));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1690, 60));
 
-        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 1590, 400));
+        btnBatak.setBackground(new java.awt.Color(204, 204, 204));
+        btnBatak.setText("[CTRL+B] Batal");
+        btnBatak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatakActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnBatak, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 290, 140, 80));
+
+        panelUtama.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 1660, 400));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -616,16 +647,16 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         tblPembelian.setRowHeight(35);
         jScrollPane1.setViewportView(tblPembelian);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 135, 1540, 260));
-        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 151, 40));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 135, 1610, 260));
+        jPanel2.add(jdcStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 151, 50));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Sampai");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, -1, -1));
-        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 80, 143, 40));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
+        jPanel2.add(jdcEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 70, 143, 50));
 
-        btnRefresh.setText("Refresh");
-        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 80, 130, 40));
+        btnRefresh.setBackground(new java.awt.Color(204, 204, 204));
+        btnRefresh.setText("[CTRL+R] Refresh");
+        jPanel2.add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 130, 50));
 
         jPanel4.setBackground(new java.awt.Color(5, 69, 162));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -635,12 +666,12 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jLabel11.setText("DAFTAR PEMBELIAN");
         jPanel4.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
 
-        jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1590, 60));
+        jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1720, 60));
 
         cmbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 80, -1, -1));
+        jPanel2.add(cmbSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 70, 110, 50));
 
-        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 430, 1580, 410));
+        panelUtama.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, 1660, 410));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -683,7 +714,87 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     String supplier = cmbSuplier.getSelectedItem().toString();
     java.util.Date tgl = jdcTanggal.getDate();
     String sku = txtSku.getText();
-    // bikin string konfirmasi
+
+    // ==== VALIDASI PER FIELD ====
+    if (kode.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan kode barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtKodeBarang.requestFocus();
+        return;
+    }
+
+    if (sku.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan kode SKU!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtSku.requestFocus();
+        return;
+    }
+
+    if (nama.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan nama barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtNamaBarang.requestFocus();
+        return;
+    }
+
+    if (satuan.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan satuan barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtSatuan.requestFocus();
+        return;
+    }
+
+    if (jumlah.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan jumlah barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtJumlah.requestFocus();
+        return;
+    }
+
+    if (harga.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan harga barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtHarga.requestFocus();
+        return;
+    }
+
+    if (total.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan nilai total!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtTotal.requestFocus();
+        return;
+    }
+
+    if (tgl == null) {
+        JOptionPane.showMessageDialog(this, "Harap pilih tanggal pembelian!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        jdcTanggal.requestFocus();
+        return;
+    }
+
+    if (cmbSuplier.getSelectedIndex() == 0) {
+        JOptionPane.showMessageDialog(this, "Harap pilih supplier terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        cmbSuplier.requestFocus();
+        return;
+    }
+
+    // ==== VALIDASI ANGKA ====
+    try {
+        Double.parseDouble(jumlah);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka!", "Kesalahan Input", JOptionPane.ERROR_MESSAGE);
+        txtJumlah.requestFocus();
+        return;
+    }
+
+    try {
+        Double.parseDouble(harga);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Harga harus berupa angka!", "Kesalahan Input", JOptionPane.ERROR_MESSAGE);
+        txtHarga.requestFocus();
+        return;
+    }
+
+    try {
+        Double.parseDouble(total);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Total harus berupa angka!", "Kesalahan Input", JOptionPane.ERROR_MESSAGE);
+        txtTotal.requestFocus();
+        return;
+    }
+
     String pesan = "Yakin ingin membeli barang ini?\n\n"
             + "Kode: " + kode + "\n"
             + "Kode Sku: " + sku + "\n"
@@ -710,8 +821,20 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     }        // TODO add your handling code here:
     }//GEN-LAST:event_txtSkuKeyReleased
 
+    private void btnBatakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatakActionPerformed
+  txtKodeBarang.setText("");
+    txtNamaBarang.setText("");
+    txtSatuan.setText("");
+    txtJumlah.setText("");
+    txtHarga.setText("");
+    txtTotal.setText("");
+    txtSku.setText("");
+    cmbSuplier.setSelectedIndex(0);
+    }//GEN-LAST:event_btnBatakActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBatak;
     private javax.swing.JButton btnBeli1;
     private javax.swing.JButton btnPilih;
     private javax.swing.JButton btnRefresh;

@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
 import javax.swing.JButton;
@@ -38,6 +40,19 @@ public class Admin extends javax.swing.JPanel {
  public Admin() {
     initComponents();
     setFilterDefault();
+    
+btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
+    "ctrlD"
+);
+
+btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnDetail.doClick(); // Menjalankan aksi tombol
+    }
+});
+
 getTotalStokKurang();
 btnReset.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl R"), "reset");
         btnReset.getActionMap().put("reset", new AbstractAction() {
@@ -134,7 +149,6 @@ applyGradient(pnlStok, new Color(255, 204, 204), new Color(255, 102, 102), false
 
 //warna orange
 applyGradient(panelKeuntungan, new Color(255, 229, 204), new Color(255, 178, 102), false);
-applyGradient(pnlBarang, new Color(255, 229, 204), new Color(255, 178, 102), false);
 
 // warna ungu
 applyGradient(pnlTransaksi, new Color(229, 204, 255), new Color(153, 102, 255), false);
@@ -265,11 +279,7 @@ private void loadChart(String startDate, String endDate) {
         pnlStok = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         lblStok = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        pnlBarang = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        lblPemasukan7 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btnDetail = new javax.swing.JButton();
 
         setFocusable(false);
         setMinimumSize(new java.awt.Dimension(20000, 20000));
@@ -416,7 +426,7 @@ private void loadChart(String startDate, String endDate) {
         lblKeuntunganTotal.setRequestFocusEnabled(false);
         panelKeuntunganTotal.add(lblKeuntunganTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 540, 90));
 
-        jPanel2.add(panelKeuntunganTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 190, 610, 160));
+        jPanel2.add(panelKeuntunganTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 180, 620, 170));
 
         panelPemasukkan.setToolTipText("focus");
         panelPemasukkan.setFocusable(false);
@@ -452,7 +462,7 @@ private void loadChart(String startDate, String endDate) {
         lblKeluar.setRequestFocusEnabled(false);
         panelPengeluaran.add(lblKeluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 540, 90));
 
-        jPanel2.add(panelPengeluaran, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 610, 160));
+        jPanel2.add(panelPengeluaran, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 10, 620, 160));
 
         panelKeuntungan.setToolTipText("focus");
         panelKeuntungan.setFocusable(false);
@@ -470,14 +480,14 @@ private void loadChart(String startDate, String endDate) {
         lblKeuntungan.setRequestFocusEnabled(false);
         panelKeuntungan.add(lblKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 540, 90));
 
-        jPanel2.add(panelKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 610, 160));
+        jPanel2.add(panelKeuntungan, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 610, 170));
 
         pnlMen.setToolTipText("focus");
         pnlMen.setFocusable(false);
         pnlMen.setRequestFocusEnabled(false);
         pnlMen.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel10.setText("Total Menu tersedia");
+        jLabel10.setText("Total barang");
         jLabel10.setToolTipText("focus");
         jLabel10.setFocusable(false);
         jLabel10.setRequestFocusEnabled(false);
@@ -488,9 +498,9 @@ private void loadChart(String startDate, String endDate) {
         lblTotal.setToolTipText("focus");
         lblTotal.setFocusable(false);
         lblTotal.setRequestFocusEnabled(false);
-        pnlMen.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 100, 90));
+        pnlMen.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 370, 90));
 
-        jPanel2.add(pnlMen, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 190, 180, 160));
+        jPanel2.add(pnlMen, new org.netbeans.lib.awtextra.AbsoluteConstraints(1260, 180, 430, 170));
 
         pnlTransaksi.setToolTipText("focus");
         pnlTransaksi.setFocusable(false);
@@ -508,9 +518,9 @@ private void loadChart(String startDate, String endDate) {
         lblTransaksi.setToolTipText("focus");
         lblTransaksi.setFocusable(false);
         lblTransaksi.setRequestFocusEnabled(false);
-        pnlTransaksi.add(lblTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
+        pnlTransaksi.add(lblTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 170, 90));
 
-        jPanel2.add(pnlTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1290, 10, 180, 160));
+        jPanel2.add(pnlTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1260, 10, 220, 160));
 
         pnlStok.setToolTipText("focus");
         pnlStok.setFocusable(false);
@@ -530,43 +540,16 @@ private void loadChart(String startDate, String endDate) {
         lblStok.setRequestFocusEnabled(false);
         pnlStok.add(lblStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, 90));
 
-        jButton1.setText("LIHAT DETAIL");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnDetail.setBackground(new java.awt.Color(255, 255, 51));
+        btnDetail.setText("[CTRL+D] Detail");
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnDetailActionPerformed(evt);
             }
         });
-        pnlStok.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, -1, -1));
+        pnlStok.add(btnDetail, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 123, 160, 30));
 
-        jPanel2.add(pnlStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 10, 180, 160));
-
-        pnlBarang.setToolTipText("focus");
-        pnlBarang.setFocusable(false);
-        pnlBarang.setRequestFocusEnabled(false);
-        pnlBarang.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel11.setText("Barang Terjual hari ini");
-        jLabel11.setToolTipText("focus");
-        jLabel11.setFocusable(false);
-        jLabel11.setRequestFocusEnabled(false);
-        pnlBarang.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, 20));
-
-        lblPemasukan7.setFont(new java.awt.Font("Segoe UI", 0, 60)); // NOI18N
-        lblPemasukan7.setText("40");
-        lblPemasukan7.setToolTipText("focus");
-        lblPemasukan7.setFocusable(false);
-        lblPemasukan7.setRequestFocusEnabled(false);
-        pnlBarang.add(lblPemasukan7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 100, 90));
-
-        jButton2.setText("LIHAT DETAIL");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        pnlBarang.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, -1, -1));
-
-        jPanel2.add(pnlBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(1510, 190, 180, 160));
+        jPanel2.add(pnlStok, new org.netbeans.lib.awtextra.AbsoluteConstraints(1490, 10, 200, 160));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1740, 960));
     }// </editor-fold>//GEN-END:initComponents
@@ -596,14 +579,14 @@ private void loadChart(String startDate, String endDate) {
  
     }//GEN-LAST:event_jdcEndKeyPressed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
    java.awt.Frame parentFrame = (java.awt.Frame) SwingUtilities.getWindowAncestor(this);
 
     // buat dan tampilkan JDialog FormBarang
     FormBarang dialog = new FormBarang(parentFrame, true, null); 
     dialog.setLocationRelativeTo(parentFrame); // tampil di tengah
     dialog.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnDetailActionPerformed
 
     private void jdcStartPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdcStartPropertyChange
    if (jdcStart.getDate() != null && jdcEnd.getDate() != null) {
@@ -621,18 +604,12 @@ private void loadChart(String startDate, String endDate) {
     }        // TODO add your handling code here:
     }//GEN-LAST:event_jdcEndPropertyChange
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDetail;
     private javax.swing.JButton btnReset;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -649,7 +626,6 @@ private void loadChart(String startDate, String endDate) {
     private javax.swing.JLabel lblKeuntungan;
     private javax.swing.JLabel lblKeuntunganTotal;
     private javax.swing.JLabel lblMasuk;
-    private javax.swing.JLabel lblPemasukan7;
     private javax.swing.JLabel lblStok;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel lblTransaksi;
@@ -660,7 +636,6 @@ private void loadChart(String startDate, String endDate) {
     private javax.swing.JPanel panelKeuntunganTotal;
     private javax.swing.JPanel panelPemasukkan;
     private javax.swing.JPanel panelPengeluaran;
-    private javax.swing.JPanel pnlBarang;
     private javax.swing.JPanel pnlMen;
     private javax.swing.JPanel pnlStok;
     private javax.swing.JPanel pnlTransaksi;

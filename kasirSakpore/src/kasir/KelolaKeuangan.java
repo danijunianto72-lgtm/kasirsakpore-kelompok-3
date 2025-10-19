@@ -401,7 +401,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
                 btnSubmitActionPerformed(evt);
             }
         });
-        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 640, 290, 60));
+        pnFormUser.add(btnSubmit, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 610, 330, 90));
 
         jPanel2.setBackground(new java.awt.Color(5, 69, 162));
 
@@ -606,11 +606,17 @@ int row = tblKeuangan.getSelectedRow();
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-   String jenis = txtJenis.getText();
+
+        String jenis = txtJenis.getText();
         double masuk = Double.parseDouble(txtMasuk.getText());
         double keluar = Double.parseDouble(txtKeluar.getText());
         java.util.Date utilDate = jdcTanggal.getDate();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+if (jenis.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Harap masukkan Jenis Keuangan!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        txtJenis.requestFocus();
+        return;
+    }
 
         try (Connection conn = koneksi.dbKonek()) {
             if (isEditMode) {
