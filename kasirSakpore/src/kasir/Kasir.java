@@ -277,7 +277,7 @@ private void loadMenu(String keyword) {
             itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
             itemPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
             itemPanel.setBackground(Color.WHITE);
-            itemPanel.setPreferredSize(new Dimension(200, 200));
+            itemPanel.setPreferredSize(new Dimension(200, 120));
 
             JLabel lblGambar = new JLabel();
             lblGambar.setAlignmentX(Component.CENTER_ALIGNMENT);

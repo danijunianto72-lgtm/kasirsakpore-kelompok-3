@@ -1184,10 +1184,8 @@ try {
     if (tKdBarang.getText().trim().isEmpty() ||
         tSKU.getText().trim().isEmpty() ||
         tNamaBarang.getText().trim().isEmpty() ||
-        cbJenis.getSelectedIndex() == 0 ||
         tSatuan.getText().trim().isEmpty() ||
         tHargaPokok.getText().trim().isEmpty() ||
-        tPajak.getText().trim().isEmpty() ||
         tHargaJual.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,

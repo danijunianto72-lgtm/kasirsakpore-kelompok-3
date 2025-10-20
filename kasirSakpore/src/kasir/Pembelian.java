@@ -715,12 +715,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     java.util.Date tgl = jdcTanggal.getDate();
     String sku = txtSku.getText();
 
-    // ==== VALIDASI PER FIELD ====
-    if (kode.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Harap masukkan kode barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        txtKodeBarang.requestFocus();
-        return;
-    }
+
 
     if (sku.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Harap masukkan kode SKU!", "Peringatan", JOptionPane.WARNING_MESSAGE);
