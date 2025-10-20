@@ -249,6 +249,7 @@ DefaultTableModel model = (DefaultTableModel) panelKasir.getTblKasir().getModel(
         jPanel1 = new javax.swing.JPanel();
         btnLogout = new javax.swing.JButton();
         txtPengguna = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         sidebar = new javax.swing.JPanel();
         btnAdmin = new javax.swing.JButton();
         btnBarang = new javax.swing.JButton();
@@ -341,6 +342,9 @@ DefaultTableModel model = (DefaultTableModel) panelKasir.getTblKasir().getModel(
         );
 
         navbar.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1690, 20, 160, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/image-removebg-preview (2).png"))); // NOI18N
+        navbar.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 360, 130));
 
         sidebar.setBackground(new java.awt.Color(59, 130, 246));
         sidebar.setPreferredSize(new java.awt.Dimension(168, 960));
@@ -632,6 +636,7 @@ DefaultTableModel model = (DefaultTableModel) panelKasir.getTblKasir().getModel(
     private javax.swing.JButton btnPembelian;
     private javax.swing.JButton btnSupplier;
     private javax.swing.JButton btnUser;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblTanggal;
     private javax.swing.JPanel navbar;
