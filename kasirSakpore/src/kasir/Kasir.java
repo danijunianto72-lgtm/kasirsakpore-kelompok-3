@@ -92,11 +92,11 @@ btnBatal.getActionMap().put("ctrlB", new AbstractAction() {
     }
 });
 btnDetail.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK),
-    "ctrlD"
+    KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK),
+    "ctrlL"
 );
 
-btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
+btnDetail.getActionMap().put("ctrlL", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
         btnDetail.doClick(); // Menjalankan aksi tombol
@@ -1107,7 +1107,7 @@ public javax.swing.JTable getTblKasir() {
         jPanel5.setBackground(new java.awt.Color(5, 69, 162));
 
         btnDetail.setBackground(new java.awt.Color(255, 255, 0));
-        btnDetail.setText("[CTRL+D] Detail");
+        btnDetail.setText("[CTRL+L] Detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailActionPerformed(evt);
