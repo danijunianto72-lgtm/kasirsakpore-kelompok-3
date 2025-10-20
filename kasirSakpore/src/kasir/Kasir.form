@@ -102,7 +102,7 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="ff" red="33" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="[ENTER] PEMBAYARAN"/>
+                <Property name="text" type="java.lang.String" value="[CTRL + S] PEMBAYARAN"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPembayaranActionPerformed"/>

@@ -186,14 +186,16 @@ try (Connection conn = koneksi.dbKonek()) {
     Session.setNama(namaAkhir != null ? namaAkhir : "");
 
     // === Simpan / Update Riwayat Login ===
-    String cekSql = """
-        SELECT id FROM riwayat_login
-        WHERE idpengguna = ? 
-          AND DATE(waktu_login) = CURRENT_DATE
-    """;
-    PreparedStatement pstCek = conn.prepareStatement(cekSql);
-    pstCek.setInt(1, idpengguna);
-    ResultSet rsCek = pstCek.executeQuery();
+ String cekSql = """
+    SELECT id FROM riwayat_login
+    WHERE idpengguna = ? 
+      AND nama_pemakai = ? 
+      AND DATE(waktu_login) = CURRENT_DATE
+""";
+PreparedStatement pstCek = conn.prepareStatement(cekSql);
+pstCek.setInt(1, idpengguna);
+pstCek.setString(2, namaAkhir);
+ResultSet rsCek = pstCek.executeQuery();
 
     if (rsCek.next()) {
         // Sudah ada login hari ini → update
@@ -213,14 +215,6 @@ try (Connection conn = koneksi.dbKonek()) {
         pstInsert.executeUpdate();
     }
 
-    // (Opsional) update nama terakhir di tabel pengguna
-    if (inputNama != null && !inputNama.isEmpty()) {
-        String updateNama = "UPDATE pengguna SET nama=? WHERE idpengguna=?";
-        PreparedStatement pstUpdate = conn.prepareStatement(updateNama);
-        pstUpdate.setString(1, inputNama);
-        pstUpdate.setInt(2, idpengguna);
-        pstUpdate.executeUpdate();
-    }
 
     JOptionPane.showMessageDialog(this, "Login berhasil sebagai " + role);
 
