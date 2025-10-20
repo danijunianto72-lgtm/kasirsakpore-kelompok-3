@@ -31,6 +31,7 @@ public class Kasir extends javax.swing.JPanel {
         initComponents();
          header();
          
+         
        
         loadMenu(null);
         setupSkuScanner(); 
@@ -101,16 +102,16 @@ btnDetail.getActionMap().put("ctrlD", new AbstractAction() {
         btnDetail.doClick(); // Menjalankan aksi tombol
     }
 });
-
-this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "submitAction");
-
-    this.getActionMap().put("submitAction", new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            btnPembayaran.doClick(); // klik tombol submit
-        }
-    });
+btnPembayaran.getActionMap().put("ctrlS", new AbstractAction() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        btnPembayaran.doClick(); // Menjalankan aksi tombol
+    }
+});
+btnPembayaran.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+    "ctrlS"
+);
 setKeyBindings();
 
 
@@ -503,8 +504,8 @@ formPanel.add(new JScrollPane(txtKeterangan), gbc);
 
     // === Panel Bawah: Tombol ===
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    JButton btnSelesai = new JButton("Selesai");
-    JButton btnKembali = new JButton("Kembali");
+    JButton btnSelesai = new JButton("[ENTER] Selesai");
+    JButton btnKembali = new JButton("[ctrl + K] Kembali");
     buttonPanel.add(btnKembali);
     buttonPanel.add(btnSelesai);
 
@@ -973,7 +974,7 @@ public javax.swing.JTable getTblKasir() {
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
 
         btnPembayaran.setBackground(new java.awt.Color(51, 255, 0));
-        btnPembayaran.setText("[ENTER] PEMBAYARAN");
+        btnPembayaran.setText("[CTRL + S] PEMBAYARAN");
         btnPembayaran.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPembayaranActionPerformed(evt);

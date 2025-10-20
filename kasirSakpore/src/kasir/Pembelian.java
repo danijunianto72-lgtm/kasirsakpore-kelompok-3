@@ -764,11 +764,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         return;
     }
 
-    if (cmbSuplier.getSelectedIndex() == 0) {
-        JOptionPane.showMessageDialog(this, "Harap pilih supplier terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-        cmbSuplier.requestFocus();
-        return;
-    }
+   
 
     // ==== VALIDASI ANGKA ====
     try {

@@ -124,16 +124,16 @@ btnCetak.getActionMap().put("ctrlC", new AbstractAction() {
 ); 
         
         
-            btnDetail1.getActionMap().put("ctrlX", new AbstractAction() {
+            btnD.getActionMap().put("ctrlL", new AbstractAction() {
     @Override
     public void actionPerformed(ActionEvent e) {
-        btnDetail1.doClick(); // Menjalankan aksi tombol
+        btnD.doClick(); // Menjalankan aksi tombol
     }
 });
 
-        btnDetail1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-    KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
-    "ctrlX"
+        btnD.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+    KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK),
+    "ctrlL"
 );      
     
     
@@ -462,7 +462,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jmcBulan = new com.toedter.calendar.JMonthChooser();
         jycTahun = new com.toedter.calendar.JYearChooser();
         lblTotalBulan = new javax.swing.JLabel();
-        btnDetail1 = new javax.swing.JButton();
+        btnD = new javax.swing.JButton();
         btnBulan = new javax.swing.JButton();
         btnTahun = new javax.swing.JButton();
 
@@ -531,7 +531,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         jPanel2.add(btnCetak, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 80, 160, 50));
 
         btnDetail.setBackground(new java.awt.Color(255, 255, 0));
-        btnDetail.setText("[CTR;+D] DETAIL");
+        btnDetail.setText("[CTRL+D] DETAIL");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailActionPerformed(evt);
@@ -564,9 +564,9 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 1620, 250));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setText("Daftar Transaksi");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 1640, 420));
 
@@ -653,14 +653,14 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         lblTotalBulan.setText("jLabel1");
         jPanel4.add(lblTotalBulan, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 90, -1, -1));
 
-        btnDetail1.setBackground(new java.awt.Color(255, 255, 0));
-        btnDetail1.setText("[CTRL+X] DETAIL");
-        btnDetail1.addActionListener(new java.awt.event.ActionListener() {
+        btnD.setBackground(new java.awt.Color(255, 255, 0));
+        btnD.setText("[CTRL+L] DETAIL");
+        btnD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDetail1ActionPerformed(evt);
+                btnDActionPerformed(evt);
             }
         });
-        jPanel4.add(btnDetail1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 160, 50));
+        jPanel4.add(btnD, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 70, 160, 50));
 
         btnBulan.setBackground(new java.awt.Color(255, 0, 0));
         btnBulan.setForeground(new java.awt.Color(255, 255, 255));
@@ -818,7 +818,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
         // TODO add your handling code here:
     }//GEN-LAST:event_jycTahunPropertyChange
 
-    private void btnDetail1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetail1ActionPerformed
+    private void btnDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDActionPerformed
          int selectedRow = tblDetail.getSelectedRow();
     if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Pilih transaksi terlebih dahulu!");
@@ -832,7 +832,7 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
     PopupDetailTransaksi popup = new PopupDetailTransaksi((java.awt.Frame) SwingUtilities.getWindowAncestor(this), true, idTransaksi);
     popup.setLocationRelativeTo(this);
     popup.setVisible(true);
-    }//GEN-LAST:event_btnDetail1ActionPerformed
+    }//GEN-LAST:event_btnDActionPerformed
 
     private void tblBulanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBulanMouseClicked
 int row = tblBulan.getSelectedRow();
@@ -1106,8 +1106,8 @@ try {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBulan;
     private javax.swing.JButton btnCetak;
+    private javax.swing.JButton btnD;
     private javax.swing.JButton btnDetail;
-    private javax.swing.JButton btnDetail1;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnTahun;
     private javax.swing.JLabel jLabel10;
