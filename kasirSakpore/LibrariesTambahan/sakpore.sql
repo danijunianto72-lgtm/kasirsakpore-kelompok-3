@@ -2,10 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.21
--- Dumped by pg_dump version 13.21
+\restrict 908hqml0rnz4MflTP1utwOgrgteqkqtIXPkc76IKAn7Ez3ra9COHgVVQhV7kUZ1
 
--- Started on 2025-10-08 09:01:14
+-- Dumped from database version 13.22
+-- Dumped by pg_dump version 13.22
+
+-- Started on 2025-10-20 14:44:43
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,7 +25,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 200 (class 1259 OID 32792)
+-- TOC entry 216 (class 1259 OID 24811)
 -- Name: barang; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -32,44 +34,19 @@ CREATE TABLE public.barang (
     skubarang character varying(50) NOT NULL,
     nama character varying(100) NOT NULL,
     hargabarang numeric(12,2) NOT NULL,
-    stok integer DEFAULT 0,
+    stok integer,
     kategori character varying(100),
     gambar character varying(255),
-    hargapokok integer,
-    ppn integer,
-    satuan character varying(100)
+    hargapokok numeric(12,2),
+    ppn numeric(12,2),
+    satuan character varying(200)
 );
 
 
 ALTER TABLE public.barang OWNER TO postgres;
 
 --
--- TOC entry 201 (class 1259 OID 32799)
--- Name: barang_kodebarang_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.barang_kodebarang_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.barang_kodebarang_seq OWNER TO postgres;
-
---
--- TOC entry 3094 (class 0 OID 0)
--- Dependencies: 201
--- Name: barang_kodebarang_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.barang_kodebarang_seq OWNED BY public.barang.kodebarang;
-
-
---
--- TOC entry 202 (class 1259 OID 32801)
+-- TOC entry 200 (class 1259 OID 24586)
 -- Name: barangmasuk; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -82,14 +59,15 @@ CREATE TABLE public.barangmasuk (
     hargabarang numeric(12,2),
     totalharga numeric(12,2),
     tanggal date,
-    supplier character varying(100)
+    supplier character varying(100),
+    skubarang character varying(200)
 );
 
 
 ALTER TABLE public.barangmasuk OWNER TO postgres;
 
 --
--- TOC entry 203 (class 1259 OID 32804)
+-- TOC entry 201 (class 1259 OID 24589)
 -- Name: barangmasuk_idbarangmasuk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -105,8 +83,8 @@ CREATE SEQUENCE public.barangmasuk_idbarangmasuk_seq
 ALTER TABLE public.barangmasuk_idbarangmasuk_seq OWNER TO postgres;
 
 --
--- TOC entry 3095 (class 0 OID 0)
--- Dependencies: 203
+-- TOC entry 3102 (class 0 OID 0)
+-- Dependencies: 201
 -- Name: barangmasuk_idbarangmasuk_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -114,7 +92,7 @@ ALTER SEQUENCE public.barangmasuk_idbarangmasuk_seq OWNED BY public.barangmasuk.
 
 
 --
--- TOC entry 204 (class 1259 OID 32806)
+-- TOC entry 202 (class 1259 OID 24591)
 -- Name: detailtransaksi; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -133,7 +111,7 @@ CREATE TABLE public.detailtransaksi (
 ALTER TABLE public.detailtransaksi OWNER TO postgres;
 
 --
--- TOC entry 205 (class 1259 OID 32812)
+-- TOC entry 203 (class 1259 OID 24597)
 -- Name: detailtransaksi_iddetailtransaksi_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -149,8 +127,8 @@ CREATE SEQUENCE public.detailtransaksi_iddetailtransaksi_seq
 ALTER TABLE public.detailtransaksi_iddetailtransaksi_seq OWNER TO postgres;
 
 --
--- TOC entry 3096 (class 0 OID 0)
--- Dependencies: 205
+-- TOC entry 3103 (class 0 OID 0)
+-- Dependencies: 203
 -- Name: detailtransaksi_iddetailtransaksi_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -158,7 +136,7 @@ ALTER SEQUENCE public.detailtransaksi_iddetailtransaksi_seq OWNED BY public.deta
 
 
 --
--- TOC entry 206 (class 1259 OID 32814)
+-- TOC entry 204 (class 1259 OID 24599)
 -- Name: kategori; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -171,7 +149,7 @@ CREATE TABLE public.kategori (
 ALTER TABLE public.kategori OWNER TO postgres;
 
 --
--- TOC entry 207 (class 1259 OID 32817)
+-- TOC entry 205 (class 1259 OID 24602)
 -- Name: kategori_idkategori_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -187,8 +165,8 @@ CREATE SEQUENCE public.kategori_idkategori_seq
 ALTER TABLE public.kategori_idkategori_seq OWNER TO postgres;
 
 --
--- TOC entry 3097 (class 0 OID 0)
--- Dependencies: 207
+-- TOC entry 3104 (class 0 OID 0)
+-- Dependencies: 205
 -- Name: kategori_idkategori_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -196,7 +174,7 @@ ALTER SEQUENCE public.kategori_idkategori_seq OWNED BY public.kategori.idkategor
 
 
 --
--- TOC entry 208 (class 1259 OID 32819)
+-- TOC entry 206 (class 1259 OID 24604)
 -- Name: keuangan; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -213,7 +191,7 @@ CREATE TABLE public.keuangan (
 ALTER TABLE public.keuangan OWNER TO postgres;
 
 --
--- TOC entry 209 (class 1259 OID 32824)
+-- TOC entry 207 (class 1259 OID 24609)
 -- Name: keuangan_idkeuangan_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -229,8 +207,8 @@ CREATE SEQUENCE public.keuangan_idkeuangan_seq
 ALTER TABLE public.keuangan_idkeuangan_seq OWNER TO postgres;
 
 --
--- TOC entry 3098 (class 0 OID 0)
--- Dependencies: 209
+-- TOC entry 3105 (class 0 OID 0)
+-- Dependencies: 207
 -- Name: keuangan_idkeuangan_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -238,7 +216,7 @@ ALTER SEQUENCE public.keuangan_idkeuangan_seq OWNED BY public.keuangan.idkeuanga
 
 
 --
--- TOC entry 210 (class 1259 OID 32826)
+-- TOC entry 208 (class 1259 OID 24611)
 -- Name: metodepembayaran; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -251,7 +229,7 @@ CREATE TABLE public.metodepembayaran (
 ALTER TABLE public.metodepembayaran OWNER TO postgres;
 
 --
--- TOC entry 211 (class 1259 OID 32829)
+-- TOC entry 209 (class 1259 OID 24614)
 -- Name: metodepembayaran_idmetodepembayaran_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -267,8 +245,8 @@ CREATE SEQUENCE public.metodepembayaran_idmetodepembayaran_seq
 ALTER TABLE public.metodepembayaran_idmetodepembayaran_seq OWNER TO postgres;
 
 --
--- TOC entry 3099 (class 0 OID 0)
--- Dependencies: 211
+-- TOC entry 3106 (class 0 OID 0)
+-- Dependencies: 209
 -- Name: metodepembayaran_idmetodepembayaran_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -276,7 +254,7 @@ ALTER SEQUENCE public.metodepembayaran_idmetodepembayaran_seq OWNED BY public.me
 
 
 --
--- TOC entry 212 (class 1259 OID 32831)
+-- TOC entry 210 (class 1259 OID 24616)
 -- Name: pengguna; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -285,14 +263,15 @@ CREATE TABLE public.pengguna (
     username character varying(50) NOT NULL,
     password character varying(255) NOT NULL,
     role character varying(20) NOT NULL,
-    status character varying(20) DEFAULT 'aktif'::character varying
+    status character varying(20) DEFAULT 'aktif'::character varying,
+    nama character varying(100)
 );
 
 
 ALTER TABLE public.pengguna OWNER TO postgres;
 
 --
--- TOC entry 213 (class 1259 OID 32835)
+-- TOC entry 211 (class 1259 OID 24620)
 -- Name: pengguna_idpengguna_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -308,8 +287,8 @@ CREATE SEQUENCE public.pengguna_idpengguna_seq
 ALTER TABLE public.pengguna_idpengguna_seq OWNER TO postgres;
 
 --
--- TOC entry 3100 (class 0 OID 0)
--- Dependencies: 213
+-- TOC entry 3107 (class 0 OID 0)
+-- Dependencies: 211
 -- Name: pengguna_idpengguna_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -317,7 +296,48 @@ ALTER SEQUENCE public.pengguna_idpengguna_seq OWNED BY public.pengguna.idpenggun
 
 
 --
--- TOC entry 214 (class 1259 OID 32837)
+-- TOC entry 218 (class 1259 OID 24821)
+-- Name: riwayat_login; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.riwayat_login (
+    id integer NOT NULL,
+    idpengguna integer,
+    username character varying(50),
+    nama_pemakai character varying(100),
+    waktu_login timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.riwayat_login OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 24819)
+-- Name: riwayat_login_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.riwayat_login_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.riwayat_login_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3108 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: riwayat_login_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.riwayat_login_id_seq OWNED BY public.riwayat_login.id;
+
+
+--
+-- TOC entry 212 (class 1259 OID 24622)
 -- Name: supplier; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -333,7 +353,7 @@ CREATE TABLE public.supplier (
 ALTER TABLE public.supplier OWNER TO postgres;
 
 --
--- TOC entry 215 (class 1259 OID 32844)
+-- TOC entry 213 (class 1259 OID 24629)
 -- Name: supplier_idsupplier_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -349,8 +369,8 @@ CREATE SEQUENCE public.supplier_idsupplier_seq
 ALTER TABLE public.supplier_idsupplier_seq OWNER TO postgres;
 
 --
--- TOC entry 3101 (class 0 OID 0)
--- Dependencies: 215
+-- TOC entry 3109 (class 0 OID 0)
+-- Dependencies: 213
 -- Name: supplier_idsupplier_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -358,7 +378,7 @@ ALTER SEQUENCE public.supplier_idsupplier_seq OWNED BY public.supplier.idsupplie
 
 
 --
--- TOC entry 216 (class 1259 OID 32846)
+-- TOC entry 214 (class 1259 OID 24631)
 -- Name: transaksi; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -377,7 +397,7 @@ CREATE TABLE public.transaksi (
 ALTER TABLE public.transaksi OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 32853)
+-- TOC entry 215 (class 1259 OID 24638)
 -- Name: transaksi_idtransaksi_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -393,8 +413,8 @@ CREATE SEQUENCE public.transaksi_idtransaksi_seq
 ALTER TABLE public.transaksi_idtransaksi_seq OWNER TO postgres;
 
 --
--- TOC entry 3102 (class 0 OID 0)
--- Dependencies: 217
+-- TOC entry 3110 (class 0 OID 0)
+-- Dependencies: 215
 -- Name: transaksi_idtransaksi_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -402,15 +422,7 @@ ALTER SEQUENCE public.transaksi_idtransaksi_seq OWNED BY public.transaksi.idtran
 
 
 --
--- TOC entry 2902 (class 2604 OID 32855)
--- Name: barang kodebarang; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.barang ALTER COLUMN kodebarang SET DEFAULT nextval('public.barang_kodebarang_seq'::regclass);
-
-
---
--- TOC entry 2903 (class 2604 OID 32856)
+-- TOC entry 2905 (class 2604 OID 24641)
 -- Name: barangmasuk idbarangmasuk; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -418,7 +430,7 @@ ALTER TABLE ONLY public.barangmasuk ALTER COLUMN idbarangmasuk SET DEFAULT nextv
 
 
 --
--- TOC entry 2904 (class 2604 OID 32857)
+-- TOC entry 2906 (class 2604 OID 24642)
 -- Name: detailtransaksi iddetailtransaksi; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -426,7 +438,7 @@ ALTER TABLE ONLY public.detailtransaksi ALTER COLUMN iddetailtransaksi SET DEFAU
 
 
 --
--- TOC entry 2905 (class 2604 OID 32858)
+-- TOC entry 2907 (class 2604 OID 24643)
 -- Name: kategori idkategori; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -434,7 +446,7 @@ ALTER TABLE ONLY public.kategori ALTER COLUMN idkategori SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 2908 (class 2604 OID 32859)
+-- TOC entry 2910 (class 2604 OID 24644)
 -- Name: keuangan idkeuangan; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -442,7 +454,7 @@ ALTER TABLE ONLY public.keuangan ALTER COLUMN idkeuangan SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 2909 (class 2604 OID 32860)
+-- TOC entry 2911 (class 2604 OID 24645)
 -- Name: metodepembayaran idmetodepembayaran; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -450,7 +462,7 @@ ALTER TABLE ONLY public.metodepembayaran ALTER COLUMN idmetodepembayaran SET DEF
 
 
 --
--- TOC entry 2911 (class 2604 OID 32861)
+-- TOC entry 2913 (class 2604 OID 24646)
 -- Name: pengguna idpengguna; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -458,7 +470,15 @@ ALTER TABLE ONLY public.pengguna ALTER COLUMN idpengguna SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 2913 (class 2604 OID 32862)
+-- TOC entry 2921 (class 2604 OID 24824)
+-- Name: riwayat_login id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.riwayat_login ALTER COLUMN id SET DEFAULT nextval('public.riwayat_login_id_seq'::regclass);
+
+
+--
+-- TOC entry 2915 (class 2604 OID 24647)
 -- Name: supplier idsupplier; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -466,7 +486,7 @@ ALTER TABLE ONLY public.supplier ALTER COLUMN idsupplier SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 2918 (class 2604 OID 32863)
+-- TOC entry 2920 (class 2604 OID 24648)
 -- Name: transaksi idtransaksi; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -474,153 +494,132 @@ ALTER TABLE ONLY public.transaksi ALTER COLUMN idtransaksi SET DEFAULT nextval('
 
 
 --
--- TOC entry 3071 (class 0 OID 32792)
--- Dependencies: 200
+-- TOC entry 3094 (class 0 OID 24811)
+-- Dependencies: 216
 -- Data for Name: barang; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.barang (kodebarang, skubarang, nama, hargabarang, stok, kategori, gambar, hargapokok, ppn, satuan) FROM stdin;
-1	SKU001	Indomie Goreng	3500.00	100	Makanan	indomie.jpg	\N	\N	\N
-2	SKU002	Aqua Botol 600ml	4000.00	200	Minuman	aqua.jpg	\N	\N	\N
-3	SKU003	Pulpen Pilot	5000.00	50	ATK	pulpen.jpg	\N	\N	\N
-4	SKU004	Kipas Angin Mini	75000.00	20	Elektronik	kipas.jpg	\N	\N	\N
-5	SKU005	beras	10200.00	0	Minuman	beras.jpg	10000	2	kg
-6	SKU006	Golda	6000.00	0	Minuman	sedan.png	6000	0	pcs
 \.
 
 
 --
--- TOC entry 3073 (class 0 OID 32801)
--- Dependencies: 202
+-- TOC entry 3078 (class 0 OID 24586)
+-- Dependencies: 200
 -- Data for Name: barangmasuk; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.barangmasuk (idbarangmasuk, kodebarang, nama, satuan, jumlahmasuk, hargabarang, totalharga, tanggal, supplier) FROM stdin;
-1	1	Indomie Goreng	pcs	50	3000.00	150000.00	2025-09-01	PT Sumber Makmur
-2	2	Aqua Botol 600ml	botol	100	3500.00	350000.00	2025-09-02	CV Maju Jaya
+COPY public.barangmasuk (idbarangmasuk, kodebarang, nama, satuan, jumlahmasuk, hargabarang, totalharga, tanggal, supplier, skubarang) FROM stdin;
 \.
 
 
 --
--- TOC entry 3075 (class 0 OID 32806)
--- Dependencies: 204
+-- TOC entry 3080 (class 0 OID 24591)
+-- Dependencies: 202
 -- Data for Name: detailtransaksi; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.detailtransaksi (iddetailtransaksi, kodebarang, idtransaksi, namabarang, jumlah, harga, keterangan, subtotal) FROM stdin;
-1	1	1	Indomie Goreng	2	3500.00	Pesanan reguler	7000.00
-2	2	1	Aqua Botol 600ml	1	3000.00	Air mineral	3000.00
-3	3	2	Pulpen Pilot	4	5000.00	ATK kantor	20000.00
 \.
 
 
 --
--- TOC entry 3077 (class 0 OID 32814)
--- Dependencies: 206
+-- TOC entry 3082 (class 0 OID 24599)
+-- Dependencies: 204
 -- Data for Name: kategori; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.kategori (idkategori, namakategori) FROM stdin;
-1	Makanan
-2	Minuman
-3	ATK
-4	Elektronik
 \.
 
 
 --
--- TOC entry 3079 (class 0 OID 32819)
--- Dependencies: 208
+-- TOC entry 3084 (class 0 OID 24604)
+-- Dependencies: 206
 -- Data for Name: keuangan; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.keuangan (idkeuangan, idasal, jeniskeuangan, masuk, keluar, tanggal) FROM stdin;
-1	1	Penjualan	10000.00	0.00	2025-09-01
-2	2	Pembelian Barang	0.00	350000.00	2025-09-02
 \.
 
 
 --
--- TOC entry 3081 (class 0 OID 32826)
--- Dependencies: 210
+-- TOC entry 3086 (class 0 OID 24611)
+-- Dependencies: 208
 -- Data for Name: metodepembayaran; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.metodepembayaran (idmetodepembayaran, namametodepembayaran) FROM stdin;
-1	Cash
-2	Transfer Bank
-3	QRIS
 \.
 
 
 --
--- TOC entry 3083 (class 0 OID 32831)
--- Dependencies: 212
+-- TOC entry 3088 (class 0 OID 24616)
+-- Dependencies: 210
 -- Data for Name: pengguna; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.pengguna (idpengguna, username, password, role, status) FROM stdin;
-1	admin	admin123	admin	aktif
-2	kasir1	kasir123	kasir	aktif
-3	manager	manager123	manager	aktif
-4	dani	123	admin	aktif
+COPY public.pengguna (idpengguna, username, password, role, status, nama) FROM stdin;
+2	kasir1	kasir123	kasir	aktif	SISISIS
+4	kasir2	kasir123	kasir	aktif	VIRGAN JUNI MAS UDI
+3	manager	manager123	manager	aktif	sukisukidaisuku
+1	admin	admin123	admin	aktif	jepri nichol
 \.
 
 
 --
--- TOC entry 3085 (class 0 OID 32837)
--- Dependencies: 214
+-- TOC entry 3096 (class 0 OID 24821)
+-- Dependencies: 218
+-- Data for Name: riwayat_login; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.riwayat_login (id, idpengguna, username, nama_pemakai, waktu_login) FROM stdin;
+36	1	admin	jepri nichol	2025-10-20 14:42:32.199806
+37	1	admin	virgan	2025-10-20 14:43:47.919766
+\.
+
+
+--
+-- TOC entry 3090 (class 0 OID 24622)
+-- Dependencies: 212
 -- Data for Name: supplier; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.supplier (idsupplier, namasupplier, notelp, status, alamat) FROM stdin;
-1	PT Sumber Makmur	08123456789	aktif	Jl. Merdeka No.1
-2	CV Maju Jaya	082233445566	aktif	Jl. Raya Selatan No.10
 \.
 
 
 --
--- TOC entry 3087 (class 0 OID 32846)
--- Dependencies: 216
+-- TOC entry 3092 (class 0 OID 24631)
+-- Dependencies: 214
 -- Data for Name: transaksi; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.transaksi (idtransaksi, notransaksi, namapengguna, tgl_transaksi, subtotal, diskon, grand_total, metodepembayaran) FROM stdin;
-1	TRX001	kasir1	2025-09-17 08:48:04.386779	10000.00	0.00	10000.00	Cash
-2	TRX002	kasir1	2025-09-17 08:48:04.386779	20000.00	2000.00	18000.00	QRIS
 \.
 
 
 --
--- TOC entry 3103 (class 0 OID 0)
+-- TOC entry 3111 (class 0 OID 0)
 -- Dependencies: 201
--- Name: barang_kodebarang_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.barang_kodebarang_seq', 4, true);
-
-
---
--- TOC entry 3104 (class 0 OID 0)
--- Dependencies: 203
 -- Name: barangmasuk_idbarangmasuk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.barangmasuk_idbarangmasuk_seq', 2, true);
+SELECT pg_catalog.setval('public.barangmasuk_idbarangmasuk_seq', 18, true);
 
 
 --
--- TOC entry 3105 (class 0 OID 0)
--- Dependencies: 205
+-- TOC entry 3112 (class 0 OID 0)
+-- Dependencies: 203
 -- Name: detailtransaksi_iddetailtransaksi_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.detailtransaksi_iddetailtransaksi_seq', 3, true);
+SELECT pg_catalog.setval('public.detailtransaksi_iddetailtransaksi_seq', 84, true);
 
 
 --
--- TOC entry 3106 (class 0 OID 0)
--- Dependencies: 207
+-- TOC entry 3113 (class 0 OID 0)
+-- Dependencies: 205
 -- Name: kategori_idkategori_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -628,17 +627,17 @@ SELECT pg_catalog.setval('public.kategori_idkategori_seq', 4, true);
 
 
 --
--- TOC entry 3107 (class 0 OID 0)
--- Dependencies: 209
+-- TOC entry 3114 (class 0 OID 0)
+-- Dependencies: 207
 -- Name: keuangan_idkeuangan_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.keuangan_idkeuangan_seq', 2, true);
+SELECT pg_catalog.setval('public.keuangan_idkeuangan_seq', 103, true);
 
 
 --
--- TOC entry 3108 (class 0 OID 0)
--- Dependencies: 211
+-- TOC entry 3115 (class 0 OID 0)
+-- Dependencies: 209
 -- Name: metodepembayaran_idmetodepembayaran_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -646,43 +645,52 @@ SELECT pg_catalog.setval('public.metodepembayaran_idmetodepembayaran_seq', 3, tr
 
 
 --
--- TOC entry 3109 (class 0 OID 0)
--- Dependencies: 213
+-- TOC entry 3116 (class 0 OID 0)
+-- Dependencies: 211
 -- Name: pengguna_idpengguna_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.pengguna_idpengguna_seq', 4, true);
+SELECT pg_catalog.setval('public.pengguna_idpengguna_seq', 5, true);
 
 
 --
--- TOC entry 3110 (class 0 OID 0)
--- Dependencies: 215
+-- TOC entry 3117 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: riwayat_login_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.riwayat_login_id_seq', 37, true);
+
+
+--
+-- TOC entry 3118 (class 0 OID 0)
+-- Dependencies: 213
 -- Name: supplier_idsupplier_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.supplier_idsupplier_seq', 2, true);
+SELECT pg_catalog.setval('public.supplier_idsupplier_seq', 11, true);
 
 
 --
--- TOC entry 3111 (class 0 OID 0)
--- Dependencies: 217
+-- TOC entry 3119 (class 0 OID 0)
+-- Dependencies: 215
 -- Name: transaksi_idtransaksi_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transaksi_idtransaksi_seq', 2, true);
+SELECT pg_catalog.setval('public.transaksi_idtransaksi_seq', 39, true);
 
 
 --
--- TOC entry 2920 (class 2606 OID 32865)
--- Name: barang barang_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 2944 (class 2606 OID 24818)
+-- Name: barang barang_new_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.barang
-    ADD CONSTRAINT barang_pkey PRIMARY KEY (kodebarang);
+    ADD CONSTRAINT barang_new_pkey PRIMARY KEY (kodebarang);
 
 
 --
--- TOC entry 2922 (class 2606 OID 32867)
+-- TOC entry 2924 (class 2606 OID 24652)
 -- Name: barangmasuk barangmasuk_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -691,7 +699,7 @@ ALTER TABLE ONLY public.barangmasuk
 
 
 --
--- TOC entry 2924 (class 2606 OID 32869)
+-- TOC entry 2926 (class 2606 OID 24654)
 -- Name: detailtransaksi detailtransaksi_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -700,7 +708,7 @@ ALTER TABLE ONLY public.detailtransaksi
 
 
 --
--- TOC entry 2926 (class 2606 OID 32871)
+-- TOC entry 2928 (class 2606 OID 24656)
 -- Name: kategori kategori_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -709,7 +717,7 @@ ALTER TABLE ONLY public.kategori
 
 
 --
--- TOC entry 2928 (class 2606 OID 32873)
+-- TOC entry 2930 (class 2606 OID 24658)
 -- Name: keuangan keuangan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -718,7 +726,7 @@ ALTER TABLE ONLY public.keuangan
 
 
 --
--- TOC entry 2930 (class 2606 OID 32875)
+-- TOC entry 2932 (class 2606 OID 24660)
 -- Name: metodepembayaran metodepembayaran_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -727,7 +735,7 @@ ALTER TABLE ONLY public.metodepembayaran
 
 
 --
--- TOC entry 2932 (class 2606 OID 32877)
+-- TOC entry 2934 (class 2606 OID 24662)
 -- Name: pengguna pengguna_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -736,7 +744,7 @@ ALTER TABLE ONLY public.pengguna
 
 
 --
--- TOC entry 2934 (class 2606 OID 32879)
+-- TOC entry 2936 (class 2606 OID 24664)
 -- Name: pengguna pengguna_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -745,7 +753,16 @@ ALTER TABLE ONLY public.pengguna
 
 
 --
--- TOC entry 2936 (class 2606 OID 32881)
+-- TOC entry 2946 (class 2606 OID 24827)
+-- Name: riwayat_login riwayat_login_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.riwayat_login
+    ADD CONSTRAINT riwayat_login_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2938 (class 2606 OID 24666)
 -- Name: supplier supplier_namasupplier_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -754,7 +771,7 @@ ALTER TABLE ONLY public.supplier
 
 
 --
--- TOC entry 2938 (class 2606 OID 32883)
+-- TOC entry 2940 (class 2606 OID 24668)
 -- Name: supplier supplier_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -763,7 +780,7 @@ ALTER TABLE ONLY public.supplier
 
 
 --
--- TOC entry 2940 (class 2606 OID 32885)
+-- TOC entry 2942 (class 2606 OID 24670)
 -- Name: transaksi transaksi_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -771,9 +788,20 @@ ALTER TABLE ONLY public.transaksi
     ADD CONSTRAINT transaksi_pkey PRIMARY KEY (idtransaksi);
 
 
--- Completed on 2025-10-08 09:01:14
+--
+-- TOC entry 2947 (class 2606 OID 24828)
+-- Name: riwayat_login riwayat_login_idpengguna_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.riwayat_login
+    ADD CONSTRAINT riwayat_login_idpengguna_fkey FOREIGN KEY (idpengguna) REFERENCES public.pengguna(idpengguna) ON DELETE CASCADE;
+
+
+-- Completed on 2025-10-20 14:44:44
 
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict 908hqml0rnz4MflTP1utwOgrgteqkqtIXPkc76IKAn7Ez3ra9COHgVVQhV7kUZ1
 
