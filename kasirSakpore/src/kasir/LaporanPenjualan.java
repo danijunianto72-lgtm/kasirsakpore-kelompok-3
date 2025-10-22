@@ -276,13 +276,13 @@ setHeader.setDefaultRenderer((table, value, isSelected, hasFocus, row, column) -
    private void loadDetailHarian(String tanggal) {
     DefaultTableModel model = new DefaultTableModel();
     model.addColumn("No");
-    model.addColumn("ID Transaksi"); // tambahkan ini
+    model.addColumn("ID"); 
     model.addColumn("No Transaksi");
-    model.addColumn("Nama Pengguna");
-    model.addColumn("Tanggal Transaksi");
+    model.addColumn("Nama");
+    model.addColumn("Tanggal ");
     model.addColumn("Subtotal");
     model.addColumn("Diskon");
-    model.addColumn("Grand Total");
+    model.addColumn("Total");
     tblDetail.setModel(model);
 
     String sql = """
@@ -601,13 +601,13 @@ public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 
         tblDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "No", "ID", "No Transaksi", "Nama", "Tanggal", "Subtotal", "Diskon", "Total"
             }
         ));
         tblDetail.setRowHeight(35);
