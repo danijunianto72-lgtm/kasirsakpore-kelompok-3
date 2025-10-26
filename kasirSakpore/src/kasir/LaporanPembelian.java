@@ -526,13 +526,13 @@ private void tampilkanDetail(String tanggal) {
 
         tblDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "No", "Nama Barang", "Satuan", "Jumlah Masuk", "Harga Barang", "Total Harga", "Supplier"
             }
         ));
         tblDetail.setRowHeight(35);

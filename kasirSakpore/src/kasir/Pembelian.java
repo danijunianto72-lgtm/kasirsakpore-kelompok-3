@@ -367,11 +367,11 @@ private void simpanTransaksi() {
         }
 
         // 2. Update stok di tabel barang
-        String sql3 = "UPDATE barang SET stok = stok + ? WHERE kodebarang = ?";
-        pst3 = conn.prepareStatement(sql3);
-        pst3.setInt(1, jumlahMasuk);
-        pst3.setInt(2, Integer.parseInt(txtKodeBarang.getText()));
-        pst3.executeUpdate();
+ String sql3 = "UPDATE barang SET stok = COALESCE(stok, 0) + ? WHERE kodebarang = ?";
+pst3 = conn.prepareStatement(sql3);
+pst3.setInt(1, jumlahMasuk);
+pst3.setInt(2, Integer.parseInt(txtKodeBarang.getText()));
+pst3.executeUpdate();
 
         // 3. Insert ke tabel keuangan
         String sql2 = "INSERT INTO keuangan (idasal, jeniskeuangan, masuk, keluar, tanggal) "
